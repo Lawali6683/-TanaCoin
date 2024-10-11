@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TanaCoin Exchange</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-shadow: 3px 4px 4px rgba(0, 0, 0, 0.3);        
+        }
+
+        #container {
+            width: 80%;
+            max-width: 600px;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+        }
+
+        #main-content {
+            display: block;
+        }
+
+        #convert-btn, #withdrawal-section button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #00b894;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .exchange-option {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .exchange-option img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .exchange-option button {
+            background-color: #555;
+            padding: 10px;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #withdrawal-section {
+            display: block;
+        }
+
+        #dark-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #dark-overlay p {
+            font-size: 1.2rem;
+        }
+
+        #back-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff5252;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .container9 {
+            width: 80%;
+            max-width: 600px;
+            background-color: #eaffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: #31ff15;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <div id="dark-overlay" class="hidden">
+            <p>End <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mining: Time is running...</p>
+            <button id="back-btn">✖️ Back</button>
+        </div>
+
+        <div id="main-content">
+            <h1>Welcome, <span id="username"></span>!</h1>
+            <p>Your Total <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>: <span id="userBalance">0.0000</span></p>
+            <p>Market <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Price: $<span id="market-price">1.00</span> per <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></p>
+
+            <h2>Select Exchange:</h2>
+            <div class="exchange-option">
+                <img src="b.png" alt="Binance">
+                <button id="binance-btn">Binance - 5.905% fee</button>
+            </div>
+            <div class="exchange-option">
+                <img src="c.png" alt="Coinbase">
+                <button id="coinbase-btn">Coinbase - 6.7979% fee</button>
+            </div>
+            <div class="exchange-option">
+                <img src="kr.png" alt="Kraken">
+                <button id="kraken-btn">Kraken - 5% fee</button>
+            </div>
+            <div class="exchange-option">
+                <img src="k.png" alt="KuCoin">
+                <button id="kucoin-btn">KuCoin - 6% fee</button>
+            </div>
+
+            <p id="converted-amount"></p>
+
+            <div class="container9">
+                <h1>Wallet</h1>
+                <p>Balance: $<span id="usd-balance">0.00</span></p>
+            </div>
+
+            <div id="withdrawal-section">
+                <h2>Withdrawal</h2>
+                <form id="withdrawal-form">
+                    <label for="wallet">Your Telegram Wallet:</label>
+                  <input type="text" id="wallet" required>
+
+                    <label for="password">Enter your password:</label>
+                    <input type="password" id="password" required>
+
+                    <button type="submit">Withdraw</button>
+                </form>
+                <p id="withdrawal-message"></p>
+            </div>
+        </div>
+    </div>    
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
+  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyCldVBl...",
+    authDomain: "tanacoin-75344.firebaseapp.com",
+    projectId: "tanacoin-75344",
+    storageBucket: "tanacoin-75344.appspot.com",
+    messagingSenderId: "425342256564",
+    appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth();
+
+  document.addEventListener('DOMContentLoaded', async function () {
+    const usernameEl = document.getElementById('username');
+    const totalTanaCoinEl = document.getElementById('userBalance');
+    const marketPriceEl = document.getElementById('market-price');
+    const usdBalanceEl = document.getElementById('usd-balance');
+    const withdrawalMessageEl = document.getElementById('withdrawal-message');
+    
+    const userCredential = await signInAnonymously(auth);
+    const user = userCredential.user;
+
+    const userDoc = doc(db, "User", user.uid);
+    let userData = await getDoc(userDoc);
+    if (!userData.exists()) {
+        userData = {
+            username: "Guest",
+            tanaCoinBalance: 0,
+            password: "12345"
+        };
+        await setDoc(userDoc, userData);
+    } else {
+        userData = userData.data();
+    }
+
+    usernameEl.textContent = userData.username;
+    totalTanaCoinEl.textContent = userData.tanaCoinBalance.toFixed(4);
+    marketPriceEl.textContent = localStorage.getItem('tanacoinPrice') || 1;
+
+    // Withdrawal logic
+    document.getElementById('withdrawal-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const wallet = document.getElementById('wallet').value;
+        const password = document.getElementById('password').value;
+        
+        if (password === userData.password && userData.tanaCoinBalance > 0) {
+            const withdrawalAmount = userData.tanaCoinBalance * marketPriceEl.textContent;
+            usdBalanceEl.textContent = (parseFloat(usdBalanceEl.textContent) + withdrawalAmount).toFixed(2);
+            
+            withdrawalMessageEl.textContent = `Withdrawal successful! $${withdrawalAmount} sent to ${wallet}`;
+            await updateDoc(userDoc, { tanaCoinBalance: 0 });
+        } else {
+            withdrawalMessageEl.textContent = "Invalid password or insufficient funds.";
+        }
+    });
+  });
+  </script>
+</body>
+</html>

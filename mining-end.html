@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TanaCoin Mining</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    Text-align:center;
+    Font-weight:bold;
+}
+
+.container {
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1f1f1f;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #fff;
+}
+
+button#backBtn {
+    background-color: transparent;
+    border: none;
+    font-size: 24px;
+    color: #ff4c4c;
+    cursor: pointer;
+}
+
+.content {
+    margin-top: 20px;
+}
+
+.content h2 {
+    font-size: 20px;
+    color: #fff;
+}
+
+.content p {
+    font-size: 30px;
+}
+
+.now {
+    margin-top: 20px;
+    color: #46ff15;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.gutt{
+    font-size: 40px;
+      color: #fff;
+      text-shadow: 0 0 1px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0;
+}
+.gut{
+    font-size: 30px;
+      color: #ff3;
+      text-shadow: 3px 3px 0 #e60000, 6px 6px 0 #ffb3b3;
+}
+.Fut{
+    font-size: 40px;
+      background: linear-gradient(to right, #8e44ad, #3498db);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button id="backBtn">🔙</button>
+            <h1><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mining</h1>
+        </header>
+
+        <div class="content">
+            <section>
+                <h2>Target Market <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Price:</h2>
+                <p style="color:#46ff15;">$1 to 1.00000 <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></p>
+            </section>
+
+            <section>
+                <h2>Total <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> created</h2>
+                <p id="totalCoins3" style="color:#46ff15;"class="gutt">2,004,638</p>
+            </section>
+
+            <section>
+                <h2 class="tyu">Total Mining <i class="tyu" style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i class="gyt"> complete mine</h2>
+                <p id="totalCoins" style="color:#46ff15;"class="gutt">246.9 (Ana ƙara guda 24.5902 kowace rana)</p>
+            </section>
+
+            <section>
+                <h2>End <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mining Time:</h2>
+                <p id="endTime" class="gut"></p>
+            </section>
+        </div>
+
+        <p class="now">
+            <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> is an exciting new mining coin that you can easily convert and trade on popular exchanges like Binance, Coinbase. Whether you want to sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> on Connected or exchange it directly in the <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Market, the process is seamless.
+        </p>
+
+        <p class="now">
+            Now is the perfect time to jump into <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> mining and maximize your earnings!
+        </p>
+    </div>
+
+    <script>
+        // Back button functionality
+document.getElementById('backBtn').addEventListener('click', () => {
+    window.history.back();  // Komawa baya
+});
+
+// TanaCoin Mining lissafi
+let totalCoins = 246.9;  // TanaCoins da aka fara
+const dailyCoins = 24.5902;  // Ƙarin kowace rana
+const startDate = new Date('2024-01-01');  // Lokacin da mining ya fara
+const endTimeElement = document.getElementById('endTime');
+
+// Yi update na total mining da end time
+function updateTanaCoinMining() {
+    const now = new Date();
+    const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));  // Tsawon kwanaki da suka wuce
+    const totalMined = totalCoins + (daysPassed * dailyCoins);
+
+    // Update total coins da aka mine
+    document.getElementById('totalCoins').textContent = totalMined.toFixed(4);
+
+    // Ƙara lokacin ƙarshen mining idan ya wuce
+    const endTime = new Date(now.getTime() + (1000 * 60 * 60 * 24));
+    endTimeElement.textContent = endTime.toLocaleString();  // Nuna lokaci kamar agogo
+}
+
+// Update kowane dakika 1
+setInterval(updateTanaCoinMining, 1000);
+
+// Kira farkon update
+updateTanaCoinMining();
+
+    </script>
+</body>
+</html>

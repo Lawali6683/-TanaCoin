@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            Text-align: center; 
+        }
+        .hidden { display: none; }
+       
+        h1, h3 {
+            text-align: center;
+            Font-weight:bold;
+            Color: #0003ff;
+        }
+        table {
+            width: 85%;
+            Position: center;
+            border-collapse: collapse;
+            margin-top: 20px;
+            Font-weight: bold;
+            Font-size: 16px;
+            Text-align: center;
+        }
+        table, th, td {
+            border: 1px solid #5bff15;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        textarea {
+            width: 80%;
+            padding: 10px;
+            border: 2px solid #5bff15;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+       input{
+           padding: 18px;
+            margin-bottom: 20px;
+            border: 1px solid #90ff2b;
+            border-radius: 5px;
+            font-size: 11px;
+       }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="password-section">
+        <h1>Admin Login</h1>
+        <input type="password" id="admin-password" placeholder="Enter admin password">
+        <button id="login-btn">Login</button>
+    </div>
+
+    <div class="container hidden" id="control-panel">
+        <h1>Admin Dashboard</h1>
+
+        <!-- Display total mined TanaCoin -->
+        <div class="setting">
+            <h3>Complete TanaCoin mined: <span id="total-mined"></span></h3>
+        </div>
+
+        <!-- All Users Table -->
+        <div class="setting">
+            <h3>All Users TanaCoin Miners</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>TanaCoin</th>
+                    </tr>
+                </thead>
+                <tbody id="user-table">
+                    <!-- User Data will be dynamically loaded here -->
+                </tbody>
+            </table>
+            <p style="color:#0d00c4;">Total users registered: <span id="total-users"></span></p>
+        </div>
+
+        <!-- Send Message to Users -->
+        <div class="setting">
+            <label for="send-message">Send Message to All Users Mining:</label>
+            <textarea id="send-message" placeholder="Type your message here..."></textarea>
+            <button onclick="sendMessage()">Send</button>
+        </div>
+
+        <!-- Send Email Notification -->
+        <div class="setting">
+            <label for="send-email">Send Email to All Users:</label>
+            <textarea id="send-email" placeholder="Type your email message here..."></textarea>
+            <button onclick="sendEmail()">Send</button>
+        </div>
+
+        <!-- Notifications -->
+        <div class="setting">
+            <h3>Withdrawal Notifications</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody id="notification-table">
+                    <!-- Withdrawal notifications will be dynamically loaded here -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
+            authDomain: "tanacoin-75344.firebaseapp.com",
+            projectId: "tanacoin-75344",
+            storageBucket: "tanacoin-75344.appspot.com",
+            messagingSenderId: "425342256564",
+            appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Password Authentication
+        document.getElementById('login-btn').addEventListener('click', function () {
+            const password = document.getElementById('admin-password').value;
+            if (password === 'haruna66') {
+                document.getElementById('control-panel').classList.remove('hidden');
+                document.getElementById('password-section').classList.add('hidden');
+                loadUserData();
+            } else {
+                alert('Incorrect Password!');
+            }
+        });
+
+        // Load user data and calculate total mined TanaCoin
+        async function loadUserData() {
+            const userTable = document.getElementById('user-table');
+            const totalMinedEl = document.getElementById('total-mined');
+            const totalUsersEl = document.getElementById('total-users');
+
+            const querySnapshot = await getDocs(query(collection(db, "users"), orderBy("userBalance", "desc")));
+            let totalMined = 0;
+            let totalUsers = 0;
+            querySnapshot.forEach(doc => {
+                const data = doc.data();
+                totalMined += data.userBalance;
+                totalUsers++;
+                userTable.innerHTML += `
+                    <tr>
+                        <td>${data.email}</td>
+                        <td>${data.username}</td>
+                        <td>${data.userBalance}</td>
+                    </tr>
+                `;
+            });
+
+            totalMinedEl.textContent = totalMined;
+            totalUsersEl.textContent = totalUsers;
+        }
+
+        // Send message to all users
+        function sendMessage() {
+            const message = document.getElementById('send-message').value;
+            if (message) {
+                alert(`Message sent: ${message}`);
+                // Code to store message in Firebase and notify users
+            } else {
+                alert('Please type a message.');
+            }
+        }
+
+        // Send email to all users
+        function sendEmail() {
+            const emailMessage = document.getElementById('send-email').value;
+            if (emailMessage) {
+                alert(`Email sent: ${emailMessage}`);
+                // Code to send email to all users using Firebase
+            } else {
+                alert('Please type an email message.');
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Friends - TanaCoin</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Basic Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #95fff597;
+}
+
+/* Video Background */
+#bgVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    z-index: -1; 
+}
+
+/* Header styling */
+header {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 0px;
+    background-color: rgba(255, 255, 255, 0.85); 
+    position: relative;
+    z-index: 1000; 
+    width: 314px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid #ddd;
+    Text-align; center;
+}
+
+header .tana {
+    width: 100px;
+    margin-right: 15px;
+}
+
+header .use {
+    font-size: 1.8em;
+    gap: 1px;
+    color: #2ecc71;
+    font-weight: bold;
+    flex-grow: 10px;
+    text-align: center;
+    
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    Color:#fffc15;
+}
+
+.avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    
+    align-items: center;
+    gap: 10px;
+    border: 2px solid #2ecc71;
+}
+
+/* Media Queries don na'urorin hannu */
+@media (max-width: 768px) {
+    header {
+        padding: 1px 3px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    header .use {
+        text-align: left;
+        font-size: 1.6em;
+        margin-top: 10px;
+    }
+    
+.container {
+width: 97%;
+    padding: 3px;
+    background-color: rgba(255, 255, 255, 0.85); 
+    background-color: #eaffff;
+    margin: 1px 3px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+    text-align: center
+}
+
+h1 {
+    color: #444;
+}
+
+p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.referral-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#referralLink {
+    width: 40%;
+    padding: 10px;
+    font-size: 1.1em;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+#copyButton {
+    padding: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#copySuccess {
+    margin-left: 10px;
+    color: green;
+    font-size: 1em;
+}
+
+table {
+
+    width: 100%;
+    border-collapse: collapse;
+    position: center;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    Font-weight: bold;
+    Font-size: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.good{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 0px;
+    background-color: rgba(255, 255, 255, 0.85); 
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid #ddd;
+    Text-align; center;
+}
+</style>
+<style>
+                            
+/* Loading screen styles */
+#loading-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #90ff2b; 
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+}
+
+.icon-container img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    animation: pulse 2s infinite; 
+}
+
+.fas8{
+    margin-top: 15px;
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+@keyframes pulse {
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+
+ /* Styles for main content */
+        #main-content {
+            display: none; /* Hide content until loading is complete */
+        }
+    </style>
+</head>
+<body>
+<div id="loading-screen">
+        <div class="icon-container">
+            <img src="dove.png" alt="Loading Icon">
+        </div>
+        <p class="fas8"><i style="color:red;">Tana</i><i style="color:green;">Coin</i><i style="color:blue">
+            ...</i></p>
+    </div>
+    
+<header>
+    
+<video autoplay muted loop id="bgVideo">
+    <source src="video4.mp4" type="video/mp4">
+</video>
+    <h2><img src="dove1.png" class="tana"><i class="unt" style="color:red;">Tana</i><i class="unt" style="color:green;">Coin</i></h2>
+   <center> <span class="use" id="userBalance">0.00000</span></center>
+    <div class="profile-container">
+        <input type="file" id="upload" style="display:none;" accept="image/*" />
+        <img id="avatar" src="avatar.png" alt="User Avatar" class="avatar" />
+        <h3 id="username">Username</h3>
+    </div>
+</header>
+
+<div class="container">
+    <h1>Invite Your Friends to Earn More <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h1>
+    <p>Earn a 3 <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> bonus for each friend you refer! Additionally, you'll earn 10% of the <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> your referral accumulates every day and 5% from their referred friends' earnings.</p>
+    <section class="good">
+       
+<video autoplay muted loop id="bgVideo">
+    <source src="video5.mp4" type="video/mp4">
+</video>
+    <h3><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i><i style="color:white;"> Target Price: $1</h3></i>
+    </section>
+    
+    <p>Copy your referral link and share it with your friends to start earning <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> today!</p>
+
+    <!-- Referral Link Section -->
+    <div class="referral-section">
+        <input type="text" value="https://tanacoin.com/referral-link" id="referralLink" readonly>
+        <button id="copyButton">Copy  Link</button>
+        <span id="copySuccess" class="hidden">Copied successfully!</span>
+    </div>    
+       <section class="good"> 
+   
+<video autoplay muted loop id="bgVideo">
+    <source src="video6.mp4" type="video/mp4">
+</video>   
+    <h2 style="color:white;">Your Active Referrals and Friends' Referrals</h2> </section>   
+    <div>
+    <table>
+        <thead>
+            <tr>
+                <th>Referral Username</th>
+                <th>Your Bonus (10%)</th>
+                <th>Friend's Referral Username</th>
+                <th>Your Bonus (5%)</th>
+            </tr>
+        </thead>
+        <tbody id="referralTable">
+            <!-- Referral data will be populated here -->
+        </tbody>
+    </table>
+</div>
+<script>
+        // Loading Screen Logic
+      // Nemi dukkan bidiyon
+const videoElements = Array.from(document.querySelectorAll('video'));
+
+// Nemi loading-screen idan ya wanzu
+const loadingScreen = document.getElementById('loading-screen');
+
+// Har ma'anar ɗaukacin bidiyon sun loda
+let videosLoaded = 0;
+
+// Duba idan loadingScreen ya wanzu
+if (loadingScreen) {
+    // Ƙara mai sauraro don duba ko bidiyo sun fara aiki
+    videoElements.forEach((video) => {
+        // Duba idan video ɗin na nan kafin ƙara mai sauraro
+        if (video) {
+            // Saita preload din video zuwa auto domin lodawa tun da wuri
+            video.preload = 'auto';
+
+            video.addEventListener('canplay', () => {
+                videosLoaded++;
+                // Idan duk bidiyo sun fara loda, ɓoye loading-screen
+                if (videosLoaded === videoElements.length) {
+                    loadingScreen.style.display = 'none';
+                }
+            });
+
+            // Tabbatar da cewa video ɗin yana fara lodawa daga farko
+            video.load();
+        }
+    });
+}
+
+    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
+    authDomain: "tanacoin-75344.firebaseapp.com",
+    projectId: "tanacoin-75344",
+    storageBucket: "tanacoin-75344.appspot.com",
+    messagingSenderId: "425342256564",
+    appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Get the elements
+const avatar = document.getElementById('avatar');
+const uploadInput = document.getElementById('upload');
+const usernameDisplay = document.getElementById('username');
+const userBalance = document.getElementById('userBalance');
+const referralLink = document.getElementById('referralLink');
+
+// Get data from localStorage or Firebase
+if (localStorage.getItem('avatar')) {
+    avatar.src = localStorage.getItem('avatar');
+}
+
+if (localStorage.getItem('username')) {
+    usernameDisplay.textContent = localStorage.getItem('username');
+} else {
+    // Get username from Firebase
+    const uid = "user-uid"; // Change this to the real user ID
+    const userDoc = await getDoc(doc(db, "users", uid));
+    if (userDoc.exists()) {
+        const data = userDoc.data();
+        usernameDisplay.textContent = data.username;
+        localStorage.setItem('username', data.username);
+    }
+}
+
+// Set up referral link
+referralLink.value = `https://tanacoin.com/referral?user=${usernameDisplay.textContent}`;
+
+// Copy referral link
+document.getElementById('copyButton').addEventListener('click', () => {
+    referralLink.select();
+    document.execCommand('copy');
+    document.getElementById('copySuccess').classList.remove('hidden');
+});
+
+// Handle avatar upload
+avatar.addEventListener('click', () => {
+    uploadInput.click();
+});
+
+uploadInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            avatar.src = reader.result;
+            localStorage.setItem('avatar', reader.result);
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Calculate bonuses and update user balance
+async function updateBalance(uid) {
+    const userDoc = await getDoc(doc(db, "users", uid));
+    if (userDoc.exists()) {
+        const data = userDoc.data();
+        let balance = data.balance || 0;
+        const referralBonus = 3; // Fixed referral bonus
+        const referralPercentage = 0.1 * data.referralEarnings;
+        const friendPercentage = 0.05 * data.friendEarnings;
+        balance += referralBonus + referralPercentage + friendPercentage;
+        await setDoc(doc(db, "users", uid), { balance });
+        userBalance.textContent = balance.toFixed(5);
+    }
+}
+
+</script>
+</body>
+</html>
