@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forgot Password</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+      * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #bfffbf;
+  color: #f82bff;
+}
+
+header {
+  background-color: black;
+  padding: 10px 0;
+}
+
+nav ul {
+  list-style-type: none;
+  text-align: center;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+}
+
+.container {
+  margin: 50px auto;
+  width: 80%;
+  max-width: 400px;
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.container h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.container form input {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #50ff00;
+  border-radius: 5px;
+}
+
+.container form button {
+  padding: 10px;
+  background-color: #70ff15;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.container form button:hover {
+  background-color: #3115ff;
+}
+
+footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #777;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Register</a></li>
+        <li><a href="login.html">Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="container">
+    <h2>Forgot Password?</h2>
+    <p>Enter your email address below, and we'll send you your password.</p>
+    <form id="forgotForm">
+      <input type="email" id="forgotEmail" placeholder="Enter your email address" required>
+      <button type="submit">Submit</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></p>
+  </footer>
+
+  <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import emailjs from 'https://cdn.emailjs.com/dist/email.min.js'; // Import EmailJS
+
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
+  authDomain: "tanacoin-75344.firebaseapp.com",
+  projectId: "tanacoin-75344",
+  storageBucket: "tanacoin-75344.appspot.com",
+  messagingSenderId: "425342256564",
+  appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Forgot password form submission
+document.getElementById('forgotForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  
+  const email = document.getElementById('forgotEmail').value;
+
+  try {
+    const userDocRef = doc(db, "users", email);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const currentPassword = userData.password; 
+      const firstName = userData.firstName; 
+      const lastName = userData.lastName;   
+      const fullName = `${firstName} ${lastName}`; 
+
+      sendExistingPassword(email, currentPassword, fullName);
+    } else {
+      alert('This email address is not registered with TanaCoin.');
+    }
+  } catch (error) {
+    alert('Network error, please try again.');
+  }
+});
+
+// Function to send the existing password to the user's email via EmailJS
+function sendExistingPassword(email, password, fullName) {
+  emailjs.send('service_p4ju5nw', 'template_j6gfn1d', {
+    to_email: email,
+    user_password: password,
+    user_name: fullName 
+  })
+  .then(() => {
+    alert('Your current password has been sent to your email address.');
+  })
+  .catch((error) => {
+    console.log('Failed to send email:', error);
+    alert('Failed to send the email. Please try again later.');
+  });
+}
+
+  </script>
+</body>
+</html>
