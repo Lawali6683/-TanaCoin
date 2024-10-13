@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TanaCoin Mining</title>
-    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="🌟 TanaCoin - Start Your Journey Today! 🌟" />
+<meta property="og:description" content="Introducing TanaCoin, the ideal cryptocurrency for beginners and seasoned miners alike. Tradeable on leading platforms like Binance and Coinbase, TanaCoin is gaining momentum with a target price of $5 per coin. 🚀 Why start now? Because early adopters are set to benefit the most! Plus, inviting your friends comes with amazing rewards: Earn 3 TanaCoins for every friend you invite! 🎁 Gain 10% of your referral's daily earnings in TanaCoin! If your referral brings others, you’ll get an additional 5% of their daily earnings too! Don’t miss this golden opportunity to grow your TanaCoin portfolio! Get started today before it’s too late." />
+    <meta property="og:image" content="/gh1.png" />
+    <meta property="og:url" content="https://tanacoin.netlify.app/"/>
+    <meta property="og:type" content="website" />
+    <link>
     <style>
         * {
             margin: 0;
@@ -27,6 +33,7 @@
             height: 100%;
             object-fit: cover;
             z-index: -1;
+       overflow-y: auto;
         }
 
         body {
@@ -66,7 +73,7 @@
 
         label {
             margin-bottom: 5px;
-            font-size: 18px;
+            font-size: 20px;
             text-align: left;
             Font-weight:bold;
         }
@@ -76,7 +83,8 @@
             margin-bottom: 20px;
             border: 1px solid #90ff2b;
             border-radius: 5px;
-            font-size: 15px;
+            font-size: 10px;
+      overflow: auto;     
         }
 
         button {
@@ -206,10 +214,24 @@
     Border-radius:10px;
     
 }
-
-
+.button one{
+    Text-align:center;
+    Font-weight:bold;
+    Font-size:20px;
+    Color#d915ff;
+}
+   .grecaptcha-badge {
+        visibility: visible;
+        opacity: 1;
+        z-index: 1000;
+        position: absolute;
+        top: 90%;
+        left: 10%;
+        transform: translate(-80%, -70%);
+    }      
+  
     </style>
-</head>
+    </head>
 <body>
     
     <div id="loading-screen">
@@ -274,7 +296,8 @@
             <button type="submit">Submit</button>
         </form>
         <p>Already have an account? <a href="login.html">Login</a></p>
-        <img src="gh.png" class="gut">
+        <img src="gh1.png" class="gut">
+        <img src="avatar.png" style="width: 100%; height:80%; border-radius:10px;">
     </div>
     <script>
     const togglePasswordIcons = document.querySelectorAll('.toggle-password');
@@ -305,7 +328,8 @@
     });
 };
 
-    </script>                
+    </script> 
+         <script src="https://www.google.com/recaptcha/api.js?render=6LcFd2AqAAAAAFXZLNVaLYsoseMG3CHkS5t6f_MI"></script>         
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getFirestore, doc, setDoc, getDocs, query, where, collection } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
@@ -354,6 +378,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         lastName,
         username,
         email,
+        Password, 
         userBalance: 0
     };
 
@@ -387,6 +412,33 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         alert("An error occurred while checking email.");
     }
 });
+
+document.getElementById('registerForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // reCAPTCHA verification
+            grecaptcha.ready(function () {
+                grecaptcha.execute('6LcFd2AqAAAAAFXZLNVaLYsoseMG3CHkS5t6f_MI', { action: 'submit' }).then(function (token) {
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+
+                    // Create user in Firebase Auth
+                    createUserWithEmailAndPassword(auth, email, password)
+                        .then(async (userCredential) => {
+                            // Save user data in Firestore
+                            const user = userCredential.user;
+                            await setDoc(doc(db, "users", user.uid), {
+                                email: user.email
+                            });
+                            alert("User registered successfully!");
+                        })
+                        .catch((error) => {
+                            console.error("Error registering user: ", error);
+                            alert("Error: " + error.message);
+                        });
+                });
+            });
+        });
 </script>
 </body>
 </html>
