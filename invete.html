@@ -254,14 +254,14 @@ th, td {
 <video autoplay muted loop id="bgVideo">
     <source src="video5.mp4" type="video/mp4">
 </video>
-    <h3><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i><i style="color:white;"> Target Price: $1</h3></i>
+    <h3><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i><i style="color:white;"> Target Price: $5</h3></i>
     </section>
     
     <p>Copy your referral link and share it with your friends to start earning <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> today!</p>
 
     <!-- Referral Link Section -->
     <div class="referral-section">
-        <input type="text" value="https://tanacoin.com/referral-link" id="referralLink" readonly>
+        <input type="text" value="https://tanacoin.netlify.app/referral-link" id="referralLink" readonly>
         <button id="copyButton">Copy  Link</button>
         <span id="copySuccess" class="hidden">Copied successfully!</span>
     </div>    
@@ -282,7 +282,7 @@ th, td {
             </tr>
         </thead>
         <tbody id="referralTable">
-            <!-- Referral data will be populated here -->
+            
         </tbody>
     </table>
 </div>
@@ -294,27 +294,25 @@ const videoElements = Array.from(document.querySelectorAll('video'));
 // Nemi loading-screen idan ya wanzu
 const loadingScreen = document.getElementById('loading-screen');
 
-// Har ma'anar ɗaukacin bidiyon sun loda
+
 let videosLoaded = 0;
 
-// Duba idan loadingScreen ya wanzu
+
 if (loadingScreen) {
-    // Ƙara mai sauraro don duba ko bidiyo sun fara aiki
+    
     videoElements.forEach((video) => {
-        // Duba idan video ɗin na nan kafin ƙara mai sauraro
+        
         if (video) {
-            // Saita preload din video zuwa auto domin lodawa tun da wuri
+            
             video.preload = 'auto';
 
             video.addEventListener('canplay', () => {
                 videosLoaded++;
-                // Idan duk bidiyo sun fara loda, ɓoye loading-screen
+                
                 if (videosLoaded === videoElements.length) {
                     loadingScreen.style.display = 'none';
                 }
-            });
-
-            // Tabbatar da cewa video ɗin yana fara lodawa daga farko
+            });            
             video.load();
         }
     });
@@ -344,7 +342,6 @@ const usernameDisplay = document.getElementById('username');
 const userBalance = document.getElementById('userBalance');
 const referralLink = document.getElementById('referralLink');
 
-// Get data from localStorage or Firebase
 if (localStorage.getItem('avatar')) {
     avatar.src = localStorage.getItem('avatar');
 }
@@ -352,8 +349,8 @@ if (localStorage.getItem('avatar')) {
 if (localStorage.getItem('username')) {
     usernameDisplay.textContent = localStorage.getItem('username');
 } else {
-    // Get username from Firebase
-    const uid = "user-uid"; // Change this to the real user ID
+    
+    const uid = "user-uid"; 
     const userDoc = await getDoc(doc(db, "users", uid));
     if (userDoc.exists()) {
         const data = userDoc.data();
@@ -363,7 +360,7 @@ if (localStorage.getItem('username')) {
 }
 
 // Set up referral link
-referralLink.value = `https://tanacoin.com/referral?user=${usernameDisplay.textContent}`;
+referralLink.value = `https://tanacoin.netlify.app/referral?user=${usernameDisplay.textContent}`;
 
 // Copy referral link
 document.getElementById('copyButton').addEventListener('click', () => {
@@ -372,7 +369,7 @@ document.getElementById('copyButton').addEventListener('click', () => {
     document.getElementById('copySuccess').classList.remove('hidden');
 });
 
-// Handle avatar upload
+
 avatar.addEventListener('click', () => {
     uploadInput.click();
 });
