@@ -80,10 +80,11 @@
 
         input[type="text"], input[type="email"], input[type="password"] {
             padding: 12px;
+            Font-size:20px;
             margin-bottom: 20px;
             border: 1px solid #90ff2b;
             border-radius: 5px;
-            font-size: 10px;
+            font-size: 17px;
       overflow: auto;     
         }
 
@@ -220,16 +221,19 @@
     Font-size:20px;
     Color#d915ff;
 }
-   .grecaptcha-badge {
-        visibility: visible;
-        opacity: 1;
-        z-index: 1000;
-        position: absolute;
-        top: 90%;
-        left: 10%;
-        transform: translate(-80%, -70%);
-    }      
-  
+  .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.grecaptcha-badge {
+    visibility: visible;
+    opacity: 1;
+    z-index: 1000;
+}
+      
     </style>
     </head>
 <body>
@@ -348,6 +352,24 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// Function don kirkirar unique TanaCoin Wallet Address
+function generateWalletAddress() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let walletAddress = 'TNC'; // Farawa da 'TNC' don TanaCoin
+    for (let i = 0; i < 32; i++) {
+        walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return walletAddress;
+}
+
+// Function don duba idan wallet address din ya taba kasancewa
+async function isWalletAddressUnique(walletAddress) {
+    const q = query(collection(db, "users"), where("walletAddress", "==", walletAddress));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.empty; // True idan ba a samu wallet address din ba
+}
+
+// Save user data to Firebase
 async function saveUserData(uid, data) {
     try {
         await setDoc(doc(db, "users", uid), data);
@@ -356,6 +378,13 @@ async function saveUserData(uid, data) {
         console.error("Error writing document: ", error);
         return false;
     }
+}
+
+// Function don duba idan username ya riga ya kasance
+async function isUsernameUnique(username) {
+    const q = query(collection(db, "users"), where("username", "==", username));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.empty; // True idan ba a samu username ba
 }
 
 document.getElementById('registerForm').addEventListener('submit', async function (e) {
@@ -373,22 +402,40 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         return;
     }
 
-    const userData = {
-        firstName,
-        lastName,
-        username,
-        email,
-        Password, 
-        userBalance: 0
-    };
-
-    const uid = username + Date.now();
-
+    const uid = "ShIKsA9c3xzVpTU16X66"; // Saka user ID din ka a nan
     const usernameRegex = /^[a-zA-Z0-9]+$/;
     if (!usernameRegex.test(username)) {
         alert('Usernames can only contain letters and numbers.');
         return;
     }
+
+    // Duba idan username ya riga ya kasance
+    const isUsernameAvailable = await isUsernameUnique(username);
+    if (!isUsernameAvailable) {
+        alert("This username is already in use. Please choose another.");
+        return;
+    }
+
+    // Kirkirar unique wallet address
+    let walletAddress;
+    let isUnique = false;
+    while (!isUnique) {
+        walletAddress = generateWalletAddress();
+        isUnique = await isWalletAddressUnique(walletAddress);
+    }
+
+    const userData = {
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
+        walletAddress,
+        userBalance: 0
+    };
+
+    // Save user wallet address to localStorage
+    localStorage.setItem('walletAddress', walletAddress);
 
     try {
         const q = query(collection(db, "users"), where("email", "==", email));
