@@ -9,7 +9,8 @@
 <meta property="og:description" content="Introducing TanaCoin, the ideal cryptocurrency for beginners and seasoned miners alike. Tradeable on leading platforms like Binance and Coinbase, TanaCoin is gaining momentum with a target price of $5 per coin. 🚀 Why start now? Because early adopters are set to benefit the most! Plus, inviting your friends comes with amazing rewards: Earn 3 TanaCoins for every friend you invite! 🎁 Gain 10% of your referral's daily earnings in TanaCoin! If your referral brings others, you’ll get an additional 5% of their daily earnings too! Don’t miss this golden opportunity to grow your TanaCoin portfolio! Get started today before it’s too late." />
     <meta property="og:image" content="/gh1.png" />
     <meta property="og:url" content="https://tanacoin.netlify.app/"/>
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="website" />      
+<script src="https://www.google.com/recaptcha/api.js?render=6LcFd2AqAAAAAFXZLNVaLYsoseMG3CHkS5t6f_MI"></script>
     <link>
     <style>
         * {
@@ -86,7 +87,7 @@
        border-bottom: 4px solid #90ff55;
       
             border-radius: 10px;
-            font-size: 17px;
+            font-size: 16px;
       overflow: auto;     
         }
 
@@ -336,9 +337,11 @@
 
     </script> 
                 
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getFirestore, doc, setDoc, getDocs, query, where, collection } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -353,6 +356,12 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// Initialize Firebase App Check with reCAPTCHA v3
+const appCheck = initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider('6LcFd2AqAAAAAFXZLNVaLYsoseMG3CHkS5t6f_MI'),
+    isTokenAutoRefreshEnabled: true
+});
 
 // Function don kirkirar unique TanaCoin Wallet Address
 function generateWalletAddress() {
@@ -461,33 +470,6 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         alert("An error occurred while checking email.");
     }
 });
-
-document.getElementById('registerForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            // reCAPTCHA verification
-            grecaptcha.ready(function () {
-                grecaptcha.execute('6LcFd2AqAAAAAFXZLNVaLYsoseMG3CHkS5t6f_MI', { action: 'submit' }).then(function (token) {
-                    const email = document.getElementById('email').value;
-                    const password = document.getElementById('password').value;
-
-                    // Create user in Firebase Auth
-                    createUserWithEmailAndPassword(auth, email, password)
-                        .then(async (userCredential) => {
-                            // Save user data in Firestore
-                            const user = userCredential.user;
-                            await setDoc(doc(db, "users", user.uid), {
-                                email: user.email
-                            });
-                            alert("User registered successfully!");
-                        })
-                        .catch((error) => {
-                            console.error("Error registering user: ", error);
-                            alert("Error: " + error.message);
-                        });
-                });
-            });
-        });
 </script>
 </body>
 </html>
