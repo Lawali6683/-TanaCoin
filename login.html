@@ -115,14 +115,12 @@ label {
 input[type="email"], input[type="password"] {
     padding: 10px;
     margin-bottom: 1px;
-    border: 1px solid #90ff2b;
-    border-radius: 5px;    
+   border-bottom: 4px solid #90ff55;
+    border-radius: 10px;    
     
-    margin-bottom: 20px;
-            border: 1px solid #90ff2b;
-            border-radius: 5px;
-            font-size: 17px;
-      overflow: auto;     
+    margin-bottom: 10px;
+                       font-size: 12px;
+      
 }
 
 button {
@@ -144,15 +142,9 @@ button:hover {
 
 .password-wrapper {
     position: relative;
+    
 }
 
-.toggle-password {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-}
 
 p {
     text-align: center;
@@ -228,11 +220,6 @@ Background-color:#ff0000;
     position: relative;
 }
 
-.grecaptcha-badge {
-    visibility: visible;
-    opacity: 1;
-    z-index: 1000;
-}
    
     </style>
 </head>
@@ -265,7 +252,7 @@ Background-color:#ff0000;
             <label for="password">Password</label>
             <div class="password-wrapper">
                 <input type="password" id="password" name="password" placeholder="password" required>
-                <span class="toggle-password">👁️‍🗨️</span>
+                
             </div>
             
             <button type="submit">Submit</button>
@@ -290,24 +277,6 @@ Background-color:#ff0000;
 
     </script>
     
-
-<script>
-    const togglePasswordIcons = document.querySelectorAll('.toggle-password');
-
-    togglePasswordIcons.forEach(icon => {
-        icon.addEventListener('click', function() {
-            const input = this.previousElementSibling;
-            const inputType = input.getAttribute('type');
-            
-            if (inputType === 'password') {
-                input.setAttribute('type', 'text');
-            } else {
-                input.setAttribute('type', 'password');
-            }
-        });
-    });
-</script>
-<script src="https://www.google.com/recaptcha/api.js?render=6LcFd2AqAAAAAFXZLNVaLYsoseMG3CHkS5t6f_MI"></script>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
