@@ -10,23 +10,23 @@
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            Text-align: center; 
+            text-align: center; 
         }
         .hidden { display: none; }
        
         h1, h3 {
             text-align: center;
-            Font-weight:bold;
-            Color: #0003ff;
+            font-weight:bold;
+            color: #0003ff;
         }
         table {
             width: 85%;
-            Position: center;
+            margin: 0 auto; /* Centers the table */
             border-collapse: collapse;
             margin-top: 20px;
-            Font-weight: bold;
-            Font-size: 16px;
-            Text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            text-align: center;
         }
         table, th, td {
             border: 1px solid #5bff15;
@@ -100,14 +100,14 @@
         <div class="setting">
             <label for="send-message">Send Message to All Users Mining:</label>
             <textarea id="send-message" placeholder="Type your message here..."></textarea>
-            <button onclick="sendMessage()">Send</button>
+            <button id="send-btn">Send</button> <!-- Added correct ID for the Send button -->
         </div>
 
         <!-- Send Email Notification -->
         <div class="setting">
             <label for="send-email">Send Email to All Users:</label>
             <textarea id="send-email" placeholder="Type your email message here..."></textarea>
-            <button onclick="sendEmail()">Send</button>
+            <button id="send-email-btn">Send</button> <!-- Corrected the button ID -->
         </div>
 
         <!-- Notifications -->
@@ -129,83 +129,143 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js";
 
-        // Firebase config
-        const firebaseConfig = {
-            apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
-            authDomain: "tanacoin-75344.firebaseapp.com",
-            projectId: "tanacoin-75344",
-            storageBucket: "tanacoin-75344.appspot.com",
-            messagingSenderId: "425342256564",
-            appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
-        };
+    // Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
+        authDomain: "tanacoin-75344.firebaseapp.com",
+        projectId: "tanacoin-75344",
+        storageBucket: "tanacoin-75344.appspot.com",
+        messagingSenderId: "425342256564",
+        appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
+    };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const messaging = getMessaging(app);
 
-        // Password Authentication
-        document.getElementById('login-btn').addEventListener('click', function () {
-            const password = document.getElementById('admin-password').value;
-            if (password === 'haruna66') {
-                document.getElementById('control-panel').classList.remove('hidden');
-                document.getElementById('password-section').classList.add('hidden');
-                loadUserData();
-            } else {
-                alert('Incorrect Password!');
-            }
+    // Password Authentication
+    document.getElementById('login-btn').addEventListener('click', function () {
+        const password = document.getElementById('admin-password').value;
+        if (password === 'haruna66') {
+            document.getElementById('control-panel').classList.remove('hidden');
+            document.getElementById('password-section').classList.add('hidden');
+            loadUserData();
+        } else {
+            alert('Incorrect Password!');
+        }
+    });
+
+    // Load user data and calculate total mined TanaCoin
+    async function loadUserData() {
+        const userTable = document.getElementById('user-table');
+        const totalMinedEl = document.getElementById('total-mined');
+        const totalUsersEl = document.getElementById('total-users');
+
+        const querySnapshot = await getDocs(query(collection(db, "users"), orderBy("userBalance", "desc")));
+        let totalMined = 0;
+        let totalUsers = 0;
+        querySnapshot.forEach(doc => {
+            const data = doc.data();
+            totalMined += data.userBalance;
+            totalUsers++;
+            userTable.innerHTML += `
+                <tr>
+                    <td>${data.email}</td>
+                    <td>${data.username}</td>
+                    <td>${data.userBalance}</td>
+                </tr>
+            `;
         });
 
-        // Load user data and calculate total mined TanaCoin
-        async function loadUserData() {
-            const userTable = document.getElementById('user-table');
-            const totalMinedEl = document.getElementById('total-mined');
-            const totalUsersEl = document.getElementById('total-users');
+        totalMinedEl.textContent = totalMined;
+        totalUsersEl.textContent = totalUsers;
+    }
 
-            const querySnapshot = await getDocs(query(collection(db, "users"), orderBy("userBalance", "desc")));
-            let totalMined = 0;
-            let totalUsers = 0;
-            querySnapshot.forEach(doc => {
-                const data = doc.data();
-                totalMined += data.userBalance;
-                totalUsers++;
-                userTable.innerHTML += `
-                    <tr>
-                        <td>${data.email}</td>
-                        <td>${data.username}</td>
-                        <td>${data.userBalance}</td>
-                    </tr>
-                `;
-            });
-
-            totalMinedEl.textContent = totalMined;
-            totalUsersEl.textContent = totalUsers;
+    // Get FCM token for notifications
+    getToken(messaging, { vapidKey: "YOUR_VAPID_KEY" }).then((currentToken) => {
+        if (currentToken) {
+            console.log('FCM token:', currentToken);
+            // Store or use this token to send notifications
+        } else {
+            console.log('No registration token available.');
         }
+    }).catch((err) => {
+        console.log('An error occurred while retrieving token.', err);
+    });
 
-        // Send message to all users
-        function sendMessage() {
-            const message = document.getElementById('send-message').value;
-            if (message) {
-                alert(`Message sent: ${message}`);
-                // Code to store message in Firebase and notify users
-            } else {
-                alert('Please type a message.');
+    // Listen for incoming messages (when app is in foreground)
+    onMessage(messaging, (payload) => {
+        console.log('Message received:', payload);
+        alert(`New message: ${payload.notification.body}`);
+    });
+
+    // Send message to all users
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    function sendMessage() {
+        const message = document.getElementById('send-message').value;
+        if (message) {
+            sendNotification(message);  // Function to send notification
+        } else {
+            alert('Please type a message.');
+        }
+    }
+
+    // Function to send FCM notification
+    function sendNotification(message) {
+        const notificationPayload = {
+            notification: {
+                title: "New Message",
+                body: message,
+                icon: "/path/to/icon.png"
             }
-        }
+        };
 
-        // Send email to all users
-        function sendEmail() {
-            const emailMessage = document.getElementById('send-email').value;
-            if (emailMessage) {
-                alert(`Email sent: ${emailMessage}`);
-                // Code to send email to all users using Firebase
-            } else {
-                alert('Please type an email message.');
-            }
-        }
+        fetch('https://fcm.googleapis.com/fcm/send', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'key=YOUR_SERVER_KEY',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                notification: notificationPayload,
+                to: '/topics/all'  // Send to all users
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Notification sent successfully:', data);
+            alert('Notification sent successfully!');
+        })
+               .catch(error => {
+            console.error('Error sending email:', error);
+            alert('Failed to send email. Please try again later.');
+        });
+    }
 
-    </script>
+    // Load withdrawal notifications
+    async function loadNotifications() {
+        const notificationTable = document.getElementById('notification-table');
+        const querySnapshot = await getDocs(query(collection(db, "withdrawals"), orderBy("date", "desc")));
+        
+        querySnapshot.forEach(doc => {
+            const data = doc.data();
+            notificationTable.innerHTML += `
+                <tr>
+                    <td>${new Date(data.date.seconds * 1000).toLocaleDateString()}</td>
+                    <td>${data.message}</td>
+                </tr>
+            `;
+        });
+    }
+
+    // Call the function to load notifications after login
+    document.getElementById('login-btn').addEventListener('click', loadNotifications);
+
+</script>
 </body>
-</html>
+</html>        
