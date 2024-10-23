@@ -77,6 +77,42 @@ button:hover {
     border: 1px solid #c3e6cb;
     color: #155724;
 }
+
+/* Sanya duhu a shafin baki daya */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Duhu tare da haske 80% */
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 25px;
+    text-align: center;
+}
+
+/* Daga style na sakon TanaCoin */
+.gutt{
+    font-size: 25px;
+    color: #fff;
+    text-shadow: 0 0 1px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0;
+}
+.gut{
+    font-size: 25px;
+    color: #ff3;
+    text-shadow: 3px 3px 0 #e60000, 6px 6px 0 #ffb3b3;
+}
+.Fut{
+    font-size: 25px;
+    background: linear-gradient(to right, #8e44ad, #3498db);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
 </style>
 <style>
 
@@ -158,6 +194,8 @@ input{
     </style>
 </head>
 <body>
+    
+
     <header>
         <h1 id="welcome-text">Welcome To Sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Username</h1>
     </header>
@@ -168,7 +206,7 @@ input{
                 <span id="userBalance">0.0000</span>
             </p>
             <p>Market <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Price: 
-                $<span id="market-price">0.8648</span> per <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>
+                $<span id="market-price">5.8648</span> per <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>
             </p>
         </section>
 
@@ -188,6 +226,14 @@ input{
         <section class="wallet-section">
             <h2 class="wel"><center>Your Dollars TRC20 WELLET</center></h2>
   <center class="container">        <p>Balance: $<span id="usdBalance">0.00</span></p></center>
+  
+  <div class="overlay">
+    <div>
+        <h2 class="gutt"><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Chenge Market is Closed</h2>
+        <p class="gut">Chenge <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> will reopen automatically when the Aidrop Mine Ends.</p>
+        <h3 class="Fut"><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mining Time Court: <span id="endTime"></span></h3>
+    </div>
+</div>
   
   <div class="notice-container">
     <h2>Notice</h2>
@@ -218,8 +264,8 @@ input{
     </main>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -340,8 +386,24 @@ document.getElementById('withdrawal-form').addEventListener('submit', async (e) 
         withdrawalMessageEl.textContent = "Incorrect password or insufficient balance.";
     }
 });
+
+let totalCoins = 246.9;
+const dailyCoins = 24.5902;
+const startDate = new Date('2024-01-01');
+const endTimeElement = document.getElementById('endTime');
+
+function updateTanaCoinMining() {
+    const now = new Date();
+    const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+    const totalMined = totalCoins + (daysPassed * dailyCoins);
+    
+    // Ƙirƙiri lokacin ƙarshen mining
+    const endTime = new Date(now.getTime() + (1000 * 60 * 60 * 24));
+    endTimeElement.textContent = endTime.toLocaleString();
+}
+
+setInterval(updateTanaCoinMining, 1000);
+updateTanaCoinMining();
 </script>
-
-
 </body>
 </html>
