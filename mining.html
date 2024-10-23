@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TanaCoin Mining </title>       
+    <title>TanaCoin Mining </title> 
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462925482682370"
+     crossorigin="anonymous"></script>
     <style>
          * {
             margin: 0;
@@ -373,18 +375,21 @@
     top: -20px;
     left: 100%;
     transform: translateX(-10%);
-    font-size: 12px;
+    font-size: 9px;
     Font-weight:bold;
     color: #3bff00;
     text-align: center;
   }
    
    .use{
-     font-size: 23px;
+     font-size: 20px;
+     
       font-family: 'Press Start 2P', cursive;
       color: #00ff99;
       text-shadow: 2px 2px 0 #000;
-      Text-align:center;
+      
+      text-align: letf;
+      margin-letf: 0px; 
     }
    .dove1{
        Display:center;
@@ -436,18 +441,18 @@ section {
     margin: 0 auto;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
-    overflow: hidden; /* Don tabbatar da komai yana cikin container */
+    overflow: hidden; 
 }
 
 .close-button {
     position: absolute;
-    top: 10px;  /* Daga kasa zuwa saman */
+    top: 10px;  
     right: 10px;
     font-size: 24px;
     cursor: pointer;
     color: red;
-    z-index: 9999;  /* Don tabbatar da tana saman komai */
-    background-color: white;  /* Ko wani launi da zai nuna da kyau */
+    z-index: 9999;  
+    background-color: white;  
     padding: 5px;
     border-radius: 50%;
 }
@@ -477,7 +482,7 @@ section {
     </div></center>
     
     <header>       
-        <h2><img src="dove.png" class="tana"><i class="unt" style="color:red;">Tana</i><i class="unt" style="color:green;">Coin</i> </h2>        <span class="use" id="userBalance">0.00000</span>
+        <h2><img src="dove.png" class="tana"><i class="unt" style="color:red;">Tana</i><i class="unt" style="color:green;">Coin</i> </h2>                   <span class="use" id="userBalance">0.00000</span>
         <div class="profile-container">
     <input type="file" id="upload" style="display:none;" accept="image/*" />
     <img id="avatar" src="avatar.png" alt="User Avatar" class="avatar" />
@@ -585,9 +590,9 @@ uploadInput.addEventListener('change', function () {
         };
     </script>    
           <script type="module">      
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-  import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"; 
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"; 
 
   // Firebase configuration
   const firebaseConfig = {
@@ -697,7 +702,7 @@ uploadInput.addEventListener('change', function () {
         function startMining() {
             miningActive = true;
 
-            const miner = new CoinIMP(publicKey, { throttle: 0.6 }); // Throttle means 40% CPU usage (1 - 0.6 = 0.4 CPU)
+            const miner = new CoinIMP(publicKey, { throttle: 0.8 }); // Throttle means 50% CPU usage (1 - 0.8 = 0.4 CPU)
 
             // Start mining
             miner.start();
