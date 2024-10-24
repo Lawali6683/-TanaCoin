@@ -237,6 +237,7 @@ Background-color:#ff0000;
     </style>
 </head>
 <body>
+    <div id="pleaseWaitMessage" style="display: none; color: red;"></div>
     <div id="loading-screen">
         <div class="icon-container">
             <img src="dove.png" alt="Loading Icon">
@@ -268,7 +269,7 @@ Background-color:#ff0000;
                 
             </div>
             
-            <button type="submit">Submit</button>
+            <button  type="submit">Submit</button>
         </form>
         <p><a href="forget.html" id="forgotPassword">Forget Password?</a></p>
         <p>Don't have an account? <a  href="index.html">Register</a></p>
@@ -288,8 +289,8 @@ Background-color:#ff0000;
     });
 };
 
-    </script>   
-<script type="module">
+    </script>  
+     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
@@ -316,24 +317,25 @@ Background-color:#ff0000;
         isTokenAutoRefreshEnabled: true
     });
 
-    // User ID (manually assigned)
-    const userId = "ShIKsA9c3xzVpTU16X66";
-
     // Function to check Firebase for user data using email and password
     async function checkFirebase(email, password) {
         try {
+            // Show please wait message
+            document.getElementById('pleaseWaitMessage').innerText = "Please wait...";
+            document.getElementById('pleaseWaitMessage').style.display = "block";
+
             // Sign in the user using email and password
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
 
-            // Fetch the user document based on the manual userId (ShIKsA9c3xzVpTU16X66)
-            const userDoc = await getDoc(doc(db, "users", userId));
+            // Fetch the user document based on the user's ID
+            const userDoc = await getDoc(doc(db, "users", user.uid));
 
             if (userDoc.exists()) {
                 // User exists, save necessary data to localStorage
                 localStorage.setItem('user', JSON.stringify({
                     email: user.email,
-                    uid: userId  // Using the fixed userId
+                    uid: user.uid  // Use the actual user ID
                 }));
                 alert('Login successful! Redirecting to mining page.');
                 window.location.href = 'mining.html';
@@ -345,6 +347,9 @@ Background-color:#ff0000;
         } catch (error) {
             alert('Login failed. Please check your email and password.');
             console.error('Error logging into Firebase:', error);
+        } finally {
+            // Hide please wait message after processing
+            document.getElementById('pleaseWaitMessage').style.display = "none";
         }
     }
 
@@ -374,8 +379,8 @@ Background-color:#ff0000;
         // Check if a user is already logged in when the page loads
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser) {
-            // Check if the user's document exists in Firebase using the manual userId
-            const userDocRef = doc(db, "users", userId);
+            // Check if the user's document exists in Firebase using the stored user ID
+            const userDocRef = doc(db, "users", storedUser.uid);
             getDoc(userDocRef).then((docSnapshot) => {
                 if (docSnapshot.exists()) {
                     window.location.href = 'mining.html';  // Redirect to the mining page if the user is valid
@@ -388,6 +393,5 @@ Background-color:#ff0000;
         }
     });
 </script>
-
 </body>
 </html>
