@@ -15,8 +15,7 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://tanacoin.netlify.app/" />      
-    <link>    
-    <script src="https://www.google.com/recaptcha/api.js?render=6LcBs2kqAAAAAF3V1-mucB0Lb5yfBk2Vy8vOvCP8"></script>
+    <link>        
     <style>
         * {
             margin: 0;
@@ -104,6 +103,8 @@
             border-radius: 10px;
             font-size: 20px;
             cursor: pointer;
+          border-bottom: 4px solid red; 
+           
         }
 
         button:hover {
@@ -228,6 +229,7 @@
     Font-weight:bold;
     Font-size:20px;
     Color#d915ff;
+   
 }
   .container {
     display: flex;
@@ -332,9 +334,7 @@
     var video = document.getElementById('background-video');
     var loadingScreen = document.getElementById('loading-screen');
     var mainContent = document.getElementById('main-content');
-
-    // When video starts playing, hide the loading screen and show the main content
-    video.addEventListener('canplaythrough', function() {
+        video.addEventListener('canplaythrough', function() {
         loadingScreen.style.display = 'none'; // Hide loading screen
         mainContent.style.display = 'block';  // Show main content
     });
@@ -346,7 +346,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDocs, query, where, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/33.5.0/firebase-app-check.js";
+    
 
     // Firebase config
     const firebaseConfig = {
@@ -362,13 +362,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth();
-
-    // Initialize Firebase App Check with reCAPTCHA v3
-    const appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider('6LcBs2kqAAAAAF3V1-mucB0Lb5yfBk2Vy8vOvCP8'),
-        isTokenAutoRefreshEnabled: true
-    });
-
+    
     // Function don kirkirar unique TanaCoin Wallet Address
     function generateWalletAddress() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
