@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
-    <script src="https://www.google.com/recaptcha/api.js?render=6LcBs2kqAAAAAF3V1-mucB0Lb5yfBk2Vy8vOvCP8"></script>
+    <title>login</title>    
         <style>
         * {
             margin: 0;
@@ -120,7 +119,7 @@ input[type="email"], input[type="password"] {
     border-radius: 10px;    
     
     margin-bottom: 10px;
-                       font-size: 12px;
+                       font-size: 17px;
       
 }
 
@@ -129,12 +128,11 @@ button {
     background-color: #00FF00;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 17px;
     
     cursor: pointer;
-    
-    
+      border-bottom: 4px solid red; 
 }
 
 button:hover {
@@ -294,8 +292,7 @@ Background-color:#ff0000;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/33.5.0/firebase-app-check.js";
-
+    
     // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
@@ -310,50 +307,38 @@ Background-color:#ff0000;
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    
-    // Initialize Firebase App Check with reCAPTCHA v3
-    const appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider('6LcBs2kqAAAAAF3V1-mucB0Lb5yfBk2Vy8vOvCP8'),
-        isTokenAutoRefreshEnabled: true
-    });
-
+        
     // Function to check Firebase for user data using email and password
     async function checkFirebase(email, password) {
         try {
             // Show please wait message
             document.getElementById('pleaseWaitMessage').innerText = "Please wait...";
             document.getElementById('pleaseWaitMessage').style.display = "block";
-
-            // Sign in the user using email and password
+            
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-
-            // Fetch the user document based on the user's ID
+            
             const userDoc = await getDoc(doc(db, "users", user.uid));
 
             if (userDoc.exists()) {
-                // User exists, save necessary data to localStorage
+                
                 localStorage.setItem('user', JSON.stringify({
                     email: user.email,
-                    uid: user.uid  // Use the actual user ID
+                    uid: user.uid  
                 }));
                 alert('Login successful! Redirecting to mining page.');
                 window.location.href = 'mining.html';
-            } else {
-                // User not found in Firestore
+            } else {                
                 alert('User data not found in Firebase, removing from localStorage.');
                 localStorage.removeItem('user');
             }
         } catch (error) {
             alert('Login failed. Please check your email and password.');
             console.error('Error logging into Firebase:', error);
-        } finally {
-            // Hide please wait message after processing
+        } finally {            
             document.getElementById('pleaseWaitMessage').style.display = "none";
         }
-    }
-
-    // Handling the login form submission
+    }    
     document.addEventListener('DOMContentLoaded', function () {
         const loginForm = document.getElementById('loginForm');
 
@@ -369,23 +354,21 @@ Background-color:#ff0000;
             if (storedUser && storedUser.email === email) {
                 // If user is already saved in localStorage, check Firebase
                 checkFirebase(email, password);
-            } else {
-                // User not in localStorage, remove any stale data and check Firebase
+            } else {               
                 localStorage.removeItem('user');
                 checkFirebase(email, password);
             }
         });
-
-        // Check if a user is already logged in when the page loads
+        
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser) {
-            // Check if the user's document exists in Firebase using the stored user ID
+            
             const userDocRef = doc(db, "users", storedUser.uid);
             getDoc(userDocRef).then((docSnapshot) => {
                 if (docSnapshot.exists()) {
-                    window.location.href = 'mining.html';  // Redirect to the mining page if the user is valid
+                    window.location.href = 'mining.html';  
                 } else {
-                    localStorage.removeItem('user');  // Remove invalid user data from localStorage
+                    localStorage.removeItem('user');  
                 }
             }).catch((error) => {
                 console.error("Error checking user in Firebase:", error);
