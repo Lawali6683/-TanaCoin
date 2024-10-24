@@ -212,26 +212,7 @@ Background-color:#ff0000;
                 transform: rotateY(360deg);
             }
         }
-         .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-
-   .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-
-.grecaptcha-badge {
-    visibility: visible;
-    opacity: 1;
-    z-index: 1000;
-}
-      
+         
     </style>
 </head>
 <body>
@@ -279,9 +260,7 @@ Background-color:#ff0000;
     var video = document.getElementById('background-video');
     var loadingScreen = document.getElementById('loading-screen');
     var mainContent = document.getElementById('main-content');
-
-    // When video starts playing, hide the loading screen and show the main content
-    video.addEventListener('canplaythrough', function() {
+     video.addEventListener('canplaythrough', function() {
         loadingScreen.style.display = 'none'; // Hide loading screen
         mainContent.style.display = 'block';  // Show main content
     });
