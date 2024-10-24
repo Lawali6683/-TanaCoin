@@ -341,12 +341,12 @@
 };
 
     </script> 
-       <script type="module">
+      <script type="module">
     // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDocs, query, where, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/33.5.0/firebase-app-check.js";
-
 
     // Firebase config
     const firebaseConfig = {
@@ -361,6 +361,7 @@
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth();
 
     // Initialize Firebase App Check with reCAPTCHA v3
     const appCheck = initializeAppCheck(app, {
@@ -418,7 +419,6 @@
             return;
         }
 
-        const uid = "ShIKsA9c3xzVpTU16X66"; // Saka user ID din ka a nan
         const usernameRegex = /^[a-zA-Z0-9]+$/;
         if (!usernameRegex.test(username)) {
             alert('Usernames can only contain letters and numbers.');
@@ -432,36 +432,33 @@
             return;
         }
 
-        // Kirkirar unique wallet address
-        let walletAddress;
-        let isUnique = false;
-        while (!isUnique) {
-            walletAddress = generateWalletAddress();
-            isUnique = await isWalletAddressUnique(walletAddress);
-        }
-
-        const userData = {
-            firstName,
-            lastName,
-            username,
-            email,
-            password,
-            walletAddress,
-            userBalance: 0.00000
-        };
-
-        // Save user wallet address to localStorage
-        localStorage.setItem('walletAddress', walletAddress);
-
         try {
-            const q = query(collection(db, "users"), where("email", "==", email));
-            const querySnapshot = await getDocs(q);
+            // Kirkirar user tare da email da password
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            const uid = user.uid; // Samun unique user id daga Firebase
 
-            if (!querySnapshot.empty) {
-                alert('This email is already in use. Please log in.');
-                return;
+            // Kirkirar unique wallet address
+            let walletAddress;
+            let isUnique = false;
+            while (!isUnique) {
+                walletAddress = generateWalletAddress();
+                isUnique = await isWalletAddressUnique(walletAddress);
             }
 
+            const userData = {
+                firstName,
+                lastName,
+                username,
+                email,
+                walletAddress,
+                userBalance: 0.00000
+            };
+
+            // Save user wallet address to localStorage
+            localStorage.setItem('walletAddress', walletAddress);
+
+            // Ajiye bayanan user a Firestore
             const success = await saveUserData(uid, userData);
 
             if (success) {
@@ -471,8 +468,8 @@
                 alert("Registration failed. Try again.");
             }
         } catch (error) {
-            console.error("Error checking email existence: ", error);
-            alert("An error occurred while checking email.");
+            console.error("Error during registration: ", error);
+            alert("Registration failed. Please try again.");
         }
     });
 </script>
