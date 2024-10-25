@@ -370,6 +370,8 @@
     const db = getFirestore(app);
     const auth = getAuth();
 
+self.FIREBASE_APPCHECK_DEBUG_TOKEN = "39F35E6F-B919-4A7B-BFE9-1E5770E0FEBA"; 
+
     // Initialize Firebase App Check with reCAPTCHA v3
     const appCheck = initializeAppCheck(app, {
         provider: new ReCaptchaV3Provider('6LcBs2kqAAAAAF3V1-mucB0Lb5yfBk2Vy8vOvCP8'), // Shigar da reCAPTCHA v3 site key
