@@ -106,14 +106,19 @@ form input {
 
         .balance-display .tnc-amount {
             color: green;
+            Font-weight: bold;
+            Font-size: 12px;
         }
 
         .balance-display .dollar-amount {
             color: red;
+            Font-weight: bold;
+            Font-size: 12px;
         }
         
          .menu-item {
             text-align: center;
+            
         }
 
         .menu-item img {
@@ -181,9 +186,9 @@ h1 {
     <i id="TanaCoinPrice" style="display: none;">$5.00</i>
 
     <div class="wallet-container">
-        <h2><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet</h2>
-        <h2 id="userName"></h2>
-
+                       <h2><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet</h2>
+        <h2 id="userName">
+                            
         <!-- Display user balance -->
         <div class="balance-container">
             <h3>Your Balance</h3>
@@ -275,126 +280,142 @@ h1 {
             y inviting others to join the TNC mining community, you can help grow the network and increase the potential earnings for everyone involved.
 
 Take advantage of this opportunity—mine TNC coins today and watch your earnings grow with the network!!
-        </p>
+        </p>   
+            <img src="pm.png" style="width: 100%; height: 50%;">
     </div>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// Firebase Config
-const firebaseConfig = {
-    apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
-    authDomain: "tanacoin-75344.firebaseapp.com",
-    projectId: "tanacoin-75344",
-    storageBucket: "tanacoin-75344.appspot.com",
-    messagingSenderId: "425342256564",
-    appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
-};
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
+        authDomain: "tanacoin-75344.firebaseapp.com",
+        projectId: "tanacoin-75344",
+        storageBucket: "tanacoin-75344.appspot.com",
+        messagingSenderId: "425342256564",
+        appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
 
+    // Fetch user data and update balance
+    async function getUserData(uid) {
+        let walletAddress = localStorage.getItem('walletAddress');
+        let userBalance = parseFloat(localStorage.getItem('userBalance')) || 0;
 
+        const pricePerTNC = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
+        const dollarTotal = (userBalance * pricePerTNC).toFixed(2);
 
-// Fetch user data and update balance
-        async function getUserData() {
-            let walletAddress = localStorage.getItem('walletAddress');
-            let userBalance = parseFloat(localStorage.getItem('userBalance')) || 0;
-            
-      const pricePerTNC = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
-            const dollarTotal = (userBalance * pricePerTNC).toFixed(2);     
-                        document.getElementById('userBalance').textContent = `${userBalance.toFixed(5)} TNC`;
-            document.getElementById('dollar_total').textContent = `$${dollarTotal}`;
-            document.getElementById('dollar_totalone').textContent = `$${dollarTotal}`;
-                       
-            if (!walletAddress) {
-                const userDoc = await getDoc(doc(db, "users", "ShIKsA9c3xzVpTU16X66"));
-                walletAddress = userDoc.data().walletAddress;
-                userBalance = userDoc.data().userBalance;
-                
-                localStorage.setItem('walletAddress', walletAddress);
-                localStorage.setItem('userBalance', userBalance);
-            }
-        
+        document.getElementById('userBalance').textContent = `${userBalance.toFixed(5)} TNC`;
+        document.getElementById('dollar_total').textContent = `$${dollarTotal}`;
+        document.getElementById('dollar_totalone').textContent = `$${dollarTotal}`;
+
+        if (!walletAddress) {
+            const userDoc = await getDoc(doc(db, "users", uid));
+            walletAddress = userDoc.data().walletAddress;
+            userBalance = userDoc.data().userBalance;
+
+            localStorage.setItem('walletAddress', walletAddress);
+            localStorage.setItem('userBalance', userBalance);
+        }
+
         document.getElementById('walletAddressDisplay').textContent = walletAddress;
-    document.getElementById('userBalance').textContent = `${userBalance} TNC`;
-}
-
-// Fetch recipient's name using wallet address
-async function getRecipientName(walletAddress) {
-    const recipientDoc = await getDoc(doc(db, "users", walletAddress)); // Assuming wallet address is user ID in Firestore
-    if (recipientDoc.exists()) {
-        const recipientData = recipientDoc.data();
-        return `${recipientData.firstName} ${recipientData.lastName}`;
-    } else {
-        throw new Error("Recipient not found!");
-    }
-}
-
-// Send TanaCoin
-document.getElementById('sendForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const walletAddress = document.getElementById('walletAddress').value;
-    const amount = parseInt(document.getElementById('amount').value);
-    const password = document.getElementById('password').value;
-
-    const senderDoc = await getDoc(doc(db, "users", "ShIKsA9c3xzVpTU16X66")); // Replace with dynamic user ID
-    const senderData = senderDoc.data();
-
-    if (password !== senderData.password) {
-        alert('Password is incorrect!');
-        return;
+        document.getElementById('userBalance').textContent = `${userBalance} TNC`;
     }
 
-    if (senderData.userBalance < amount) {
-        alert('Insufficient Balance!');
-        return;
+    // Fetch recipient's name using wallet address
+    async function getRecipientName(walletAddress) {
+        const recipientDoc = await getDoc(doc(db, "users", walletAddress));
+        if (recipientDoc.exists()) {
+            const recipientData = recipientDoc.data();
+            return `${recipientData.firstName} ${recipientData.lastName}`;
+        } else {
+            throw new Error("Recipient not found!");
+        }
     }
 
-    try {
-        const recipientName = await getRecipientName(walletAddress);
-        const confirmation = confirm(`Are you sure to send ${amount} TNC to ${recipientName} (${walletAddress})?`);
-        if (!confirmation) return;
+    // Send TanaCoin
+    document.getElementById('sendForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-        // Update sender's balance
-        const newBalance = senderData.userBalance - amount;
-        await updateDoc(doc(db, "users", "ShIKsA9c3xzVpTU16X66"), { userBalance: newBalance }); // Replace with sender's user ID
-        localStorage.setItem('userBalance', newBalance);
+        const walletAddress = document.getElementById('walletAddress').value;
+        const amount = parseInt(document.getElementById('amount').value);
+        const password = document.getElementById('password').value;
 
-        // Update recipient's balance
-        const recipientDoc = await getDoc(doc(db, "users", walletAddress)); // Assuming walletAddress is recipient's ID
-        const recipientData = recipientDoc.data();
-        const recipientNewBalance = (recipientData.userBalance || 0) + amount;
-        await updateDoc(doc(db, "users", walletAddress), { userBalance: recipientNewBalance });
+        const user = auth.currentUser;
+        if (!user) {
+            alert("User not logged in!");
+            return;
+        }
 
-        // Save transaction to history
-        const transactionId = `txn_${Date.now()}`;
-        await setDoc(doc(db, "transactions", transactionId), {
-            sender: "ShIKsA9c3xzVpTU16X66", // Replace with dynamic sender ID
-            recipient: walletAddress,
-            amount,
-            timestamp: new Date(),
-            recipientName
-        });
+        const senderDoc = await getDoc(doc(db, "users", user.uid));
+        const senderData = senderDoc.data();
 
-        alert(`TanaCoin sending successful to ${recipientName}! New Balance: ${newBalance} TNC`);
-        getUserData();
-    } catch (error) {
-        alert(`Error: ${error.message}`);
-    }
-});
+        if (password !== senderData.password) {
+            alert('Password is incorrect!');
+            return;
+        }
 
-// Copy wallet address
-document.getElementById('copyBtn').addEventListener('click', () => {
-    const walletAddress = document.getElementById('walletAddressDisplay').textContent;
-    navigator.clipboard.writeText(walletAddress).then(() => {
-        document.getElementById('copyMessage').textContent = "Copied Wallet Address successfully!";
+        if (senderData.userBalance < amount) {
+            alert('Insufficient Balance!');
+            return;
+        }
+
+        try {
+            const recipientName = await getRecipientName(walletAddress);
+            const confirmation = confirm(`Are you sure to send ${amount} TNC to ${recipientName} (${walletAddress})?`);
+            if (!confirmation) return;
+
+            // Update sender's balance
+            const newBalance = senderData.userBalance - amount;
+            await updateDoc(doc(db, "users", user.uid), { userBalance: newBalance });
+            localStorage.setItem('userBalance', newBalance);
+
+            // Update recipient's balance
+            const recipientDoc = await getDoc(doc(db, "users", walletAddress));
+            const recipientData = recipientDoc.data();
+            const recipientNewBalance = (recipientData.userBalance || 0) + amount;
+            await updateDoc(doc(db, "users", walletAddress), { userBalance: recipientNewBalance });
+
+            // Save transaction to history
+            const transactionId = `txn_${Date.now()}`;
+            await setDoc(doc(db, "transactions", transactionId), {
+                sender: user.uid,
+                recipient: walletAddress,
+                amount,
+                timestamp: new Date(),
+                recipientName
+            });
+
+            alert(`TanaCoin sending successful to ${recipientName}! New Balance: ${newBalance} TNC`);
+            getUserData(user.uid);
+        } catch (error) {
+            alert(`Error: ${error.message}`);
+        }
     });
-});       
-        // Initialize data
-        getUserData();
-    </script>
+
+    // Copy wallet address
+    document.getElementById('copyBtn').addEventListener('click', () => {
+        const walletAddress = document.getElementById('walletAddressDisplay').textContent;
+        navigator.clipboard.writeText(walletAddress).then(() => {
+            document.getElementById('copyMessage').textContent = "Copied Wallet Address successfully!";
+        });
+    });
+
+    // Initialize user data when user is logged in
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            getUserData(user.uid);
+        } else {
+            alert("No user logged in. Please log in first.");
+        }
+    });
+</script>
 </body>
 </html>
