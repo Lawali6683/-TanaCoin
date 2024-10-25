@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TanaCoin Mining</title>
-    <!DOCTYPE html>
+    <title>TanaCoin Mining</title>    
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,8 +13,7 @@
     <meta property="og:image" content="https://tanacoin.netlify.app/gh1.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:url" content="https://tanacoin.netlify.app/" />      
-    <link>        
+    <meta property="og:url" content="https://tanacoin.netlify.app/" />                  
     <style>
         * {
             margin: 0;
@@ -349,13 +347,11 @@
     </script> 
       
     <script type="module">
-    // Import Firebase modules
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDocs, query, where, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/33.5.0/firebase-app-check.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app-check.js";
 
-    // Firebase config
     const firebaseConfig = {
         apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
         authDomain: "tanacoin-75344.firebaseapp.com",
@@ -365,17 +361,15 @@
         appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth();
 
-self.FIREBASE_APPCHECK_DEBUG_TOKEN = "39F35E6F-B919-4A7B-BFE9-1E5770E0FEBA"; 
+    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; // Enable debugging in development
 
-    // Initialize Firebase App Check with reCAPTCHA v3
     const appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider('6LcBs2kqAAAAAF3V1-mucB0Lb5yfBk2Vy8vOvCP8'), // Shigar da reCAPTCHA v3 site key
-        isTokenAutoRefreshEnabled: true 
+        provider: new ReCaptchaV3Provider('6LcBs2kqAAAAAF3V1-mucB0Lb5yfBk2Vy8vOvCP8'), // insert your actual site key
+        isTokenAutoRefreshEnabled: true
     });
 
     // Function don kirkirar unique TanaCoin Wallet Address
