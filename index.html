@@ -231,11 +231,29 @@
     Color#d915ff;
    
 }
-       
+       /* CSS domin loading screen */
+#loadingScreen2 {
+    position: fixed;
+    top: 59px;
+    left: 20px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; 
+}
+
     </style>
     </head>
 <body>
-    
+    <div id="loadingScreen2" style="display: none;">
+    Please wait...
+</div>
+
     <div id="loading-screen">
         <div class="icon-container">
             <img src="dove.png" alt="Loading Icon">
@@ -329,131 +347,136 @@
 };
 
     </script> 
-      <script type="module">
-    // Import Firebase modules
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDocs, query, where, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    
+      
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDocs, query, where, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-    // Firebase config
-    const firebaseConfig = {
-        apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
-        authDomain: "tanacoin-75344.firebaseapp.com",
-        projectId: "tanacoin-75344",
-        storageBucket: "tanacoin-75344.appspot.com",
-        messagingSenderId: "425342256564",
-        appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
-    };
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
+            authDomain: "tanacoin-75344.firebaseapp.com",
+            projectId: "tanacoin-75344",
+            storageBucket: "tanacoin-75344.appspot.com",
+            messagingSenderId: "425342256564",
+            appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
+        };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth();
-    
-    // Function don kirkirar unique TanaCoin Wallet Address
-    function generateWalletAddress() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let walletAddress = 'TNC'; // Farawa da 'TNC' don TanaCoin
-        for (let i = 0; i < 32; i++) {
-            walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return walletAddress;
-    }
-
-    // Function don duba idan wallet address din ya taba kasancewa
-    async function isWalletAddressUnique(walletAddress) {
-        const q = query(collection(db, "users"), where("walletAddress", "==", walletAddress));
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.empty; // True idan ba a samu wallet address din ba
-    }
-
-    // Save user data to Firebase
-    async function saveUserData(uid, data) {
-        try {
-            await setDoc(doc(db, "users", uid), data);
-            return true;
-        } catch (error) {
-            console.error("Error writing document: ", error);
-            return false;
-        }
-    }
-
-    // Function don duba idan username ya riga ya kasance
-    async function isUsernameUnique(username) {
-        const q = query(collection(db, "users"), where("username", "==", username));
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.empty; // True idan ba a samu username ba
-    }
-
-    document.getElementById('registerForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-
-        if (password !== confirmPassword) {
-            alert("Passwords do not match!");
-            return;
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth();
+        
+        // Function don kirkirar unique TanaCoin Wallet Address
+        function generateWalletAddress() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let walletAddress = 'TNC'; 
+            for (let i = 0; i < 32; i++) {
+                walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return walletAddress;
         }
 
-        const usernameRegex = /^[a-zA-Z0-9]+$/;
-        if (!usernameRegex.test(username)) {
-            alert('Usernames can only contain letters and numbers.');
-            return;
+        // Function don duba idan wallet address din ya taba kasancewa
+        async function isWalletAddressUnique(walletAddress) {
+            const q = query(collection(db, "users"), where("walletAddress", "==", walletAddress));
+            const querySnapshot = await getDocs(q);
+            return querySnapshot.empty;
         }
 
-        // Duba idan username ya riga ya kasance
-        const isUsernameAvailable = await isUsernameUnique(username);
-        if (!isUsernameAvailable) {
-            alert("This username is already in use. Please choose another.");
-            return;
+        // Save user data to Firebase
+        async function saveUserData(uid, data) {
+            try {
+                await setDoc(doc(db, "users", uid), data);
+                return true;
+            } catch (error) {
+                console.error("Error writing document: ", error);
+                return false;
+            }
         }
 
-        try {
-            // Kirkirar user tare da email da password
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            const uid = user.uid; // Samun unique user id daga Firebase
+        // Function don duba idan username ya riga ya kasance
+        async function isUsernameUnique(username) {
+            const q = query(collection(db, "users"), where("username", "==", username));
+            const querySnapshot = await getDocs(q);
+            return querySnapshot.empty;
+        }
 
-            // Kirkirar unique wallet address
-            let walletAddress;
-            let isUnique = false;
-            while (!isUnique) {
-                walletAddress = generateWalletAddress();
-                isUnique = await isWalletAddressUnique(walletAddress);
+        // Add event listener for form submission
+        document.getElementById('registerForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Show loading screen
+            document.getElementById('loadingScreen2').style.display = 'block';
+
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                alert("Passwords do not match!");
+                document.getElementById('loadingScreen2').style.display = 'none';
+                return;
             }
 
-            const userData = {
-                firstName,
-                lastName,
-                username,
-                email,
-                walletAddress,
-                userBalance: 0.00000
-            };
-
-            // Save user wallet address to localStorage
-            localStorage.setItem('walletAddress', walletAddress);
-
-            // Ajiye bayanan user a Firestore
-            const success = await saveUserData(uid, userData);
-
-            if (success) {
-                alert("Registration successful!");
-                window.location.href = "login.html";
-            } else {
-                alert("Registration failed. Try again.");
+            const usernameRegex = /^[a-zA-Z0-9]+$/;
+            if (!usernameRegex.test(username)) {
+                alert('Usernames can only contain letters and numbers.');
+                document.getElementById('loadingScreen2').style.display = 'none';
+                return;
             }
-        } catch (error) {
-            console.error("Error during registration: ", error);
-            alert("Registration failed. Please try again.");
-        }
-    });
-</script>
+
+            const isUsernameAvailable = await isUsernameUnique(username);
+            if (!isUsernameAvailable) {
+                alert("This username is already in use. Please choose another.");
+                document.getElementById('loadingScreen2').style.display = 'none';
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                const uid = user.uid;
+
+                let walletAddress;
+                let isUnique = false;
+                while (!isUnique) {
+                    walletAddress = generateWalletAddress();
+                    isUnique = await isWalletAddressUnique(walletAddress);
+                }
+
+                const userData = {
+                    firstName,
+                    lastName,
+                    username,
+                    email,
+                    walletAddress,
+                    userBalance: 0.00000
+                };
+
+                localStorage.setItem('walletAddress', walletAddress);
+
+                const success = await saveUserData(uid, userData);
+
+                document.getElementById('loadingScreen2').style.display = 'none';
+
+                if (success) {
+                    alert("Registration successful!");
+                    window.location.href = "login.html";
+                } else {
+                    alert("Registration failed. Try again.");
+                }
+            } catch (error) {
+                console.error("Error during registration: ", error);
+                alert("Registration failed. Please try again.");
+                document.getElementById('loadingScreen2').style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
