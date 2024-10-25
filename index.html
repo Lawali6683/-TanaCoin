@@ -232,11 +232,27 @@
    
 }
        
-
+/* CSS domin loading screen */
+#loadingScreen2 {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999; 
+}
     </style>
     </head>
 <body>
-    
+    <div id="loadingScreen2" style="display: none;"><center>
+    Please Wait to verify your information...</center>
+</div>
 
     <div id="loading-screen">
         <div class="icon-container">
@@ -337,6 +353,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getFirestore, doc, setDoc, getDocs, query, where, collection } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
     import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app-check.js";
 
     // Firebase config
     const firebaseConfig = {
@@ -353,7 +370,13 @@
     const db = getFirestore(app);
     const auth = getAuth();
 
-    // Function to generate a unique TanaCoin Wallet Address
+    // Initialize Firebase App Check with reCAPTCHA v3
+    const appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaV3Provider('6LcBs2kqAAAAAF3V1-mucB0Lb5yfBk2Vy8vOvCP8'), // Shigar da reCAPTCHA v3 site key
+        isTokenAutoRefreshEnabled: true 
+    });
+
+    // Function don kirkirar unique TanaCoin Wallet Address
     function generateWalletAddress() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let walletAddress = 'TNC'; 
@@ -363,7 +386,7 @@
         return walletAddress;
     }
 
-    // Function to check if wallet address is unique
+    // Function don duba idan wallet address din ya taba kasancewa
     async function isWalletAddressUnique(walletAddress) {
         const q = query(collection(db, "users"), where("walletAddress", "==", walletAddress));
         const querySnapshot = await getDocs(q);
@@ -381,7 +404,7 @@
         }
     }
 
-    // Function to check if username is unique
+    // Function don duba idan username ya riga ya kasance
     async function isUsernameUnique(username) {
         const q = query(collection(db, "users"), where("username", "==", username));
         const querySnapshot = await getDocs(q);
@@ -392,6 +415,9 @@
     document.getElementById('registerForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
+        // Show loading screen
+        document.getElementById('loadingScreen2').style.display = 'block';
+
         const firstName = document.getElementById('firstName').value;
         const lastName = document.getElementById('lastName').value;
         const username = document.getElementById('username').value;
@@ -401,18 +427,21 @@
 
         if (password !== confirmPassword) {
             alert("Passwords do not match!");
+            document.getElementById('loadingScreen2').style.display = 'none';
             return;
         }
 
         const usernameRegex = /^[a-zA-Z0-9]+$/;
         if (!usernameRegex.test(username)) {
             alert('Usernames can only contain letters and numbers.');
+            document.getElementById('loadingScreen2').style.display = 'none';
             return;
         }
 
         const isUsernameAvailable = await isUsernameUnique(username);
         if (!isUsernameAvailable) {
             alert("This username is already in use. Please choose another.");
+            document.getElementById('loadingScreen2').style.display = 'none';
             return;
         }
 
@@ -441,6 +470,8 @@
 
             const success = await saveUserData(uid, userData);
 
+            document.getElementById('loadingScreen2').style.display = 'none';
+
             if (success) {
                 alert("Registration successful!");
                 window.location.href = "login.html";
@@ -450,6 +481,7 @@
         } catch (error) {
             console.error("Error during registration: ", error);
             alert("Registration failed. Please try again.");
+            document.getElementById('loadingScreen2').style.display = 'none';
         }
     });
 </script>
