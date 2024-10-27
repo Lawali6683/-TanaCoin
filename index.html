@@ -345,13 +345,12 @@
 };
 
     </script> 
-      
-    <script type="module">
+      <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        
-      const firebaseConfig = {
+    import { getFirestore, collection, query, where, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    
+    const firebaseConfig = {
         apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
         authDomain: "tanacoin-75344.firebaseapp.com",
         projectId: "tanacoin-75344",
@@ -364,12 +363,12 @@
     const db = getFirestore(app);
     const auth = getAuth();
 
-localStorage.clear();
+    localStorage.clear();
     
     // Function don kirkirar unique TanaCoin Wallet Address
     function generateWalletAddress() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let walletAddress = 'TNC'; 
+        let walletAddress = 'TNC';
         for (let i = 0; i < 32; i++) {
             walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
         }
@@ -383,7 +382,7 @@ localStorage.clear();
         return querySnapshot.empty;
     }
 
-    // Save user data to Firebase
+    // Save user data to Firebase Firestore
     async function saveUserData(uid, data) {
         try {
             await setDoc(doc(db, "users", uid), data);
@@ -475,5 +474,5 @@ localStorage.clear();
         }
     });
 </script>
-</body>
+    </body>
 </html>
