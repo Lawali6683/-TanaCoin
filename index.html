@@ -350,9 +350,8 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
     import { getAuth } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app-check.js";
-
-    const firebaseConfig = {
+        
+      const firebaseConfig = {
         apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
         authDomain: "tanacoin-75344.firebaseapp.com",
         projectId: "tanacoin-75344",
@@ -365,13 +364,8 @@
     const db = getFirestore(app);
     const auth = getAuth();
 
-    self.FIREBASE_APPCHECK_DEBUG_TOKEN = true; // Enable debugging in development
-
-    const appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider('6LcBs2kqAAAAAF3V1-mucB0Lb5yfBk2Vy8vOvCP8'), // insert your actual site key
-        isTokenAutoRefreshEnabled: true
-    });
-
+localStorage.clear();
+    
     // Function don kirkirar unique TanaCoin Wallet Address
     function generateWalletAddress() {
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
