@@ -347,134 +347,151 @@
 };
 
     </script> 
-      <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, collection, query, where, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    
-    
-    const firebaseConfig = {
-        apiKey: "AIzaSyCldVBlGP7hsERLEa9R30PSYZEOXppYvDs",
-        authDomain: "tanacoin-75344.firebaseapp.com",
-        projectId: "tanacoin-75344",
-        storageBucket: "tanacoin-75344.appspot.com",
-        messagingSenderId: "425342256564",
-        appId: "1:425342256564:web:b33f74f41e8d7d62659ee1"
-    };
+      <script type="module">  
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getFirestore, collection, query, where, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth();
-    
-    
-    // Function don kirkirar unique TanaCoin Wallet Address
-    function generateWalletAddress() {
-        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        let walletAddress = 'TNC';
-        for (let i = 0; i < 32; i++) {
-            walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        return walletAddress;
+  const firebaseConfig = {
+    apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
+    authDomain: "tanacoin-mine.firebaseapp.com",
+    projectId: "tanacoin-mine",
+    storageBucket: "tanacoin-mine.appspot.com",
+    messagingSenderId: "550307127686",
+    appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+    measurementId: "G-596X16VEGX"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth();
+  const analytics = getAnalytics(app);
+
+  // Function to check if the email is already registered
+  async function isEmailRegistered(email) {
+    const q = query(collection(db, "users"), where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty; // Returns true if email exists
+  }
+
+  // Save user data to Firebase Firestore
+  async function saveUserData(uid, data) {
+    try {
+      await setDoc(doc(db, "users", uid), data);
+      return true;
+    } catch (error) {
+      console.error("Error writing document: ", error);
+      return false;
+    }
+  }
+
+  // Function to generate a unique TanaCoin Wallet Address
+  function generateWalletAddress() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let walletAddress = 'TNC';
+    for (let i = 0; i < 32; i++) {
+      walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return walletAddress;
+  }
+
+  // Function to check if wallet address is unique
+  async function isWalletAddressUnique(walletAddress) {
+    const q = query(collection(db, "users"), where("walletAddress", "==", walletAddress));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.empty;
+  }
+
+  // Function to check if username is unique
+  async function isUsernameUnique(username) {
+    const q = query(collection(db, "users"), where("username", "==", username));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.empty;
+  }
+
+  // Add event listener for form submission
+  document.getElementById('registerForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Show loading screen
+    document.getElementById('loadingScreen2').style.display = 'block';
+
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      document.getElementById('loadingScreen2').style.display = 'none';
+      return;
     }
 
-    // Function don duba idan wallet address din ya taba kasancewa
-    async function isWalletAddressUnique(walletAddress) {
-        const q = query(collection(db, "users"), where("walletAddress", "==", walletAddress));
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.empty;
+    const usernameRegex = /^[a-zA-Z0-9]+$/;
+    if (!usernameRegex.test(username)) {
+      alert('Usernames can only contain letters and numbers.');
+      document.getElementById('loadingScreen2').style.display = 'none';
+      return;
     }
 
-    // Save user data to Firebase Firestore
-    async function saveUserData(uid, data) {
-        try {
-            await setDoc(doc(db, "users", uid), data);
-            return true;
-        } catch (error) {
-            console.error("Error writing document: ", error);
-            return false;
-        }
+    // Check if email is already registered
+    const emailExists = await isEmailRegistered(email);
+    if (emailExists) {
+      alert("This email address is already in use. Please log in to your account.");
+      document.getElementById('loadingScreen2').style.display = 'none';
+      return;
     }
 
-    // Function don duba idan username ya riga ya kasance
-    async function isUsernameUnique(username) {
-        const q = query(collection(db, "users"), where("username", "==", username));
-        const querySnapshot = await getDocs(q);
-        return querySnapshot.empty;
+    const isUsernameAvailable = await isUsernameUnique(username);
+    if (!isUsernameAvailable) {
+      alert("This username is already in use. Please choose another.");
+      document.getElementById('loadingScreen2').style.display = 'none';
+      return;
     }
 
-    // Add event listener for form submission
-    document.getElementById('registerForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      const uid = user.uid;
 
-        // Show loading screen
-        document.getElementById('loadingScreen2').style.display = 'block';
+      let walletAddress;
+      let isUnique = false;
+      while (!isUnique) {
+        walletAddress = generateWalletAddress();
+        isUnique = await isWalletAddressUnique(walletAddress);
+      }
 
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const username = document.getElementById('username').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
+      const userData = {
+        firstName,
+        lastName,
+        username,
+        email,
+        walletAddress,
+        userBalance: 0.00000
+      };
 
-        if (password !== confirmPassword) {
-            alert("Passwords do not match!");
-            document.getElementById('loadingScreen2').style.display = 'none';
-            return;
-        }
+      localStorage.setItem('walletAddress', walletAddress);
 
-        const usernameRegex = /^[a-zA-Z0-9]+$/;
-        if (!usernameRegex.test(username)) {
-            alert('Usernames can only contain letters and numbers.');
-            document.getElementById('loadingScreen2').style.display = 'none';
-            return;
-        }
+      const success = await saveUserData(uid, userData);
 
-        const isUsernameAvailable = await isUsernameUnique(username);
-        if (!isUsernameAvailable) {
-            alert("This username is already in use. Please choose another.");
-            document.getElementById('loadingScreen2').style.display = 'none';
-            return;
-        }
+      document.getElementById('loadingScreen2').style.display = 'none';
 
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            const uid = user.uid;
-
-            let walletAddress;
-            let isUnique = false;
-            while (!isUnique) {
-                walletAddress = generateWalletAddress();
-                isUnique = await isWalletAddressUnique(walletAddress);
-            }
-
-            const userData = {
-                firstName,
-                lastName,
-                username,
-                email,
-                walletAddress,
-                userBalance: 0.00000
-            };
-
-            localStorage.setItem('walletAddress', walletAddress);
-
-            const success = await saveUserData(uid, userData);
-
-            document.getElementById('loadingScreen2').style.display = 'none';
-
-            if (success) {
-                alert("Registration successful!");
-                window.location.href = "login.html";
-            } else {
-                alert("Registration failed. Try again.");
-            }
-        } catch (error) {
-            console.error("Error during registration: ", error);
-            alert("Registration failed. Please try again.");
-            document.getElementById('loadingScreen2').style.display = 'none';
-        }
-    });
+      if (success) {
+        alert("Registration successful!");
+        window.location.href = "login.html";
+      } else {
+        alert("Registration failed. Try again.");
+      }
+    } catch (error) {
+      console.error("Error during registration: ", error);
+      alert("Registration failed. Please try again.");
+      document.getElementById('loadingScreen2').style.display = 'none';
+    }
+  });
 </script>
     </body>
 </html>
