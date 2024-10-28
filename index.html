@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TanaCoin Mining</title>   
-    <meta property="og:title" content="🌟TanaCoin Mine! Earn over $100🎁🌟"/>            
+    <meta property="og:title" content="🌟TanaCoin Mine! Earn over $1000🎁"/>            
     <meta property="og:image" content="https://tanacoin.netlify.app/gh1.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -251,7 +251,7 @@
     </head>
 <body>
     <div id="loadingScreen2" style="display: none;"><center>
-    Please Wait to verify your information...</center>
+    Please Wait to Verify Your Information...</center>
 </div>
 
     <div id="loading-screen">
@@ -350,9 +350,8 @@
       <script type="module">  
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getFirestore, collection, query, where, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  
   const firebaseConfig = {
     apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
     authDomain: "tanacoin-mine.firebaseapp.com",
@@ -367,27 +366,8 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth();
-  const analytics = getAnalytics(app);
 
-  // Function to check if the email is already registered
-  async function isEmailRegistered(email) {
-    const q = query(collection(db, "users"), where("email", "==", email));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty; // Returns true if email exists
-  }
-
-  // Save user data to Firebase Firestore
-  async function saveUserData(uid, data) {
-    try {
-      await setDoc(doc(db, "users", uid), data);
-      return true;
-    } catch (error) {
-      console.error("Error writing document: ", error);
-      return false;
-    }
-  }
-
-  // Function to generate a unique TanaCoin Wallet Address
+  // Generate unique wallet address
   function generateWalletAddress() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let walletAddress = 'TNC';
@@ -397,25 +377,42 @@
     return walletAddress;
   }
 
-  // Function to check if wallet address is unique
+  // Check for unique wallet address
   async function isWalletAddressUnique(walletAddress) {
     const q = query(collection(db, "users"), where("walletAddress", "==", walletAddress));
     const querySnapshot = await getDocs(q);
     return querySnapshot.empty;
   }
 
-  // Function to check if username is unique
+  // Check if email is already registered
+  async function isEmailRegistered(email) {
+    const q = query(collection(db, "users"), where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
+  }
+
+  // Check if username is unique
   async function isUsernameUnique(username) {
     const q = query(collection(db, "users"), where("username", "==", username));
     const querySnapshot = await getDocs(q);
     return querySnapshot.empty;
   }
 
-  // Add event listener for form submission
-  document.getElementById('registerForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
+  // Save user data to Firebase and localStorage
+  async function saveUserData(uid, data) {
+    try {
+      await setDoc(doc(db, "users", uid), data);
+      localStorage.setItem('userData', JSON.stringify(data));
+      return true;
+    } catch (error) {
+      console.error("Error writing document: ", error);
+      return false;
+    }
+  }
 
-    // Show loading screen
+  // Form submission handler
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
     document.getElementById('loadingScreen2').style.display = 'block';
 
     const firstName = document.getElementById('firstName').value;
@@ -433,22 +430,19 @@
 
     const usernameRegex = /^[a-zA-Z0-9]+$/;
     if (!usernameRegex.test(username)) {
-      alert('Usernames can only contain letters and numbers.');
+      alert("Usernames can only contain letters and numbers.");
       document.getElementById('loadingScreen2').style.display = 'none';
       return;
     }
 
-    // Check if email is already registered
-    const emailExists = await isEmailRegistered(email);
-    if (emailExists) {
-      alert("This email address is already in use. Please log in to your account.");
+    // Check if email and username are unique
+    if (await isEmailRegistered(email)) {
+      alert("This email address is already in use.");
       document.getElementById('loadingScreen2').style.display = 'none';
       return;
     }
-
-    const isUsernameAvailable = await isUsernameUnique(username);
-    if (!isUsernameAvailable) {
-      alert("This username is already in use. Please choose another.");
+    if (!(await isUsernameUnique(username))) {
+      alert("This username is already in use.");
       document.getElementById('loadingScreen2').style.display = 'none';
       return;
     }
@@ -458,11 +452,11 @@
       const user = userCredential.user;
       const uid = user.uid;
 
+      // Generate unique wallet address
       let walletAddress;
-      let isUnique = false;
-      while (!isUnique) {
+      while (true) {
         walletAddress = generateWalletAddress();
-        isUnique = await isWalletAddressUnique(walletAddress);
+        if (await isWalletAddressUnique(walletAddress)) break;
       }
 
       const userData = {
@@ -471,24 +465,22 @@
         username,
         email,
         walletAddress,
-        userBalance: 0.00000
+        userBalance: 0.00000,
+        userId: uid
       };
 
-      localStorage.setItem('walletAddress', walletAddress);
-
-      const success = await saveUserData(uid, userData);
-
-      document.getElementById('loadingScreen2').style.display = 'none';
-
-      if (success) {
+      // Save data in Firestore and localStorage
+      if (await saveUserData(uid, userData)) {
         alert("Registration successful!");
         window.location.href = "login.html";
       } else {
-        alert("Registration failed. Try again.");
+        alert("Registration failed. Please try again.");
       }
+
     } catch (error) {
-      console.error("Error during registration: ", error);
+      console.error("Registration error: ", error);
       alert("Registration failed. Please try again.");
+    } finally {
       document.getElementById('loadingScreen2').style.display = 'none';
     }
   });
