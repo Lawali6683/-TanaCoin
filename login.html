@@ -286,9 +286,7 @@ Background-color:#ff0000;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-analytics.js";
-    
-    
+            
    const firebaseConfig = {
     apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
     authDomain: "tanacoin-mine.firebaseapp.com",
@@ -303,7 +301,7 @@ Background-color:#ff0000;
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const analytics = getAnalytics(app);
+    
                 
     // Function to check Firebase for user data using email and password
     async function checkFirebase(email, password) {
