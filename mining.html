@@ -589,9 +589,9 @@ uploadInput.addEventListener('change', function () {
             });
         };
     </script>    
-          <script type="module">      
+          <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js"; 
 
   // Firebase configuration
@@ -602,12 +602,13 @@ uploadInput.addEventListener('change', function () {
     storageBucket: "tanacoin-mine.appspot.com",
     messagingSenderId: "550307127686",
     appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
-    measurementId: "G-596X16VEGX"
-  };
+    measurementId: "G-596X16VEGX",
+    databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/"
+  };  
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const db = getDatabase(app);
   const auth = getAuth(app);
 
   // Function to set username display
@@ -625,20 +626,20 @@ uploadInput.addEventListener('change', function () {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setUsername(user);
-
-      // Set a timeout to update the user balance every few minutes
+      const userId = user.uid; // Get the user's unique ID
       setTimeout(async () => {
-        const userId = user.uid; // Use Firebase user ID
-        const userBalance = 100; // Assuming this is the balance you want to update
+        const userBalance = 100;
 
-        const userDocRef = doc(db, "users", userId);
+        // Reference to the user's data in Realtime Database
+        const userRef = ref(db, "users/" + userId);
+
         try {
-          await updateDoc(userDocRef, {
+          await update(userRef, {
             balance: userBalance
           });
-          console.log("User balance successfully updated in Firebase.");
+          console.log("User balance successfully updated in Firebase Realtime Database.");
         } catch (error) {
-          console.error("Error updating user balance in Firebase:", error);
+          console.error("Error updating user balance in Firebase Realtime Database:", error);
         }
       }, 30); 
     }
@@ -647,8 +648,7 @@ uploadInput.addEventListener('change', function () {
   document.addEventListener('DOMContentLoaded', function () {
     
   });
-</script>
-                     
+</script>             
     </script>
     <script src="https://www.coinimp.com/sdk.js"></script>
     <script>
@@ -781,7 +781,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let adsWatched = false;
     let adVisible = false;
 
-    // Yin tracking ad din ko an gama kallon ad din ta amfani da Visibility API
+   
     function trackAdCompletion() {
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
