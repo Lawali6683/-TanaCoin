@@ -287,21 +287,23 @@ Take advantage of this opportunity—mine TNC coins today and watch your earning
 
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
-    authDomain: "tanacoin-mine.firebaseapp.com",
-    projectId: "tanacoin-mine",
-    storageBucket: "tanacoin-mine.appspot.com",
-    messagingSenderId: "550307127686",
-    appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
-    measurementId: "G-596X16VEGX"
-  };
+        authDomain: "tanacoin-mine.firebaseapp.com",
+        databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/",
+        projectId: "tanacoin-mine",
+        storageBucket: "tanacoin-mine.appspot.com",
+        messagingSenderId: "550307127686",
+        appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+        measurementId: "G-596X16VEGX"
+    };
+
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+    const db = getDatabase(app);
     const auth = getAuth();
 
     // Fetch user data and update balance
@@ -317,12 +319,16 @@ Take advantage of this opportunity—mine TNC coins today and watch your earning
         document.getElementById('dollar_totalone').textContent = `$${dollarTotal}`;
 
         if (!walletAddress) {
-            const userDoc = await getDoc(doc(db, "users", uid));
-            walletAddress = userDoc.data().walletAddress;
-            userBalance = userDoc.data().userBalance;
+            const userRef = ref(db, `users/${uid}`);
+            const userSnap = await get(userRef);
+            if (userSnap.exists()) {
+                const userData = userSnap.val();
+                walletAddress = userData.walletAddress;
+                userBalance = userData.userBalance;
 
-            localStorage.setItem('walletAddress', walletAddress);
-            localStorage.setItem('userBalance', userBalance);
+                localStorage.setItem('walletAddress', walletAddress);
+                localStorage.setItem('userBalance', userBalance);
+            }
         }
 
         document.getElementById('walletAddressDisplay').textContent = walletAddress;
@@ -331,9 +337,10 @@ Take advantage of this opportunity—mine TNC coins today and watch your earning
 
     // Fetch recipient's name using wallet address
     async function getRecipientName(walletAddress) {
-        const recipientDoc = await getDoc(doc(db, "users", walletAddress));
-        if (recipientDoc.exists()) {
-            const recipientData = recipientDoc.data();
+        const recipientRef = ref(db, `users/${walletAddress}`);
+        const recipientSnap = await get(recipientRef);
+        if (recipientSnap.exists()) {
+            const recipientData = recipientSnap.val();
             return `${recipientData.firstName} ${recipientData.lastName}`;
         } else {
             throw new Error("Recipient not found!");
@@ -354,49 +361,56 @@ Take advantage of this opportunity—mine TNC coins today and watch your earning
             return;
         }
 
-        const senderDoc = await getDoc(doc(db, "users", user.uid));
-        const senderData = senderDoc.data();
+        const senderRef = ref(db, `users/${user.uid}`);
+        const senderSnap = await get(senderRef);
+        if (senderSnap.exists()) {
+            const senderData = senderSnap.val();
 
-        if (password !== senderData.password) {
-            alert('Password is incorrect!');
-            return;
-        }
+            if (password !== senderData.password) {
+                alert('Password is incorrect!');
+                return;
+            }
 
-        if (senderData.userBalance < amount) {
-            alert('Insufficient Balance!');
-            return;
-        }
+            if (senderData.userBalance < amount) {
+                alert('Insufficient Balance!');
+                return;
+            }
 
-        try {
-            const recipientName = await getRecipientName(walletAddress);
-            const confirmation = confirm(`Are you sure to send ${amount} TNC to ${recipientName} (${walletAddress})?`);
-            if (!confirmation) return;
+            try {
+                const recipientName = await getRecipientName(walletAddress);
+                const confirmation = confirm(`Are you sure to send ${amount} TNC to ${recipientName} (${walletAddress})?`);
+                if (!confirmation) return;
 
-            // Update sender's balance
-            const newBalance = senderData.userBalance - amount;
-            await updateDoc(doc(db, "users", user.uid), { userBalance: newBalance });
-            localStorage.setItem('userBalance', newBalance);
+                // Update sender's balance
+                const newBalance = senderData.userBalance - amount;
+                await update(senderRef, { userBalance: newBalance });
+                localStorage.setItem('userBalance', newBalance);
 
-            // Update recipient's balance
-            const recipientDoc = await getDoc(doc(db, "users", walletAddress));
-            const recipientData = recipientDoc.data();
-            const recipientNewBalance = (recipientData.userBalance || 0) + amount;
-            await updateDoc(doc(db, "users", walletAddress), { userBalance: recipientNewBalance });
+                // Update recipient's balance
+                const recipientRef = ref(db, `users/${walletAddress}`);
+                const recipientSnap = await get(recipientRef);
+                if (recipientSnap.exists()) {
+                    const recipientData = recipientSnap.val();
+                    const recipientNewBalance = (recipientData.userBalance || 0) + amount;
+                    await update(recipientRef, { userBalance: recipientNewBalance });
+                }
 
-            // Save transaction to history
-            const transactionId = `txn_${Date.now()}`;
-            await setDoc(doc(db, "transactions", transactionId), {
-                sender: user.uid,
-                recipient: walletAddress,
-                amount,
-                timestamp: new Date(),
-                recipientName
-            });
+                // Save transaction to history
+                const transactionId = `txn_${Date.now()}`;
+                const transactionRef = ref(db, `transactions/${transactionId}`);
+                await set(transactionRef, {
+                    sender: user.uid,
+                    recipient: walletAddress,
+                    amount,
+                    timestamp: new Date().toISOString(),
+                    recipientName
+                });
 
-            alert(`TanaCoin sending successful to ${recipientName}! New Balance: ${newBalance} TNC`);
-            getUserData(user.uid);
-        } catch (error) {
-            alert(`Error: ${error.message}`);
+                alert(`TanaCoin sending successful to ${recipientName}! New Balance: ${newBalance} TNC`);
+                getUserData(user.uid);
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
         }
     });
 
