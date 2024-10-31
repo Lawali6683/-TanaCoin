@@ -320,12 +320,15 @@ if (loadingScreen) {
 
     </script>
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-const firebaseConfig = {
+  // Firebase configuration
+  const firebaseConfig = {
     apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
     authDomain: "tanacoin-mine.firebaseapp.com",
+    databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/",
     projectId: "tanacoin-mine",
     storageBucket: "tanacoin-mine.appspot.com",
     messagingSenderId: "550307127686",
@@ -333,75 +336,95 @@ const firebaseConfig = {
     measurementId: "G-596X16VEGX"
   };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
 
-// Get the elements
-const avatar = document.getElementById('avatar');
-const uploadInput = document.getElementById('upload');
-const usernameDisplay = document.getElementById('username');
-const userBalance = document.getElementById('userBalance');
-const referralLink = document.getElementById('referralLink');
+  // Get the elements
+  const avatar = document.getElementById('avatar');
+  const uploadInput = document.getElementById('upload');
+  const usernameDisplay = document.getElementById('username');
+  const userBalance = document.getElementById('userBalance');
+  const referralLink = document.getElementById('referralLink');
 
-if (localStorage.getItem('avatar')) {
+  // Load avatar from local storage if available
+  if (localStorage.getItem('avatar')) {
     avatar.src = localStorage.getItem('avatar');
-}
+  }
 
-if (localStorage.getItem('username')) {
-    usernameDisplay.textContent = localStorage.getItem('username');
-} else {
-    
-    const uid = "user-uid"; 
-    const userDoc = await getDoc(doc(db, "users", uid));
-    if (userDoc.exists()) {
-        const data = userDoc.data();
-        usernameDisplay.textContent = data.username;
-        localStorage.setItem('username', data.username);
+  // Handle user authentication state
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const uid = user.uid;
+
+      // Get user data from Realtime Database
+      const userRef = ref(db, `users/${uid}`);
+      const userSnapshot = await get(userRef);
+      if (userSnapshot.exists()) {
+        const data = userSnapshot.val();
+        
+        // Display username and set localStorage
+        usernameDisplay.textContent = data.username || "User";
+        localStorage.setItem('username', data.username || "User");
+
+        // Display referral link
+        referralLink.value = `https://tanacoin.netlify.app/referral?user=${uid}`;
+
+        // Update balance and bonuses
+        updateBalance(uid);
+      } else {
+        console.error("User data does not exist in database.");
+      }
+    } else {
+      console.error("User is not authenticated.");
     }
-}
+  });
 
-// Set up referral link
-referralLink.value = `https://tanacoin.netlify.app/referral?user=${usernameDisplay.textContent}`;
-
-// Copy referral link
-document.getElementById('copyButton').addEventListener('click', () => {
+  // Set up referral link
+  document.getElementById('copyButton').addEventListener('click', () => {
     referralLink.select();
     document.execCommand('copy');
     document.getElementById('copySuccess').classList.remove('hidden');
-});
+  });
 
-
-avatar.addEventListener('click', () => {
+  // Update profile picture
+  avatar.addEventListener('click', () => {
     uploadInput.click();
-});
+  });
 
-uploadInput.addEventListener('change', function () {
+  uploadInput.addEventListener('change', function () {
     const file = this.files[0];
     if (file) {
-        const reader = new FileReader();
-        reader.onload = function () {
-            avatar.src = reader.result;
-            localStorage.setItem('avatar', reader.result);
-        };
-        reader.readAsDataURL(file);
+      const reader = new FileReader();
+      reader.onload = function () {
+        avatar.src = reader.result;
+        localStorage.setItem('avatar', reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-});
+  });
 
-// Calculate bonuses and update user balance
-async function updateBalance(uid) {
-    const userDoc = await getDoc(doc(db, "users", uid));
-    if (userDoc.exists()) {
-        const data = userDoc.data();
-        let balance = data.balance || 0;
-        const referralBonus = 3; // Fixed referral bonus
-        const referralPercentage = 0.1 * data.referralEarnings;
-        const friendPercentage = 0.05 * data.friendEarnings;
-        balance += referralBonus + referralPercentage + friendPercentage;
-        await setDoc(doc(db, "users", uid), { balance });
-        userBalance.textContent = balance.toFixed(5);
+  // Function to calculate bonuses and update user balance
+  async function updateBalance(uid) {
+    const userRef = ref(db, `users/${uid}`);
+    const userSnapshot = await get(userRef);
+    if (userSnapshot.exists()) {
+      const data = userSnapshot.val();
+      let balance = data.balance || 0;
+      const referralBonus = 3; // Fixed referral bonus
+      const referralPercentage = 0.1 * (data.referralEarnings || 0);
+      const friendPercentage = 0.05 * (data.friendEarnings || 0);
+
+      balance += referralBonus + referralPercentage + friendPercentage;
+      
+      // Update balance in Realtime Database
+      await update(userRef, { balance });
+      
+      // Display balance
+      userBalance.textContent = balance.toFixed(5);
     }
-}
-
+  }
 </script>
 </body>
 </html>
