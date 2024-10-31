@@ -329,89 +329,64 @@ Background-color:#ff0000;
 </script>
      <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-            
-   const firebaseConfig = {
-    apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
-    authDomain: "tanacoin-mine.firebaseapp.com",
-    projectId: "tanacoin-mine",
-    storageBucket: "tanacoin-mine.appspot.com",
-    messagingSenderId: "550307127686",
-    appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
-    measurementId: "G-596X16VEGX"
-  };
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
+        authDomain: "tanacoin-mine.firebaseapp.com",
+        databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/",
+        projectId: "tanacoin-mine",
+        storageBucket: "tanacoin-mine.appspot.com",
+        messagingSenderId: "550307127686",
+        appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+        measurementId: "G-596X16VEGX"
+    };
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app);
-    
-                
-    // Function to check Firebase for user data using email and password
-    async function checkFirebase(email, password) {
+    const database = getDatabase(app);
+
+    // Function to handle login
+    async function loginUser(email, password) {
         try {
-            // Show please wait message
             document.getElementById('pleaseWaitMessage').innerText = "Please wait...";
             document.getElementById('pleaseWaitMessage').style.display = "block";
             
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
             
-            const userDoc = await getDoc(doc(db, "users", user.uid));
-
-            if (userDoc.exists()) {
-                
-                localStorage.setItem('user', JSON.stringify({
-                    email: user.email,
-                    uid: user.uid  
-                }));
-                alert('Login successful! Redirecting to mining page.');
-                window.location.href = 'mining.html';
-            } else {                
-                alert('User data not found in Firebase, removing from localStorage.');
-                localStorage.removeItem('user');
-            }
+            localStorage.setItem('user', JSON.stringify({
+                email: user.email,
+                uid: user.uid  
+            }));
+            alert('Login successful!');
+            window.location.href = 'mining.html';
         } catch (error) {
             alert('Login failed. Please check your email and password.');
             console.error('Error logging into Firebase:', error);
-        } finally {            
+        } finally {
             document.getElementById('pleaseWaitMessage').style.display = "none";
         }
-    }    
+    }
+
+    // Check if user is already logged in and redirect to mining.html if true
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.location.href = 'mining.html';
+        }
+    });
+
+    // Handle form submission for login
     document.addEventListener('DOMContentLoaded', function () {
         const loginForm = document.getElementById('loginForm');
-
         loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
-
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
-            const storedUser = JSON.parse(localStorage.getItem('user'));
-
-            if (storedUser && storedUser.email === email) {
-                                checkFirebase(email, password);
-            } else {               
-                localStorage.removeItem('user');
-                checkFirebase(email, password);
-            }
+            loginUser(email, password);
         });
-        
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser) {
-            
-            const userDocRef = doc(db, "users", storedUser.uid);
-            getDoc(userDocRef).then((docSnapshot) => {
-                if (docSnapshot.exists()) {
-                    window.location.href = 'mining.html';  
-                } else {
-                    localStorage.removeItem('user');  
-                }
-            }).catch((error) => {
-                console.error("Error checking user in Firebase:", error);
-            });
-        }
     });
 </script>
 </body>
