@@ -294,18 +294,24 @@ Background-color:#ff0000;
     </div>
     
 <script>
-        window.onload = function() {
-    var video = document.getElementById('background-video');
-    var loadingScreen = document.getElementById('loading-screen');
-    var mainContent = document.getElementById('main-content');
-     video.addEventListener('canplaythrough', function() {
-        loadingScreen.style.display = 'none'; // Hide loading screen
-        mainContent.style.display = 'block';  // Show main content
-    });
-};
+    window.onload = function() {
+        var video = document.getElementById('background-video');
+        var loadingScreen = document.getElementById('loading-screen');
+        var mainContent = document.getElementById('main-content');
+        
+        // Don saurin bude shafin bayan seconds 3
+        setTimeout(function() {
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+        }, 3000);
 
-    </script> 
-     <script>
+        video.addEventListener('canplaythrough', function() {
+            loadingScreen.style.display = 'none'; // Cire loading screen
+            mainContent.style.display = 'block';  // Nuna main content
+        });
+    };
+</script>
+   <script>
     const togglePasswordIcons = document.querySelectorAll('.toggle-password');
 
     togglePasswordIcons.forEach(icon => {
