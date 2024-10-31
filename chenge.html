@@ -77,42 +77,6 @@ button:hover {
     border: 1px solid #c3e6cb;
     color: #155724;
 }
-
-/* Sanya duhu a shafin baki daya */
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8); /* Duhu tare da haske 80% */
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 25px;
-    text-align: center;
-}
-
-/* Daga style na sakon TanaCoin */
-.gutt{
-    font-size: 25px;
-    color: #fff;
-    text-shadow: 0 0 1px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0;
-}
-.gut{
-    font-size: 25px;
-    color: #ff3;
-    text-shadow: 3px 3px 0 #e60000, 6px 6px 0 #ffb3b3;
-}
-.Fut{
-    font-size: 25px;
-    background: linear-gradient(to right, #8e44ad, #3498db);
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
 </style>
 <style>
 
@@ -194,8 +158,6 @@ input{
     </style>
 </head>
 <body>
-    
-
     <header>
         <h1 id="welcome-text">Welcome To Sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Username</h1>
     </header>
@@ -227,14 +189,6 @@ input{
             <h2 class="wel"><center>Your Dollars TRC20 WELLET</center></h2>
   <center class="container">        <p>Balance: $<span id="usdBalance">0.00</span></p></center>
   
-  <div class="overlay">
-    <div>
-        <h2 class="gutt"><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Chenge Market is Closed</h2>
-        <p class="gut">Chenge <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> will reopen automatically when the Aidrop Mine Ends.</p>
-        <h3 class="Fut"><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mining Time Court: <span id="endTime"></span></h3>
-    </div>
-</div>
-  
   <div class="notice-container">
     <h2>Notice</h2>
     <p>
@@ -262,161 +216,145 @@ input{
             <p id="notification-message">Payment successfully made to your Telegram Wallet!</p>
         </section>
     </main>
-
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    // Import Firebase
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
-// Firebase config
-const firebaseConfig = {
-    apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
-    authDomain: "tanacoin-mine.firebaseapp.com",
-    projectId: "tanacoin-mine",
-    storageBucket: "tanacoin-mine.appspot.com",
-    messagingSenderId: "550307127686",
-    appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
-    measurementId: "G-596X16VEGX"
-};
+    // Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
+        authDomain: "tanacoin-mine.firebaseapp.com",
+        databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/",
+        projectId: "tanacoin-mine",
+        storageBucket: "tanacoin-mine.appspot.com",
+        messagingSenderId: "550307127686",
+        appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+        measurementId: "G-596X16VEGX"
+    };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
 
-// Elements
-const usernameEl = document.getElementById('welcome-text');
-const userBalanceEl = document.getElementById('userBalance');
-const usdBalanceEl = document.getElementById('usdBalance');
-const marketPriceEl = document.getElementById('market-price');
-const withdrawalMessageEl = document.getElementById('withdrawal-message');
+    // Elements
+    const usernameEl = document.getElementById('welcome-text');
+    const userBalanceEl = document.getElementById('userBalance');
+    const usdBalanceEl = document.getElementById('usdBalance');
+    const marketPriceEl = document.getElementById('market-price');
+    const withdrawalMessageEl = document.getElementById('withdrawal-message');
 
-// Fetch user data from Firestore
-async function getUserData(userId) {
-    const userDoc = await getDoc(doc(db, "users", userId));
-    if (userDoc.exists()) {
-        const data = userDoc.data();
-        usernameEl.innerHTML = `Welcome To Sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> (${data.username || "Guest"})`;
-        userBalanceEl.innerText = data.tanaCoinBalance ? data.tanaCoinBalance.toFixed(4) : "0.0000";
-        usdBalanceEl.innerText = data.usdBalance ? data.usdBalance.toFixed(2) : "0.00";
-    } else {
-        alert("User data not found!");
+    // Fetch user data from Realtime Database
+    async function getUserData(userId) {
+        const userRef = ref(db, `users/${userId}`);
+        const userSnapshot = await get(userRef);
+        if (userSnapshot.exists()) {
+            const data = userSnapshot.val();
+            usernameEl.innerHTML = `Welcome To Sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> (${data.username || "Guest"})`;
+            userBalanceEl.innerText = data.tanaCoinBalance ? parseFloat(data.tanaCoinBalance).toFixed(4) : "0.0000";
+            usdBalanceEl.innerText = data.usdBalance ? parseFloat(data.usdBalance).toFixed(2) : "0.00";
+        } else {
+            alert("User data not found!");
+        }
     }
-}
 
-// Calculate exchange
-function calculateExchange(tanaCoin, feeRate) {
-    const marketPrice = parseFloat(marketPriceEl.innerText);
-    const totalAmount = tanaCoin * marketPrice;
-    const fee = totalAmount * feeRate / 100;
-    return (totalAmount - fee).toFixed(8);
-}
+    // Calculate exchange
+    function calculateExchange(tanaCoin, feeRate) {
+        const marketPrice = parseFloat(marketPriceEl.innerText);
+        const totalAmount = tanaCoin * marketPrice;
+        const fee = totalAmount * feeRate / 100;
+        return (totalAmount - fee).toFixed(8);
+    }
 
-// Binance button click
-document.getElementById('binanceBtn').addEventListener('click', () => {
-    const tanaCoin = parseFloat(userBalanceEl.innerText);
-    const finalAmount = calculateExchange(tanaCoin, 5.905);
-    alert(`You will receive $${finalAmount} after a 5.905% fee.`);
-});
+    // Binance button click
+    document.getElementById('binanceBtn').addEventListener('click', () => {
+        const tanaCoin = parseFloat(userBalanceEl.innerText);
+        const finalAmount = calculateExchange(tanaCoin, 5.905);
+        alert(`You will receive $${finalAmount} after a 5.905% fee.`);
+    });
 
-// Coinbase button click
-document.getElementById('coinbaseBtn').addEventListener('click', () => {
-    const tanaCoin = parseFloat(userBalanceEl.innerText);
-    const finalAmount = calculateExchange(tanaCoin, 6.2979);
-    alert(`You will receive $${finalAmount} after a 6.2979% fee.`);
-});
+    // Coinbase button click
+    document.getElementById('coinbaseBtn').addEventListener('click', () => {
+        const tanaCoin = parseFloat(userBalanceEl.innerText);
+        const finalAmount = calculateExchange(tanaCoin, 6.2979);
+        alert(`You will receive $${finalAmount} after a 6.2979% fee.`);
+    });
 
-// Handle Withdrawal
-document.getElementById('withdrawBtn').addEventListener('click', () => {
-    document.getElementById('withdrawal-container').classList.toggle('hidden');
-});
+    // Handle Withdrawal
+    document.getElementById('withdrawBtn').addEventListener('click', () => {
+        document.getElementById('withdrawal-container').classList.toggle('hidden');
+    });
 
-// Handle Withdrawal with new validation
-document.getElementById('withdrawal-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+    // Handle Withdrawal with new validation
+    document.getElementById('withdrawal-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const password = document.getElementById('password').value;
-    const withdrawalAmount = parseFloat(document.getElementById('withdrawal-amount').value);
-    const wallet = document.getElementById('telegram-wallet').value;
-    
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            const userId = user.uid;
-            const userDoc = await getDoc(doc(db, "users", userId));
-            const userData = userDoc.data();
+        const password = document.getElementById('password').value;
+        const withdrawalAmount = parseFloat(document.getElementById('withdrawal-amount').value);
+        const wallet = document.getElementById('telegram-wallet').value;
+        
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userId = user.uid;
+                const userRef = ref(db, `users/${userId}`);
+                const userSnapshot = await get(userRef);
+                const userData = userSnapshot.val();
 
-            // Check password and balance
-            if (password === userData.password && userData.tanaCoinBalance > 0) {
-                const marketPrice = parseFloat(marketPriceEl.textContent);
-                const totalWithdrawal = userData.tanaCoinBalance * marketPrice;
+                // Check password and balance
+                if (password === userData.password && userData.tanaCoinBalance > 0) {
+                    const marketPrice = parseFloat(marketPriceEl.textContent);
+                    const totalWithdrawal = userData.tanaCoinBalance * marketPrice;
 
-                if (withdrawalAmount > totalWithdrawal) {
-                    withdrawalMessageEl.textContent = 'Withdrawal amount exceeds available balance.';
-                    return;
-                }
+                    if (withdrawalAmount > totalWithdrawal) {
+                        withdrawalMessageEl.textContent = 'Withdrawal amount exceeds available balance.';
+                        return;
+                    }
 
-                usdBalanceEl.textContent = (parseFloat(usdBalanceEl.textContent) + totalWithdrawal).toFixed(2);
+                    usdBalanceEl.textContent = (parseFloat(usdBalanceEl.textContent) + totalWithdrawal).toFixed(2);
 
-                // Display success message
-                withdrawalMessageEl.textContent = `Withdrawal successful! $${totalWithdrawal} sent to TRC20 Wallet Address: ${wallet}`;
+                    // Display success message
+                    withdrawalMessageEl.textContent = `Withdrawal successful! $${totalWithdrawal} sent to TRC20 Wallet Address: ${wallet}`;
 
-                // Update user balance in Firestore
-                await updateDoc(doc(db, "users", userId), {
-                    tanaCoinBalance: 0
-                });
-
-                // Send message to Telegram bot
-                const telegramBotToken = "YOUR_TELEGRAM_BOT_TOKEN";
-                const chatId = "YOUR_TELEGRAM_CHAT_ID";
-                const message = `Withdrawal alert: $${totalWithdrawal} sent to TRC20 Wallet Address: ${wallet}`;
-
-                // Send withdrawal details to Telegram bot
-                fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.ok) {
-                            console.log("Message sent to Telegram successfully.");
-                        } else {
-                            console.error("Error sending message to Telegram:", data);
-                        }
-                    }).catch(error => {
-                        console.error("Error in Telegram communication:", error);
+                    // Update user balance in Realtime Database
+                    await update(userRef, {
+                        tanaCoinBalance: 0
                     });
+
+                    // Send message to Telegram bot
+                    const telegramBotToken = "YOUR_TELEGRAM_BOT_TOKEN";
+                    const chatId = "YOUR_TELEGRAM_CHAT_ID";
+                    const message = `Withdrawal alert: $${totalWithdrawal} sent to TRC20 Wallet Address: ${wallet}`;
+
+                    fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.ok) {
+                                console.log("Message sent to Telegram successfully.");
+                            } else {
+                                console.error("Error sending message to Telegram:", data);
+                            }
+                        }).catch(error => {
+                            console.error("Error in Telegram communication:", error);
+                        });
+                } else {
+                    withdrawalMessageEl.textContent = "Incorrect password or insufficient balance.";
+                }
             } else {
-                withdrawalMessageEl.textContent = "Incorrect password or insufficient balance.";
+                alert("No user is signed in.");
             }
+        });
+    });
+
+    // Check if user is authenticated and load user data
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            getUserData(user.uid);
         } else {
             alert("No user is signed in.");
         }
     });
-});
-
-// Check if user is authenticated and load user data
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        getUserData(user.uid);
-    } else {
-        alert("No user is signed in.");
-    }
-});
-
-let totalCoins = 246.9;
-const dailyCoins = 24.5902;
-const startDate = new Date('2024-01-01');
-const endTimeElement = document.getElementById('endTime');
-
-function updateTanaCoinMining() {
-    const now = new Date();
-    const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
-    const totalMined = totalCoins + (daysPassed * dailyCoins);
-    
-    // Ƙirƙiri lokacin ƙarshen mining
-    const endTime = new Date(now.getTime() + (1000 * 60 * 60 * 24));
-    endTimeElement.textContent = endTime.toLocaleString();
-}
-
-setInterval(updateTanaCoinMining, 1000);
-updateTanaCoinMining();
 </script>
 </body>
 </html>
