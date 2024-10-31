@@ -583,6 +583,11 @@ uploadInput.addEventListener('change', function () {
             var video = document.getElementById('background-video');
             var loadingScreen = document.getElementById('loading-screen');
             var mainContent = document.getElementById('main-content');            
+         // Don saurin bude shafin bayan seconds 3
+        setTimeout(function() {
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+        }, 3000);
             video.addEventListener('canplay', function() {
                 loadingScreen.style.display = 'none'; 
                 mainContent.style.display = 'block';  
