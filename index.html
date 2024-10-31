@@ -3,68 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TanaCoin Mining</title>    
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TanaCoin Mining</title>   
-    <meta property="og:title" content="🌟TanaCoin Mine! Earn over $1000🎁"/>            
+    <title>TanaCoin Mining Register</title>
+        <meta property="og:title" content="🌟TanaCoin Mine! Earn over $1000🎁"/>            
     <meta property="og:image" content="https://tanacoin.netlify.app/gh1.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:url" content="https://tanacoin.netlify.app/" />  
     <link rel="icon" href="dove.png" type="image/png">
-                  
+    <link rel="manifest" href="/manifest.json">
+<link rel="icon" href="dove.png" type="image/png">
     <style>
+        /* Styling */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body, html {
+       body, html {
             height: 100%;
             overflow: hidden;
             font-family: Arial, sans-serif;
        text-shadow: 3px 4px 4px rgba(0, 0, 0, 0.3);          
         }
 
-        #background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-       overflow-y: auto;
-        }
 
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-      text-shadow: 3px 4px 4px rgba(0, 0, 0, 0.3);           
-        }
-
-        /* Register container styling */
         .register-container {
             width: 350px;
             background: rgba(255, 255, 255, 0.9);
-           
-            
+         
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-            z-index: 10;
-            overflow-y: auto;
+            text-align: center
+        z-index: 10;   
+        overflow-y: auto;   
         }
 
         h1 {
-            text-align: center;
             color: #0003ff;
             margin-bottom: 20px;
             font-weight: bold;
@@ -74,17 +50,18 @@
         form {
             display: flex;
             flex-direction: column;
+            gap: 15px;
         }
 
         label {
-            margin-bottom: 5px;
-            font-size: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
             text-align: left;
-            Font-weight:bold;
         }
 
         input[type="text"], input[type="email"], input[type="password"] {
-            padding: 12px;
+            padding: 13px;
             Font-size:20px;
             margin-bottom: 20px;
             
@@ -92,26 +69,38 @@
       
             border-radius: 10px;
             font-size: 16px;
-      overflow: auto;     
+      overflow: auto;
         }
 
         button {
             padding: 10px;
             background-color: #00FF00;
             color: white;
-            border: none;
+            
             border-radius: 10px;
             font-size: 20px;
             cursor: pointer;
           border-bottom: 4px solid red; 
-           
         }
 
         button:hover {
-            background-color: #1100ff;
+            background-color: blue;
         }
 
-        .password-wrapper {
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        
+   .password-wrapper {
             position: relative;
         }
 
@@ -125,7 +114,7 @@
 
         p {
             text-align: center;
-            font-size: 20px;
+            font-size: 23px;
         }
 
         a {
@@ -230,30 +219,55 @@
     Font-size:20px;
     Color#d915ff;
    
-}
-       
-/* CSS domin loading screen */
-#loadingScreen2 {
-    position: fixed;
-    top: 80px;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999; 
-}
-    </style>
-    </head>
-<body>
-    <div id="loadingScreen2" style="display: none;"><center>
-    Please Wait to Verify Your Information...</center>
-</div>
+} 
 
+   #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+       overflow-y: auto;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+      text-shadow: 3px 4px 4px rgba(0, 0, 0, 0.3);           
+        }
+        
+         h1 {
+            text-align: center;
+            color: #0003ff;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 23px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 20px;
+            text-align: left;
+            Font-weight:bold;
+        }
+        input{
+            text-align: none;
+            width: 100%;
+        }
+      
+    </style>
+</head>
+<body>
     <div id="loading-screen">
         <div class="icon-container">
             <img src="dove.png" alt="Loading Icon">
@@ -283,43 +297,46 @@
         }
     }
 </script>
-
-
-    <!-- Register form -->
+   
     <div class="register-container">
         <h1><i style="color:red;">Tana</i><i style="color:green;">Coin</i> Mining Register</h1>
-        <form id="registerForm">
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" placeholder="John" required>
-            
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName" placeholder="Joseph" required>
-            
-            <label for="username">User Name</label>
-            <input type="text" id="username" name="username" placeholder="John466" required>
-
+        <form id="step1Form" class="form-section active">
             <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="example@gmail.com" required>
+            <input type="email" id="email" name="email" placeholder="example75@gmail.com" required>
             
             <label for="password">Password</label>
             <div class="password-wrapper">
-                <input type="password" id="password" name="password" placeholder="Password" required>
-                <span class="toggle-password">👁️‍🗨️</span>
-            </div>
-            
-            <label for="confirmPassword">Confirm Password</label>
-            <div class="password-wrapper">
-                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
-                <span class="toggle-password">👁️‍🗨️</span>
-            </div>
-            
+            <input type="password" id="password" name="password" placeholder="create like xtwu@648" required>
+            <span class="toggle-password">👁️‍🗨️</span>
+                </div>  
+   <label for="confirmPassword">Confirm Password</label>
+   <div class="password-wrapper">
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirming" required>
+             <span class="toggle-password">👁️‍🗨️</span>
+             </div>    
             <button type="submit">Submit</button>
+            <div id="error-message" class="error"></div>
+        </form>
+
+        <form id="step2Form" class="form-section">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" placeholder="John" required>
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Joseph" required>
+
+            <label for="username">User Name</label>
+            <input type="text" id="username" name="username" placeholder="John466@" required>
+
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" placeholder="Your Nation" required>
+
+            <button type="submit">Complete Registration</button>
         </form>
         <p>Already have an account? <a href="login.html">Login</a></p>
         <img src="gh1.png" class="gut">
-        <img src="avatar.png" style="width: 100%; height:80%; border-radius:10px;">
     </div>
-    <script>
+<script>
     const togglePasswordIcons = document.querySelectorAll('.toggle-password');
 
     togglePasswordIcons.forEach(icon => {
@@ -347,143 +364,108 @@
 };
 
     </script> 
-      <script type="module">  
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import { getFirestore, collection, query, where, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  
-  const firebaseConfig = {
-    apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
-    authDomain: "tanacoin-mine.firebaseapp.com",
-    projectId: "tanacoin-mine",
-    storageBucket: "tanacoin-mine.appspot.com",
-    messagingSenderId: "550307127686",
-    appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
-    measurementId: "G-596X16VEGX"
-  };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const auth = getAuth();
+        const firebaseConfig = {
+            apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
+            authDomain: "tanacoin-mine.firebaseapp.com",
+            projectId: "tanacoin-mine",
+            storageBucket: "tanacoin-mine.appspot.com",
+            messagingSenderId: "550307127686",
+            appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+            measurementId: "G-596X16VEGX",
+            databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/"
+        };
 
-  // Generate unique wallet address
-  function generateWalletAddress() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let walletAddress = 'TNC';
-    for (let i = 0; i < 32; i++) {
-      walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return walletAddress;
-  }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const db = getDatabase();
 
-  // Check for unique wallet address
-  async function isWalletAddressUnique(walletAddress) {
-    const q = query(collection(db, "users"), where("walletAddress", "==", walletAddress));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.empty;
-  }
+        function generateWalletAddress() {
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            let walletAddress = "TNC";
+            for (let i = 0; i < 32; i++) {
+                walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return walletAddress;
+        }
 
-  // Check if email is already registered
-  async function isEmailRegistered(email) {
-    const q = query(collection(db, "users"), where("email", "==", email));
-    const querySnapshot = await getDocs(q);
-    return !querySnapshot.empty;
-  }
+        document.getElementById('step1Form').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-  // Check if username is unique
-  async function isUsernameUnique(username) {
-    const q = query(collection(db, "users"), where("username", "==", username));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.empty;
-  }
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessage = document.getElementById('error-message');
 
-  // Save user data to Firebase and localStorage
-  async function saveUserData(uid, data) {
-    try {
-      await setDoc(doc(db, "users", uid), data);
-      localStorage.setItem('userData', JSON.stringify(data));
-      return true;
-    } catch (error) {
-      console.error("Error writing document: ", error);
-      return false;
-    }
-  }
+            // Clear previous error messages
+            errorMessage.textContent = '';
 
-  // Form submission handler
-  document.getElementById('registerForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    document.getElementById('loadingScreen2').style.display = 'block';
+            if (password !== confirmPassword) {
+                errorMessage.textContent = "Passwords do not match!";
+                return;
+            }
 
-    const firstName = document.getElementById('firstName').value;
-    const lastName = document.getElementById('lastName').value;
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
+            try {
+                const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+                if (signInMethods.length > 0) {
+                    errorMessage.textContent = "This email address has already been used. Please log in to your account.";
+                    return;
+                }
 
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      document.getElementById('loadingScreen2').style.display = 'none';
-      return;
-    }
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
 
-    const usernameRegex = /^[a-zA-Z0-9]+$/;
-    if (!usernameRegex.test(username)) {
-      alert("Usernames can only contain letters and numbers.");
-      document.getElementById('loadingScreen2').style.display = 'none';
-      return;
-    }
+                localStorage.setItem('userEmail', email);
+                localStorage.setItem('userId', user.uid);
 
-    // Check if email and username are unique
-    if (await isEmailRegistered(email)) {
-      alert("This email address is already in use.");
-      document.getElementById('loadingScreen2').style.display = 'none';
-      return;
-    }
-    if (!(await isUsernameUnique(username))) {
-      alert("This username is already in use.");
-      document.getElementById('loadingScreen2').style.display = 'none';
-      return;
-    }
+                document.getElementById('step1Form').classList.remove('active');
+                document.getElementById('step2Form').classList.add('active');
+            } catch (error) {
+                console.error("Error in Firebase Authentication: ", error);
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage.textContent = "This email address is already in use. Please log in.";
+                } else {
+                    errorMessage.textContent = "Failed to create account. Please try again.";
+                }
+            }
+        });
 
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-      const uid = user.uid;
+        document.getElementById('step2Form').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-      // Generate unique wallet address
-      let walletAddress;
-      while (true) {
-        walletAddress = generateWalletAddress();
-        if (await isWalletAddressUnique(walletAddress)) break;
-      }
+            const userId = localStorage.getItem('userId');
+            const email = localStorage.getItem('userEmail');
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const username = document.getElementById('username').value;
+            const country = document.getElementById('country').value;
 
-      const userData = {
-        firstName,
-        lastName,
-        username,
-        email,
-        walletAddress,
-        userBalance: 0.00000,
-        userId: uid
-      };
+            const userData = {
+                firstName,
+                lastName,
+                username,
+                email,
+                country,
+                walletAddress: generateWalletAddress(),
+                userBalance: 0.00000,
+                userId: userId
+            };
 
-      // Save data in Firestore and localStorage
-      if (await saveUserData(uid, userData)) {
-        alert("Registration successful!");
-        window.location.href = "login.html";
-      } else {
-        alert("Registration failed. Please try again.");
-      }
+            try {
+                await set(ref(db, 'users/' + userId), userData);
+                localStorage.setItem('userData', JSON.stringify(userData));
 
-    } catch (error) {
-      console.error("Registration error: ", error);
-      alert("Registration failed. Please try again.");
-    } finally {
-      document.getElementById('loadingScreen2').style.display = 'none';
-    }
-  });
-</script>
-    </body>
+                alert("Registration successful!");
+                window.location.href = "login.html";
+            } catch (error) {
+                console.error("Error in Firebase Database: ", error);
+                alert("Failed to save user data. Please try again.");
+            }
+        });
+    </script>
+</body>
 </html>
