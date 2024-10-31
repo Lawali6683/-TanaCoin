@@ -13,10 +13,9 @@
             text-align: center; 
         }
         .hidden { display: none; }
-       
         h1, h3 {
             text-align: center;
-            font-weight:bold;
+            font-weight: bold;
             color: #0003ff;
         }
         table {
@@ -53,13 +52,13 @@
             border-radius: 5px;
             margin-bottom: 10px;
         }
-       input{
-           padding: 18px;
+        input {
+            padding: 18px;
             margin-bottom: 20px;
             border: 1px solid #90ff2b;
             border-radius: 5px;
             font-size: 11px;
-       }
+        }
     </style>
 </head>
 <body>
@@ -73,12 +72,10 @@
     <div class="container hidden" id="control-panel">
         <h1>Admin Dashboard</h1>
 
-        <!-- Display total mined TanaCoin -->
         <div class="setting">
-            <h3>Complete TanaCoin mined: <span id="total-mined"></span></h3>
+            <h3>Total TanaCoin mined: <span id="total-mined">0</span></h3>
         </div>
 
-        <!-- All Users Table -->
         <div class="setting">
             <h3>All Users TanaCoin Miners</h3>
             <table>
@@ -93,24 +90,15 @@
                     <!-- User Data will be dynamically loaded here -->
                 </tbody>
             </table>
-            <p style="color:#0d00c4;">Total users registered: <span id="total-users"></span></p>
+            <p style="color:#0d00c4;">Total users registered: <span id="total-users">0</span></p>
         </div>
 
-        <!-- Send Message to Users -->
         <div class="setting">
             <label for="send-message">Send Message to All Users Mining:</label>
             <textarea id="send-message" placeholder="Type your message here..."></textarea>
-            <button id="send-btn">Send</button> <!-- Added correct ID for the Send button -->
+            <button id="send-btn">Send</button>
         </div>
 
-        <!-- Send Email Notification -->
-        <div class="setting">
-            <label for="send-email">Send Email to All Users:</label>
-            <textarea id="send-email" placeholder="Type your email message here..."></textarea>
-            <button id="send-email-btn">Send</button> <!-- Corrected the button ID -->
-        </div>
-
-        <!-- Notifications -->
         <div class="setting">
             <h3>Withdrawal Notifications</h3>
             <table>
@@ -125,37 +113,45 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 
     <script type="module">
+    // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDocs, collection, query, orderBy } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-messaging.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     // Firebase config
     const firebaseConfig = {
         apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
-    authDomain: "tanacoin-mine.firebaseapp.com",
-    projectId: "tanacoin-mine",
-    storageBucket: "tanacoin-mine.appspot.com",
-    messagingSenderId: "550307127686",
-    appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
-    measurementId: "G-596X16VEGX"
-  };
+        authDomain: "tanacoin-mine.firebaseapp.com",
+        databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/",
+        projectId: "tanacoin-mine",
+        storageBucket: "tanacoin-mine.appspot.com",
+        messagingSenderId: "550307127686",
+        appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+        measurementId: "G-596X16VEGX"
+    };
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const messaging = getMessaging(app);
+    const database = getDatabase(app);
+    const auth = getAuth(app);
 
     // Password Authentication
     document.getElementById('login-btn').addEventListener('click', function () {
         const password = document.getElementById('admin-password').value;
+        const adminEmails = ["minetanacoin@gmail.com", "harunalawali5522@gmail.com"];
+
         if (password === 'haruna66') {
-            document.getElementById('control-panel').classList.remove('hidden');
-            document.getElementById('password-section').classList.add('hidden');
-            loadUserData();
+            const email = prompt("Enter admin email:");
+            if (adminEmails.includes(email)) {
+                document.getElementById('control-panel').classList.remove('hidden');
+                document.getElementById('password-section').classList.add('hidden');
+                loadUserData();
+            } else {
+                alert('Unauthorized email address!');
+            }
         } else {
             alert('Incorrect Password!');
         }
@@ -167,106 +163,65 @@
         const totalMinedEl = document.getElementById('total-mined');
         const totalUsersEl = document.getElementById('total-users');
 
-        const querySnapshot = await getDocs(query(collection(db, "users"), orderBy("userBalance", "desc")));
-        let totalMined = 0;
-        let totalUsers = 0;
-        querySnapshot.forEach(doc => {
-            const data = doc.data();
-            totalMined += data.userBalance;
-            totalUsers++;
-            userTable.innerHTML += `
-                <tr>
-                    <td>${data.email}</td>
-                    <td>${data.username}</td>
-                    <td>${data.userBalance}</td>
-                </tr>
-            `;
+        const usersRef = ref(database, 'users');
+        onValue(usersRef, (snapshot) => {
+            const users = snapshot.val();
+            let totalMined = 0;
+            let totalUsers = 0;
+            userTable.innerHTML = '';
+
+            for (let userId in users) {
+                const data = users[userId];
+                totalMined += data.userBalance;
+                totalUsers++;
+                userTable.innerHTML += `
+                    <tr>
+                        <td>${data.email}</td>
+                        <td>${data.username}</td>
+                        <td>${data.userBalance}</td>
+                    </tr>
+                `;
+            }
+
+            totalMinedEl.textContent = totalMined.toFixed(3);
+            totalUsersEl.textContent = totalUsers;
         });
-
-        totalMinedEl.textContent = totalMined;
-        totalUsersEl.textContent = totalUsers;
     }
-
-    // Get FCM token for notifications
-    getToken(messaging, { vapidKey: "YOUR_VAPID_KEY" }).then((currentToken) => {
-        if (currentToken) {
-            console.log('FCM token:', currentToken);
-            // Store or use this token to send notifications
-        } else {
-            console.log('No registration token available.');
-        }
-    }).catch((err) => {
-        console.log('An error occurred while retrieving token.', err);
-    });
-
-    // Listen for incoming messages (when app is in foreground)
-    onMessage(messaging, (payload) => {
-        console.log('Message received:', payload);
-        alert(`New message: ${payload.notification.body}`);
-    });
 
     // Send message to all users
     document.getElementById('send-btn').addEventListener('click', sendMessage);
     function sendMessage() {
         const message = document.getElementById('send-message').value;
         if (message) {
-            sendNotification(message);  // Function to send notification
+            alert(`Message sent to all users: ${message}`); // Simulated message sending
+            document.getElementById('send-message').value = ''; // Clear the textarea
         } else {
             alert('Please type a message.');
         }
     }
 
-    // Function to send FCM notification
-    function sendNotification(message) {
-        const notificationPayload = {
-            notification: {
-                title: "New Message",
-                body: message,
-                icon: "/path/to/icon.png"
-            }
-        };
-
-        fetch('https://fcm.googleapis.com/fcm/send', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'key=YOUR_SERVER_KEY',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                notification: notificationPayload,
-                to: '/topics/all'  // Send to all users
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Notification sent successfully:', data);
-            alert('Notification sent successfully!');
-        })
-               .catch(error => {
-            console.error('Error sending email:', error);
-            alert('Failed to send email. Please try again later.');
-        });
-    }
-
     // Load withdrawal notifications
     async function loadNotifications() {
         const notificationTable = document.getElementById('notification-table');
-        const querySnapshot = await getDocs(query(collection(db, "withdrawals"), orderBy("date", "desc")));
-        
-        querySnapshot.forEach(doc => {
-            const data = doc.data();
-            notificationTable.innerHTML += `
-                <tr>
-                    <td>${new Date(data.date.seconds * 1000).toLocaleDateString()}</td>
-                    <td>${data.message}</td>
-                </tr>
-            `;
+        const notificationsRef = ref(database, 'withdrawals');
+        onValue(notificationsRef, (snapshot) => {
+            const notifications = snapshot.val();
+            notificationTable.innerHTML = '';
+
+            for (let key in notifications) {
+                const data = notifications[key];
+                notificationTable.innerHTML += `
+                    <tr>
+                        <td>${new Date(data.date).toLocaleDateString()}</td>
+                        <td>${data.message}</td>
+                    </tr>
+                `;
+            }
         });
     }
 
     // Call the function to load notifications after login
     document.getElementById('login-btn').addEventListener('click', loadNotifications);
-
 </script>
 </body>
 </html>
