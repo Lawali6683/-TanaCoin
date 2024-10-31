@@ -11,7 +11,7 @@
     <meta property="og:url" content="https://tanacoin.netlify.app/" />  
     <link rel="icon" href="dove.png" type="image/png">
     <link rel="manifest" href="/manifest.json">
-<link rel="icon" href="dove.png" type="image/png">
+</head>
     <style>
         /* Styling */
         * {
@@ -266,7 +266,6 @@
         }
       
     </style>
-</head>
 <body>
     <div id="loading-screen">
         <div class="icon-container">
@@ -284,7 +283,7 @@
 
     <!-- Image container -->
     <div  class="image-container">
-    <img id="doveImage" src="dove.png" class="image" alt="Rotating Image" onclick="checkClicks()">
+    <img id="doveImage" src="Dove.png" class="image" alt="Rotating Image" onclick="checkClicks()">
 </div>
 
 <script>
@@ -353,17 +352,24 @@
     });
 </script>
 <script>
-        window.onload = function() {
-    var video = document.getElementById('background-video');
-    var loadingScreen = document.getElementById('loading-screen');
-    var mainContent = document.getElementById('main-content');
-        video.addEventListener('canplaythrough', function() {
-        loadingScreen.style.display = 'none'; // Hide loading screen
-        mainContent.style.display = 'block';  // Show main content
-    });
-};
+    window.onload = function() {
+        var video = document.getElementById('background-video');
+        var loadingScreen = document.getElementById('loading-screen');
+        var mainContent = document.getElementById('main-content');
+        
+        // Don saurin bude shafin bayan seconds 3
+        setTimeout(function() {
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+        }, 3000);
 
-    </script> 
+        video.addEventListener('canplaythrough', function() {
+            loadingScreen.style.display = 'none'; // Cire loading screen
+            mainContent.style.display = 'block';  // Nuna main content
+        });
+    };
+</script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
