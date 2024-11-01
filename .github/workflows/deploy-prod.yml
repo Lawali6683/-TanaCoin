@@ -20,9 +20,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build project
-        run: npm run build  # Idan kana da aikin gina, idan ba haka ba ka iya watsi da wannan matakin.
-
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
