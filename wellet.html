@@ -6,9 +6,12 @@
     <title>TanaCoin Wallet</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        Body{
+            background: #eaffff97;
+        }
         #{
     font-family: Arial, sans-serif;
-    background-color: #3b3134;
+    background-color: #eaffff97;
     margin: 0;
     display: flex;
     justify-content: center;
@@ -20,7 +23,7 @@
 }
 
 .wallet-container {
-    background-color: node;
+    background-color: #eaffff97;
     justify-content: center;
     
     padding: 0px;
@@ -62,9 +65,11 @@ form label {
 }
 
 form input {
-    width: 100%;
-    padding: 8px;
+    width: 80%;
+    padding: 10px;
     margin-bottom: 10px;
+    Border-radius:10px;
+    
 }
 
 .menu-container{
@@ -76,7 +81,15 @@ form input {
 
 }
 
-
+button{
+    background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.70);
+}
 
  .balance-container {
             margin-top: 20px;
@@ -107,13 +120,13 @@ form input {
         .balance-display .tnc-amount {
             color: green;
             Font-weight: bold;
-            Font-size: 12px;
+            Font-size: 17px;
         }
 
         .balance-display .dollar-amount {
             color: red;
             Font-weight: bold;
-            Font-size: 12px;
+            Font-size: 17px;
         }
         
          .menu-item {
@@ -157,7 +170,7 @@ form input {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #ffaaf46c;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -180,14 +193,24 @@ h1 {
     color: #ff8800;
     font-weight: bold;
 }
+.pay{
+    Color:#0018ff;
+    Font-weight: bold;
+    Font-size: 20px;
+    
+}
+P{
+    Font-weight: bold;
+    
+}
+
     </style>
 </head>
 <body>
     <i id="TanaCoinPrice" style="display: none;">$5.00</i>
 
     <div class="wallet-container">
-                       <h2><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet</h2>
-        <h2 id="userName">
+                       <h2><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet</h2>        <span class="pay"     id="firstNameDispay lastNameDispay"></span>
                             
         <!-- Display user balance -->
         <div class="balance-container">
@@ -200,7 +223,7 @@ h1 {
             <div class="balance-display">
                 <img src="dove.png" alt="TanaCoin">
                 <div>
-                    <span class="tnc-amount" id="userBalance">0.00000 TNC</span>
+                    <span class="tnc-amount" id="userBalance">TNC 0.00000</span>
                     <span class="dollar-amount" id="dollar_totalone">$0.00</span>
                 </div>
             </div>            
@@ -223,15 +246,15 @@ h1 {
         <!-- Send TanaCoin Form -->
         <div id="sendContainer" class="hidden">
             <h3>Send <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h3>
-            <p>Ally <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wellet address you can send This Coin</p>
+            <p>Ally TNC <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wellet address you can send This Coin</p>
             <form id="sendForm">
-                <label for="walletAddress">Wallet Address:</label>
+                <label for="walletAddress">TNC Wallet Address:</label>
                 <input type="text" id="walletAddress" required>
                 
-                <label for="amount">Amount:</label>
+                <label for="amount">TNC Amount:</label>
                 <input type="number" id="amount" required>
                 
-                <label for="password">Password:</label>
+                <label for="password">Your Log in Password:</label>
                 <input type="password" id="password" required>
                 
                 <button type="submit">Submit</button>
@@ -240,10 +263,10 @@ h1 {
 
         <!-- Receive Wallet Address -->
         <div id="receiveContainer" class="hidden">
-            <h3>Your Wallet Address</h3>
+            <h3>Copy Your Wallet Address</h3>
             <p id="walletAddressDisplay"></p>
             <button id="copyBtn">Copy Wallet Address</button>
-            <p id="copyMessage"></p>
+            <p style="color: blue;" id="copyMessage"></p>
         </div>
 
         <!-- Transaction History -->
@@ -284,7 +307,75 @@ Take advantage of this opportunity—mine TNC coins today and watch your earning
             <img src="pm.png" style="width: 100%; height: 50%;">
     </div>
     </div>
+<script>
+    // Samun maballin da akwatinan da suka dace
+const sendBtn = document.getElementById('sendBtn');
+const receiveBtn = document.getElementById('receiveBtn');
+const historyReceiveBtn = document.getElementById('historyReceiveBtn');
+const historySendBtn = document.getElementById('historySendBtn');
 
+const sendContainer = document.getElementById('sendContainer');
+const receiveContainer = document.getElementById('receiveContainer');
+const historyReceiveContainer = document.getElementById('historyReceiveContainer');
+const historySendContainer = document.getElementById('historySendContainer');
+const receivedHistoryList = document.getElementById('receivedHistoryList');
+const sentHistoryList = document.getElementById('sentHistoryList');
+
+// Aikin boye dukkan akwatinan
+function hideAllContainers() {
+    sendContainer.classList.add('hidden');
+    receiveContainer.classList.add('hidden');
+    historyReceiveContainer.classList.add('hidden');
+    historySendContainer.classList.add('hidden');
+}
+
+function checkTransactionHistory() {
+    if (!receivedHistoryList.innerHTML.trim()) {
+        receivedHistoryList.innerHTML = '<p style="color:red;">Not Transactions History</p>';
+    }
+    if (!sentHistoryList.innerHTML.trim()) {
+        sentHistoryList.innerHTML = '<p style="color:red;">Not Transactions History</p>';
+    }
+}
+
+sendBtn.addEventListener('click', () => {
+    if (sendContainer.classList.contains('hidden')) {
+        hideAllContainers();
+        sendContainer.classList.remove('hidden');
+    } else {
+        sendContainer.classList.add('hidden');
+    }
+});
+
+receiveBtn.addEventListener('click', () => {
+    if (receiveContainer.classList.contains('hidden')) {
+        hideAllContainers();
+        receiveContainer.classList.remove('hidden');
+    } else {
+        receiveContainer.classList.add('hidden');
+    }
+});
+
+historyReceiveBtn.addEventListener('click', () => {
+    if (historyReceiveContainer.classList.contains('hidden')) {
+        hideAllContainers();
+        historyReceiveContainer.classList.remove('hidden');
+        checkTransactionHistory();
+    } else {
+        historyReceiveContainer.classList.add('hidden');
+    }
+});
+
+historySendBtn.addEventListener('click', () => {
+    if (historySendContainer.classList.contains('hidden')) {
+        hideAllContainers();
+        historySendContainer.classList.remove('hidden');
+        checkTransactionHistory();
+    } else {
+        historySendContainer.classList.add('hidden');
+    }
+});
+</script>
     <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
@@ -305,6 +396,48 @@ Take advantage of this opportunity—mine TNC coins today and watch your earning
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth();
+        
+// DOM Elements for displaying names
+const firstNameDisplay = document.getElementById('firstNameDispay');
+const lastNameDisplay = document.getElementById('lastNameDispay');
+
+function loadUserInfo() {
+     localStorage
+    const firstName = localStorage.getItem('firstName');
+    const lastName = localStorage.getItem('lastName');
+
+    if (firstName && lastName) {       
+        firstNameDisplay.innerText = firstName;
+        lastNameDisplay.innerText = lastName;
+    } else {
+       
+        localStorage
+        const userRef = firebase.database().ref('users/uid'); 
+        userRef.once('value')
+            .then(snapshot => {
+                const userData = snapshot.val();
+                if (userData) {
+                    // Store in localStorage for future
+                    localStorage.setItem('firstName', userData.firstName);
+                    localStorage.setItem('lastName', userData.lastName);
+                    // Display on page
+                    firstNameDisplay.innerText = userData.firstName;
+                    lastNameDisplay.innerText = userData.lastName;
+                } else {
+                    firstNameDisplay.innerText = "Unknown";
+                    lastNameDisplay.innerText = "User";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+                firstNameDisplay.innerText = "Unknown";
+                lastNameDisplay.innerText = "User";
+            });
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadUserInfo);
+
 
     // Fetch user data and update balance
     async function getUserData(uid) {
@@ -418,7 +551,7 @@ Take advantage of this opportunity—mine TNC coins today and watch your earning
     document.getElementById('copyBtn').addEventListener('click', () => {
         const walletAddress = document.getElementById('walletAddressDisplay').textContent;
         navigator.clipboard.writeText(walletAddress).then(() => {
-            document.getElementById('copyMessage').textContent = "Copied Wallet Address successfully!";
+            document.getElementById('copyMessage').textContent = "Copy Your Wallet Address successfully!";
         });
     });
 
