@@ -219,7 +219,7 @@ th, td {
 
  /* Styles for main content */
         #main-content {
-            display: none; /* Hide content until loading is complete */
+            display: none; 
         }
     </style>
 </head>
@@ -286,7 +286,7 @@ th, td {
         </tbody>
     </table>
 </div>
-<script>
+referralLink.value = <script>
         // Loading Screen Logic
       // Nemi dukkan bidiyon
 const videoElements = Array.from(document.querySelectorAll('video'));
@@ -369,7 +369,7 @@ if (loadingScreen) {
         localStorage.setItem('username', data.username || "User");
 
         // Display referral link
-        referralLink.value = `https://tanacoin.netlify.app/referral?user=${uid}`;
+        referralLink.value = `https://tanacoin.netlify.app/referral?user=${usernameDisplay.textContent}${uid}`;
 
         // Update balance and bonuses
         updateBalance(uid);
