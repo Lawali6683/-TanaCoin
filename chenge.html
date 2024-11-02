@@ -165,7 +165,7 @@ input{
     <main>
         <section class="balance-section">
             <p>Your Total <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>: 
-                <span id="userBalance">0.0000</span>
+                <span id="userBalanceDispay">0.0000</span>
             </p>
             <p>Market <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Price: 
                 $<span id="market-price">5.8648</span> per <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>
@@ -216,6 +216,23 @@ input{
             <p id="notification-message">Payment successfully made to your Telegram Wallet!</p>
         </section>
     </main>
+    <script>
+        // Element na nuna user balance
+const userBalanceDisplay = document.getElementById('userBalanceDispay');
+
+function loadUserBalance() {
+    
+    const userBalance = localStorage.getItem('userBalance');
+        
+    if (userBalance) {
+        userBalanceDisplay.innerText = parseFloat(userBalance).toFixed(5);
+    } else {
+        userBalanceDisplay.innerText = "0.00000"; 
+    }
+}
+
+document.addEventListener('DOMContentLoaded', loadUserBalance);
+    </script>
 <script type="module">
     // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
