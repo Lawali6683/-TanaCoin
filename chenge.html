@@ -77,6 +77,42 @@ button:hover {
     border: 1px solid #c3e6cb;
     color: #155724;
 }
+
+/* Sanya duhu a shafin baki daya */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Duhu tare da haske 80% */
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 25px;
+    text-align: center;
+}
+
+/* Daga style na sakon TanaCoin */
+.gutt{
+    font-size: 25px;
+    color: #fff;
+    text-shadow: 0 0 1px #0f0, 0 0 20px #0f0, 0 0 30px #0f0, 0 0 40px #0f0;
+}
+.gut{
+    font-size: 25px;
+    color: #ff3;
+    text-shadow: 3px 3px 0 #e60000, 6px 6px 0 #ffb3b3;
+}
+.Fut{
+    font-size: 25px;
+    background: linear-gradient(to right, #8e44ad, #3498db);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
 </style>
 <style>
 
@@ -158,6 +194,8 @@ input{
     </style>
 </head>
 <body>
+    
+
     <header>
         <h1 id="welcome-text">Welcome To Sell your <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Username</h1>
     </header>
@@ -165,7 +203,7 @@ input{
     <main>
         <section class="balance-section">
             <p>Your Total <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>: 
-                <span id="userBalanceDispay">0.0000</span>
+                 <span id="userBalanceDispay">0.0000</span>
             </p>
             <p>Market <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Price: 
                 $<span id="market-price">5.8648</span> per <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>
@@ -188,6 +226,14 @@ input{
         <section class="wallet-section">
             <h2 class="wel"><center>Your Dollars TRC20 WELLET</center></h2>
   <center class="container">        <p>Balance: $<span id="usdBalance">0.00</span></p></center>
+  
+  <div class="overlay">
+    <div>
+        <h2 class="gutt"><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Chenge Market is Closed</h2>
+        <p class="gut">Chenge <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> will reopen automatically when the Aidrop Mine Ends.</p>
+        <h3 class="Fut"><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mining Time Court: <span id="endTime"></span></h3>
+    </div>
+</div>
   
   <div class="notice-container">
     <h2>Notice</h2>
@@ -216,23 +262,27 @@ input{
             <p id="notification-message">Payment successfully made to your Telegram Wallet!</p>
         </section>
     </main>
-    <script>
-        // Element na nuna user balance
+<script>
+    // Element na nuna user balance
 const userBalanceDisplay = document.getElementById('userBalanceDispay');
 
+// Function don load user balance daga localStorage
 function loadUserBalance() {
-    
+    // Dauko userBalance daga localStorage
     const userBalance = localStorage.getItem('userBalance');
-        
+    
+    // Idan balance yana cikin localStorage, sai a nuna shi; idan ba haka ba, a bar 0.0000
     if (userBalance) {
-        userBalanceDisplay.innerText = parseFloat(userBalance).toFixed(5);
+        userBalanceDisplay.innerText = parseFloat(userBalance).toFixed(5); // Nuna shi har decimal 4
     } else {
-        userBalanceDisplay.innerText = "0.00000"; 
+        userBalanceDisplay.innerText = "0.00000"; // Default idan babu balance a localStorage
     }
 }
 
+// Run function din nan don load balance lokacin da shafin ya bude
 document.addEventListener('DOMContentLoaded', loadUserBalance);
-    </script>
+
+</script>
 <script type="module">
     // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -372,6 +422,23 @@ document.addEventListener('DOMContentLoaded', loadUserBalance);
             alert("No user is signed in.");
         }
     });
+let totalCoins = 246.9;
+const dailyCoins = 24.5902;
+const startDate = new Date('2024-01-01');
+const endTimeElement = document.getElementById('endTime');
+
+function updateTanaCoinMining() {
+    const now = new Date();
+    const daysPassed = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+    const totalMined = totalCoins + (daysPassed * dailyCoins);
+    
+    // Ƙirƙiri lokacin ƙarshen mining
+    const endTime = new Date(now.getTime() + (1000 * 60 * 60 * 24));
+    endTimeElement.textContent = endTime.toLocaleString();
+}
+
+setInterval(updateTanaCoinMining, 1000);
+updateTanaCoinMining();
 </script>
 </body>
 </html>
