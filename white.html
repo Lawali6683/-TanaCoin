@@ -3,617 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TanaCoin Wallet</title>
+    <title>TanaCoin Whitepaper</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        Body{
-            background: #eaffff97;
-        }
-        #{
-    font-family: Arial, sans-serif;
-    background-color: #eaffff97;
+        /* style.css */
+* {
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    text-shadow: 3px 4px 8px rgba(0, 0, 0, 0.3); 
-    Text-align:center;
-    overflow: auto;     
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
-.wallet-container {
-    background-color: #eaffff97;
-    justify-content: center;
-    
-    padding: 0px;
-    border-radius: 10px;
-    text-align: center;
-     border-top: 5px solid green;
-    
-    width: 100%;
-    overflow: auto;     
+body {
+    background-color: #f8f9fa;
+    color: #333;
 }
 
-.balance-container {
-    margin-top: 20px;
-    
-   background: #66ff2b; 
-    Border-radius:10px;
-    border-top: 7px solid red;
-    
-    font-size: 20px;
-}
-
-.menu-container {
-    margin-top: 20px;
-    display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);    
-}
-
-
-
-.hidden {
-    display: none;
-}
-
-form label {
-    display: block;
-    margin: 10px 0 5px;
-}
-
-form input {
-    width: 80%;
-    padding: 10px;
-    margin-bottom: 10px;
-    Border-radius:10px;
-    
-}
-
-.menu-container{
-    margin-top: 2px;
-    margin-top: 2px;
-    display: flex;
-            justify-content: space-between;
-            margin-top: 2px;
-
-}
-
-button{
-    background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.70);
-}
-
- .balance-container {
-            margin-top: 20px;
-            font-size: 18px;
-       border-bottom: 3px solid blue; 
-          box-shadow: 0 4px 10px rgba(20, 0, 0, 0.75);
-        }
-
-        .balance-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #e9e9e9;
-         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.89);  
-         border-bottom: 3px solid blue;     
-            padding: 10px;
-            border-radius: 8px;
-        
-        }
-
-        .balance-display img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.70);    
-        }
-
-        .balance-display .tnc-amount {
-            color: green;
-            Font-weight: bold;
-            Font-size: 17px;
-        }
-
-        .balance-display .dollar-amount {
-            color: red;
-            Font-weight: bold;
-            Font-size: 17px;
-        }
-        
-         .menu-item {
-            text-align: center;
-            
-        }
-
-        .menu-item img {
-            width: 50px;
-            height: 50px;
-            Border-radius: 50%;
-            
-            display: block;
-            margin: 0 auto 5px;
-            
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.70);
-        }
-
-        .menu-item button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.70);
-        }
-       .menu-item:hover {
-         background: #1100ff; 
-         Border-radius: 10px;
-       }
-         .menu-item button:hover{
-         background: #1100ff; 
-         Border-radius: 10px;  
-         } 
-        .dollar{
-            Font-weight: bold;
-            Font-size: 30px;
-        } 
-         .container {
+.container {
     max-width: 800px;
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 20px;
-    background-color: #ffaaf46c;
+    background: url('bacgraoud.png'); 
+    
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+header {
     text-align: center;
-    color: #0066cc;
-    font-size: 13px;
     margin-bottom: 20px;
-    font-weight: bold;
 }
 
-.description {
-    font-size: 10px;
+header h1 {
+    font-size: 28px;
+    color: #0056b3;
+}
+
+header p {
+    font-size: 16px;
     color: #555;
-    font-weight: bold;
 }
 
-.highlight {
-    color: #ff8800;
-    font-weight: bold;
-}
-.pay{
-    Color:#0018ff;
-    Font-weight: bold;
-    Font-size: 20px;
-    
-}
-P{
-    Font-weight: bold;
-    
+section {
+    margin-bottom: 20px;
 }
 
-.amount-container {
-    display: flex;
-    align-items: center;
+h2 {
+    font-size: 22px;
+    color: #007bff;
+    margin-bottom: 10px;
 }
 
-#amount {
-    width: 100px;
-    padding: 10px;
-    margin-right: 10px;
-    border-radius: 10px;
-    border: 2px solid #333;
+p, li {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
 }
 
-#coinEquivalent {
-    font-size: 19px;
-    font-weight: bold;
-    color: #4A90E2;
+ul {
+    padding-left: 20px;
+    list-style-type: disc;
+    margin-top: 10px;
 }
-#walletAddressDisplay{
-    Font-weight:  bold;
-    Font-size: 11px;
+
+ul li {
+    margin-bottom: 8px;
 }
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
     </style>
 </head>
 <body>
-    <i id="TanaCoinPrice" style="display: none;">$5.00</i>
-
-    <div class="wallet-container">
-                       <h2><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet</h2>        <span class="pay" id="firstNameDisplay"></span> <span id="lastNameDisplay"></span>
-
-                            
-        <!-- Display user balance -->
-        <div class="balance-container">
-            <h3>Your Balance</h3>
-            <p class ="dollar" id="dollar_total">$0.00</p>
-            
-        </div>
+    <div class="container">
+        <header>
+            <h1><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Whitepaper</h1>
+            <p><strong>Name:</strong> <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> | <strong>Ticker:</strong> TNC | <strong>Creation Year:</strong> 2025</p>
+            <p><strong>Network:</strong> BEP-20 (Binance Smart Chain)</p>
+            <p><strong>Address:</strong> (To be listed soon on Binance)</p>
+        </header>
         
-       <p> <section>
-            <div class="balance-display">
-                <img src="dove.png" alt="TanaCoin">
-                <div>
-                    <span class="tnc-amount" id="userBalance">TNC 0.00000</span>
-                    <span class="dollar-amount" id="dollar_totalone">$0.00</span>
-                </div>
-            </div>            
-        </section></p>
+        <section>
+            <h2>1. Introduction</h2>
+            <p><strong><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></strong> is a new cryptocurrency created to facilitate transactions in commerce and provide new trading opportunities worldwide. <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> aims to offer a secure, user-friendly, and beneficial payment method using blockchain technology for both users and investors.</p>
+        </section>
+        
+        <section>
+            <h2>2. Reasons for Creating <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h2>
+            <p><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> was developed to address common business challenges such as high transaction fees, security issues, and limited access to financial services for underbanked communities. TanaCoin is designed to provide everyone with a straightforward way to make payments without relying on central financial institutions.</p>
+            <ul>
+                <li><strong>Ease of Use:</strong> Create a system that anyone can use, even those with limited knowledge of cryptocurrencies.</li>
+                <li><strong>Security:</strong> Utilize blockchain technology to ensure secure transactions and protect against fraud.</li>
+                <li><strong>Cost Reduction:</strong> Minimize transaction fees for <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> users.</li>
+                <li><strong>Economic Empowerment:</strong> Offer a payment alternative without the high costs associated with traditional banking fees.</li>
+            </ul>
+        </section>
 
-        <!-- Send/Receive Menu -->
-       <p> <section>
-                    
-        <div class="menu-container">
-            <div class="menu-item">
-         <img src="send.png" alt="Send Icon">   
-            <button id="sendBtn">Sending</button></div>
-            <div>
-              <div class="menu-item">
-         <img src="receive.png" alt="Send Icon">  
-            <button id="receiveBtn">Receiving</button>
-        </div>
-        </section></p>
-
-        <!-- Send TanaCoin Form -->
-        <div id="sendContainer" class="hidden">
-    <h3>Send <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h3>
-    <p>Ally TNC <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet address you can send this Coin</p>
-    <form id="sendForm">
-        <label for="walletAddress">TNC Wallet Address:</label>
-        <input type="text" id="walletAddress" placeholder="Ally TanaCoin Wallet Address" required>
-
-        <label for="amount">TNC Amount (in dollars):</label>
-        <div class="amount-container">
-            <input type="number" id="amount" placeholder="$0.00" required>
-            <span id="coinEquivalent">TNC: 0.00000</span>
-        </div>
-
-        <label for="password">Your Login Password:</label>
-        <input type="password" id="password" placeholder="Your password" required>
-
-        <button type="submit">Submit</button>
-    </form>
-</div>
-
-        <!-- Receive Wallet Address -->
-        <div id="receiveContainer" class="hidden">
-            <h3>Copy Your Wallet Address</h3>
-            <p id="walletAddressDisplay"></p>
-            <button id="copyBtn">Copy Wallet Address</button>
-            <p style="color: blue;" id="copyMessage"></p>
-        </div>
-
-        <!-- Transaction History -->
        <section>
-           <p>
-        <div class="menu-container">
-    <div class="menu-item">
-        <img src="history1.png" alt="History Receive Icon">
-        <button id="historyReceiveBtn">History Receive</button>
+    <h2>3. Technology Behind <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h2>
+    <p><strong><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></strong> is built on the <strong>Ethereum blockchain</strong> using the ERC-20 token standard, allowing it to integrate with Ethereum's platform, use <strong>smart contracts</strong>, and connect with major wallets like <strong>MetaMask</strong> and <strong>Trust Wallet</strong>.</p>
+    <h3>Smart Contracts</h3>
+    <p><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> uses <strong>smart contracts</strong> to ensure all transactions are transparent and follow predetermined rules, making it impossible to alter or reverse transactions.</p>
+    <h3>Security Mechanism</h3>
+    <p><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> operates on a <strong>Proof of Stake (PoS)</strong> system, allowing coin holders to benefit through staking. This reduces mining costs and ensures secure transaction processing.</p>
+</section>
+
+<section>
+    <h2>4. Coin Supply and Distribution</h2>
+    <p><strong>Total Supply:</strong> 100,000,000 TNC</p>
+    <ul>
+        <li><strong>ICO Sale (Initial Coin Offering):</strong> 40%</li>
+        <li><strong>Development Team:</strong> 20%</li>
+        <li><strong>Liquidity Pool:</strong> 10%</li>
+        <li><strong>Community Incentives:</strong> 15%</li>
+        <li><strong>Future Development:</strong> 10%</li>
+        <li><strong>Charity & Social Impact:</strong> 5%</li>
+    </ul>
+    <p>This structure ensures enough supply for investors and users while reserving coins for ongoing project and community development.</p>
+</section>
+
+<section>
+    <h2>5. Investment Staking</h2>
+    <p><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> will offer staking rewards for coin holders based on the amount they stake. This allows users to earn from holding their coins and encourages long-term retention.</p>
+    <ul>
+        <li><strong>Staking Rewards:</strong> <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> holders earn rewards based on the amount they stake.</li>
+        <li><strong>Staking Period:</strong> Staking periods range from 6 months to 1 year.</li>
+    </ul>
+</section>
+
+<section>
+    <h2>6. Use Cases for <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h2>
+    <h3>Payments</h3>
+    <p><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> aims to be a useful payment tool for businesses and institutions, particularly for exchanging goods and services. It can be used in digital marketplaces similarly to fiat currency but without high transaction fees.</p>
+    <h3>Small Business Support</h3>
+    <p><strong><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></strong> will support small businesses with payment processing and provide access to those without bank services, helping reduce the banking challenges in underbanked regions.</p>
+    <h3>Crypto Market (Exchange)</h3>
+    <p><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> will be available on major exchanges like <strong>Binance</strong> and <strong>Coinbase</strong>, allowing it to be traded alongside other major coins.</p>
+</section>
+
+<section>
+    <h2>7. <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mining & Miner Incentives</h2>
+    <p><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> uses <strong>Proof of Stake</strong> (PoS) instead of <strong>Proof of Work</strong> (PoW), reducing energy use and simplifying mining. This allows coin holders to mine through staking without costly equipment, with rewards based on their TanaCoin holdings.</p>
+</section>
+
+<section>
+    <h2>8. <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Trading</h2>
+    <p><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> can be listed on major crypto exchanges, meeting all exchange requirements. It aims to be widely accessible, making trading easy.</p>
+</section>
+
+<section>
+    <h2>9. Holder Rewards</h2>
+    <p><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> holders receive rewards through staking, encouraging long-term holding. Additionally, <strong>buy-back programs</strong> reduce coin supply in the market, increasing its value.</p>
+</section>
+
+<section>
+    <h2>10. Future of <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h2>
+    <p><strong>Future developments for TanaCoin</strong> include:</p>
+    <ul>
+        <li>Expanding merchant acceptance of <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>.</li>
+        <li>Creating a marketplace for easy payments with TanaCoin.</li>
+        <li>Collaborating with tech developers to expand <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i>’s use.</li>
+    </ul>
+</section>
+
+        <section>
+            <h2>Conclusion</h2>
+            <p><strong><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></strong> aims to offer a new path in commerce and support the economy, especially in low-income regions. Its blockchain technology and staking system provide holders with secure, long-term benefits.</p>
+            <p>For more information or investment inquiries, contact us: <a href="mailto:minetanacoin@gmail.com">minetanacoin@gmail.com</a></p>
+        </section>
     </div>
-    
-    <div class="menu-item">
-        <img src="history2.png" alt="History Send Icon">
-        <button id="historySendBtn">History Sending</button>
-    </div>
-</div>
-</section></p>
-    
-
-        <!-- History Containers -->
-        <div id="historyReceiveContainer" class="hidden">
-            <h3>Received TanaCoin History</h3>
-            <div id="receivedHistoryList"></div>
-        </div>
-
-        <div id="historySendContainer" class="hidden">
-            <h3>Sent TanaCoin History</h3>
-            <div id="sentHistoryList"></div> 
-        </div>
-         <div class="container">
-        <h1> <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> (TNC) Information</h1>
-        <p class="description">
-            target price for<span class="highlight">TanaCoin (TNC) </span> is $5, but it can go higher or lower depending on market conditions. As more people mine and use TNC coins, its value is expected to rise significantly, much like <span class="highlight">Bitcoin</span>. 
-            y inviting others to join the TNC mining community, you can help grow the network and increase the potential earnings for everyone involved.
-
-Take advantage of this opportunity—mine TNC coins today and watch your earnings grow with the network!!
-        </p>   
-            <img src="pm.png" style="width: 100%; height: 50%;">
-    </div>
-    </div>
-<script>
-    // Samun maballin da akwatinan da suka dace
-const sendBtn = document.getElementById('sendBtn');
-const receiveBtn = document.getElementById('receiveBtn');
-const historyReceiveBtn = document.getElementById('historyReceiveBtn');
-const historySendBtn = document.getElementById('historySendBtn');
-
-const sendContainer = document.getElementById('sendContainer');
-const receiveContainer = document.getElementById('receiveContainer');
-const historyReceiveContainer = document.getElementById('historyReceiveContainer');
-const historySendContainer = document.getElementById('historySendContainer');
-const receivedHistoryList = document.getElementById('receivedHistoryList');
-const sentHistoryList = document.getElementById('sentHistoryList');
-
-// Aikin boye dukkan akwatinan
-function hideAllContainers() {
-    sendContainer.classList.add('hidden');
-    receiveContainer.classList.add('hidden');
-    historyReceiveContainer.classList.add('hidden');
-    historySendContainer.classList.add('hidden');
-}
-
-function checkTransactionHistory() {
-    if (!receivedHistoryList.innerHTML.trim()) {
-        receivedHistoryList.innerHTML = '<p style="color:red;">Not Transactions History</p>';
-    }
-    if (!sentHistoryList.innerHTML.trim()) {
-        sentHistoryList.innerHTML = '<p style="color:red;">Not Transactions History</p>';
-    }
-}
-
-sendBtn.addEventListener('click', () => {
-    if (sendContainer.classList.contains('hidden')) {
-        hideAllContainers();
-        sendContainer.classList.remove('hidden');
-    } else {
-        sendContainer.classList.add('hidden');
-    }
-});
-
-receiveBtn.addEventListener('click', () => {
-    if (receiveContainer.classList.contains('hidden')) {
-        hideAllContainers();
-        receiveContainer.classList.remove('hidden');
-    } else {
-        receiveContainer.classList.add('hidden');
-    }
-});
-
-historyReceiveBtn.addEventListener('click', () => {
-    if (historyReceiveContainer.classList.contains('hidden')) {
-        hideAllContainers();
-        historyReceiveContainer.classList.remove('hidden');
-        checkTransactionHistory();
-    } else {
-        historyReceiveContainer.classList.add('hidden');
-    }
-});
-
-historySendBtn.addEventListener('click', () => {
-    if (historySendContainer.classList.contains('hidden')) {
-        hideAllContainers();
-        historySendContainer.classList.remove('hidden');
-        checkTransactionHistory();
-    } else {
-        historySendContainer.classList.add('hidden');
-    }
-});
-</script>
-        <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, get, set, update, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-
-    // Firebase Config
-    const firebaseConfig = {
-        apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
-        authDomain: "tanacoin-mine.firebaseapp.com",
-        databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/",
-        projectId: "tanacoin-mine",
-        storageBucket: "tanacoin-mine.appspot.com",
-        messagingSenderId: "550307127686",
-        appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
-        measurementId: "G-596X16VEGX"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const auth = getAuth();
-
-    // DOM Elements for displaying names
-    const firstNameDisplay = document.getElementById('firstNameDisplay');
-    const lastNameDisplay = document.getElementById('lastNameDisplay');
-
-    // Load user information
-    function loadUserInfo(uid) {
-        const userRef = ref(db, `users/${uid}`);
-        get(userRef).then(snapshot => {
-            const data = snapshot.val();
-            if (data) {
-                firstNameDisplay.textContent = data.firstName;
-                lastNameDisplay.textContent = data.lastName;
-            }
-        }).catch(console.error);
-    }
-
-    // Fetch user data and update balance
-    async function getUserData(uid) {
-        const userRef = ref(db, `users/${uid}`);
-        const userSnap = await get(userRef);
-        if (userSnap.exists()) {
-            const userData = userSnap.val();
-            const walletAddress = userData.walletAddress || "Not available";
-            const userBalance = parseFloat(userData.userBalance) || 0;
-
-            const pricePerTNC = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
-            const dollarTotal = (userBalance * pricePerTNC).toFixed(2);
-
-            document.getElementById('userBalance').textContent = `${userBalance.toFixed(5)} TNC`;
-            document.getElementById('dollar_total').textContent = `$${dollarTotal}`;
-            document.getElementById('dollar_totalone').textContent = `$${dollarTotal}`;
-            document.getElementById('walletAddressDisplay').textContent = walletAddress;
-        }
-    }
-
-    // Fetch recipient's name using wallet address
-    async function getRecipientName(walletAddress) {
-        const recipientRef = ref(db, `users/${walletAddress}`);
-        const recipientSnap = await get(recipientRef);
-        if (recipientSnap.exists()) {
-            const recipientData = recipientSnap.val();
-            return `${recipientData.firstName} ${recipientData.lastName}`;
-        } else {
-            throw new Error("Recipient not found!");
-        }
-    }
-
-    const TanaCoinPrice = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
-
-    // Calculate TanaCoin equivalent
-    document.getElementById('amount').addEventListener('input', function () {
-        const amountInDollars = parseFloat(document.getElementById('amount').value);
-        if (isNaN(amountInDollars) || amountInDollars <= 0) {
-            document.getElementById('coinEquivalent').textContent = 'TNC: 0.00000';
-            return;
-        }
-
-        const equivalentTNC = (amountInDollars / TanaCoinPrice).toFixed(5);  
-        document.getElementById('coinEquivalent').textContent = `TNC: ${equivalentTNC}`;
-    });
-
-    // Send TanaCoin
-    document.getElementById('sendForm').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const walletAddress = document.getElementById('walletAddress').value;
-        const amount = parseFloat(document.getElementById('amount').value);
-        const password = document.getElementById('password').value;
-
-        const user = auth.currentUser;
-        if (!user) {
-            alert("User not logged in!");
-            return;
-        }
-
-        const senderRef = ref(db, `users/${user.uid}`);
-        const snapshot = await get(senderRef);
-
-        if (snapshot.exists()) {
-            const senderData = snapshot.val();
-            if (password !== senderData.password) {
-                alert('Password is incorrect!');
-                return;
-            }
-
-            const amountInTNC = amount / TanaCoinPrice;
-            if (senderData.userBalance < amountInTNC) {
-                alert('Insufficient Balance!');
-                return;
-            }
-
-            try {
-                const recipientRef = ref(db, `users/${walletAddress}`);
-                const recipientSnapshot = await get(recipientRef);
-                if (!recipientSnapshot.exists()) {
-                    alert("Recipient not found!");
-                    return;
-                }
-
-                const recipientData = recipientSnapshot.val();
-                const recipientName = `${recipientData.firstName} ${recipientData.lastName}`;
-                const confirmSend = confirm(`Are you sure you want to send ${amountInTNC.toFixed(5)} TNC to ${recipientName} (${walletAddress})?`);
-                if (!confirmSend) return;
-
-       // Update balances
-                const newSenderBalance = senderData.userBalance - amountInTNC;
-                const newRecipientBalance = (recipientData.userBalance || 0) + amountInTNC;
-
-                await update(senderRef, { userBalance: newSenderBalance });
-                await update(recipientRef, { userBalance: newRecipientBalance });
-
-                alert('Transaction successful!');
-                loadUserInfo(user.uid);
-                getUserData(user.uid);
-            } catch (error) {
-                console.error("Transaction error:", error);
-                alert("Transaction failed!");
-            }
-        }
-    });        
-
-    // Copy wallet address
-    document.getElementById('copyBtn').addEventListener('click', () => {
-        const walletAddress = document.getElementById('walletAddressDisplay').textContent;
-        navigator.clipboard.writeText(walletAddress).then(() => {
-            document.getElementById('copyMessage').textContent = "Copy Your Wallet Address successfully!";
-        });
-    });
-
-    // Transaction history
-    async function addToSendHistory(senderId, recipientAddress, amount, recipientName) {
-        const sendHistoryRef = ref(db, `sendHistory/${senderId}`);
-        await push(sendHistoryRef, {
-            recipient: recipientAddress,
-            amount,
-            recipientName,
-            timestamp: new Date().toISOString()
-        });
-    }
-
-    async function addToReceivedHistory(recipientAddress, senderId, amount, senderName) {
-        const receivedHistoryRef = ref(db, `receivedHistory/${recipientAddress}`);
-        await push(receivedHistoryRef, {
-            sender: senderId,
-            amount,
-            senderName,
-            timestamp: new Date().toISOString()
-        });
-    }
-
-    async function getSendHistory(uid) {
-        const sendHistoryRef = ref(db, `sendHistory/${uid}`);
-        const snapshot = await get(sendHistoryRef);
-        if (snapshot.exists()) {
-            const history = snapshot.val();
-            const sendHistoryList = document.getElementById('sentHistoryList');
-            sendHistoryList.innerHTML = "";
-            for (const key in history) {
-                const { recipient, amount, recipientName, timestamp } = history[key];
-                const historyItem = document.createElement('div');
-                historyItem.textContent = `Sent ${amount} TNC to ${recipientName} (${recipient}) on ${timestamp}`;
-                sendHistoryList.appendChild(historyItem);
-            }
-        }
-    }
-
-    async function getReceivedHistory(walletAddress) {
-        const receivedHistoryRef = ref(db, `receivedHistory/${walletAddress}`);
-        const snapshot = await get(receivedHistoryRef);
-        if (snapshot.exists()) {
-            const history = snapshot.val();
-            const receivedHistoryList = document.getElementById('receivedHistoryList');
-            receivedHistoryList.innerHTML = "";
-            for (const key in history) {
-                const { sender, amount, senderName, timestamp } = history[key];
-                const historyItem = document.createElement('div');
-                historyItem.textContent = `Received ${amount} TNC from ${senderName} (${sender}) on ${timestamp}`;
-                receivedHistoryList.appendChild(historyItem);
-            }
-        }
-    }
-onAuthStateChanged(auth, (user) => {
-        if (user) {
-            loadUserInfo(user.uid);
-            getSendHistory(user.uid);
-            getUserData(user.uid);
-        } else {
-            alert("No user logged in. Please log in first.");
-        }
-    });
-    
-</script>
 </body>
 </html>
