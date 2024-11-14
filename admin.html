@@ -20,7 +20,7 @@
         }
         table {
             width: 85%;
-            margin: 0 auto; /* Centers the table */
+            margin: 0 auto;
             border-collapse: collapse;
             margin-top: 20px;
             font-weight: bold;
@@ -84,6 +84,7 @@
                         <th>Email</th>
                         <th>Username</th>
                         <th>TanaCoin</th>
+                        <th>Country</th>
                     </tr>
                 </thead>
                 <tbody id="user-table">
@@ -109,7 +110,7 @@
                     </tr>
                 </thead>
                 <tbody id="notification-table">
-                    <!-- Withdrawal notifications will be dynamically loaded here -->
+                    <!-- Notifications will be loaded here -->
                 </tbody>
             </table>
         </div>
@@ -118,7 +119,7 @@
     <script type="module">
     // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     // Firebase config
@@ -143,12 +144,17 @@
         const password = document.getElementById('admin-password').value;
         const adminEmails = ["minetanacoin@gmail.com", "harunalawali5522@gmail.com"];
 
-        if (password === 'haruna66') {
+        if (password === 'Haruna66') {
             const email = prompt("Enter admin email:");
             if (adminEmails.includes(email)) {
-                document.getElementById('control-panel').classList.remove('hidden');
-                document.getElementById('password-section').classList.add('hidden');
-                loadUserData();
+                signInWithEmailAndPassword(auth, email, password)
+                    .then(() => {
+                        document.getElementById('control-panel').classList.remove('hidden');
+                        document.getElementById('password-section').classList.add('hidden');
+                        loadUserData();
+                        loadNotifications();
+                    })
+                    .catch(error => alert(`Authentication Error: ${error.message}`));
             } else {
                 alert('Unauthorized email address!');
             }
@@ -179,6 +185,7 @@
                         <td>${data.email}</td>
                         <td>${data.username}</td>
                         <td>${data.userBalance}</td>
+                        <td>${data.country}</td>
                     </tr>
                 `;
             }
@@ -189,19 +196,18 @@
     }
 
     // Send message to all users
-    document.getElementById('send-btn').addEventListener('click', sendMessage);
-    function sendMessage() {
+    document.getElementById('send-btn').addEventListener('click', () => {
         const message = document.getElementById('send-message').value;
         if (message) {
-            alert(`Message sent to all users: ${message}`); // Simulated message sending
-            document.getElementById('send-message').value = ''; // Clear the textarea
+            alert(`Message sent to all users: ${message}`);
+            document.getElementById('send-message').value = '';
         } else {
             alert('Please type a message.');
         }
-    }
+    });
 
     // Load withdrawal notifications
-    async function loadNotifications() {
+    function loadNotifications() {
         const notificationTable = document.getElementById('notification-table');
         const notificationsRef = ref(database, 'withdrawals');
         onValue(notificationsRef, (snapshot) => {
@@ -219,9 +225,6 @@
             }
         });
     }
-
-    // Call the function to load notifications after login
-    document.getElementById('login-btn').addEventListener('click', loadNotifications);
-</script>
+    </script>
 </body>
 </html>
