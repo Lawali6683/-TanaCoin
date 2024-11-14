@@ -204,13 +204,36 @@ P{
     
 }
 
+.amount-container {
+    display: flex;
+    align-items: center;
+}
+
+#amount {
+    width: 100px;
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 10px;
+    border: 2px solid #333;
+}
+
+#coinEquivalent {
+    font-size: 19px;
+    font-weight: bold;
+    color: #4A90E2;
+}
+#walletAddressDisplay{
+    Font-weight:  bold;
+    Font-size: 11px;
+}
     </style>
 </head>
 <body>
     <i id="TanaCoinPrice" style="display: none;">$5.00</i>
 
     <div class="wallet-container">
-                       <h2><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet</h2>        <span class="pay"     id="firstNameDispay lastNameDispay"></span>
+                       <h2><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet</h2>        <span class="pay" id="firstNameDisplay"></span> <span id="lastNameDisplay"></span>
+
                             
         <!-- Display user balance -->
         <div class="balance-container">
@@ -245,21 +268,24 @@ P{
 
         <!-- Send TanaCoin Form -->
         <div id="sendContainer" class="hidden">
-            <h3>Send <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h3>
-            <p>Ally TNC <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wellet address you can send This Coin</p>
-            <form id="sendForm">
-                <label for="walletAddress">TNC Wallet Address:</label>
-                <input type="text" id="walletAddress" required>
-                
-                <label for="amount">TNC Amount:</label>
-                <input type="number" id="amount" required>
-                
-                <label for="password">Your Log in Password:</label>
-                <input type="password" id="password" required>
-                
-                <button type="submit">Submit</button>
-            </form>
+    <h3>Send <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h3>
+    <p>Ally TNC <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet address you can send this Coin</p>
+    <form id="sendForm">
+        <label for="walletAddress">TNC Wallet Address:</label>
+        <input type="text" id="walletAddress" placeholder="Ally TanaCoin Wallet Address" required>
+
+        <label for="amount">TNC Amount (in dollars):</label>
+        <div class="amount-container">
+            <input type="number" id="amount" placeholder="$0.00" required>
+            <span id="coinEquivalent">TNC: 0.00000</span>
         </div>
+
+        <label for="password">Your Login Password:</label>
+        <input type="password" id="password" placeholder="Your password" required>
+
+        <button type="submit">Submit</button>
+    </form>
+</div>
 
         <!-- Receive Wallet Address -->
         <div id="receiveContainer" class="hidden">
@@ -401,41 +427,34 @@ historySendBtn.addEventListener('click', () => {
 const firstNameDisplay = document.getElementById('firstNameDispay');
 const lastNameDisplay = document.getElementById('lastNameDispay');
 
-function loadUserInfo() {
-     localStorage
-    const firstName = localStorage.getItem('firstName');
-    const lastName = localStorage.getItem('lastName');
+// Load user information
+    function loadUserInfo() {
+        const firstName = localStorage.getItem('firstName');
+        const lastName = localStorage.getItem('lastName');
 
-    if (firstName && lastName) {       
-        firstNameDisplay.innerText = firstName;
-        lastNameDisplay.innerText = lastName;
-    } else {
-       
-        localStorage
-        const userRef = firebase.database().ref('users/uid'); 
-        userRef.once('value')
-            .then(snapshot => {
-                const userData = snapshot.val();
-                if (userData) {
-                    // Store in localStorage for future
-                    localStorage.setItem('firstName', userData.firstName);
-                    localStorage.setItem('lastName', userData.lastName);
-                    // Display on page
-                    firstNameDisplay.innerText = userData.firstName;
-                    lastNameDisplay.innerText = userData.lastName;
-                } else {
-                    firstNameDisplay.innerText = "Unknown";
-                    lastNameDisplay.innerText = "User";
+        if (firstName && lastName) {
+            document.getElementById('firstNameDisplay').textContent = user.firstName;
+            
+document.getElementById('lastNameDisplay').textContent = user.lastName;
+
+        } else {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    const userRef = ref(db, `users/${user.uid}`);
+                    get(userRef).then(snapshot => {
+                        const data = snapshot.val();
+                        if (data) {
+                            localStorage.setItem('firstName', data.firstName);
+                            localStorage.setItem('lastName', data.lastName);
+                            document.getElementById('firstNameDisplay').innerText = data.firstName;
+                            document.getElementById('lastNameDisplay').innerText = data.lastName;
+                        }
+                    }).catch(console.error);
                 }
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
-                firstNameDisplay.innerText = "Unknown";
-                lastNameDisplay.innerText = "User";
             });
+        }
     }
-}
-
+    
 document.addEventListener('DOMContentLoaded', loadUserInfo);
 
 
@@ -479,13 +498,27 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
             throw new Error("Recipient not found!");
         }
     }
+    
+    const TanaCoinPrice = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
 
+// Calculate TanaCoin equivalent
+    document.getElementById('amount').addEventListener('input', function () {
+        const amountInDollars = parseFloat(document.getElementById('amount').value);
+        if (isNaN(amountInDollars) || amountInDollars <= 0) {
+            document.getElementById('coinEquivalent').textContent = 'TNC: 0.00000';
+            return;
+        }
+
+        const equivalentTNC = (amountInDollars / TanaCoinPrice).toFixed(5);  
+        document.getElementById('coinEquivalent').textContent = `TNC: ${equivalentTNC}`;
+    });
+        
     // Send TanaCoin
     document.getElementById('sendForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const walletAddress = document.getElementById('walletAddress').value;
-        const amount = parseInt(document.getElementById('amount').value);
+        const amount = parseFloat(document.getElementById('amount').value);
         const password = document.getElementById('password').value;
 
         const user = auth.currentUser;
@@ -495,58 +528,55 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
         }
 
         const senderRef = ref(db, `users/${user.uid}`);
-        const senderSnap = await get(senderRef);
-        if (senderSnap.exists()) {
-            const senderData = senderSnap.val();
+        const snapshot = await get(senderRef);
 
+        if (snapshot.exists()) {
+            const senderData = snapshot.val();
             if (password !== senderData.password) {
                 alert('Password is incorrect!');
                 return;
             }
 
-            if (senderData.userBalance < amount) {
+            const amountInTNC = amount / TanaCoinPrice;
+            if (senderData.userBalance < amountInTNC) {
                 alert('Insufficient Balance!');
                 return;
             }
 
             try {
-                const recipientName = await getRecipientName(walletAddress);
-                const confirmation = confirm(`Are you sure to send ${amount} TNC to ${recipientName} (${walletAddress})?`);
-                if (!confirmation) return;
-
-                // Update sender's balance
-                const newBalance = senderData.userBalance - amount;
-                await update(senderRef, { userBalance: newBalance });
-                localStorage.setItem('userBalance', newBalance);
-
-                // Update recipient's balance
                 const recipientRef = ref(db, `users/${walletAddress}`);
-                const recipientSnap = await get(recipientRef);
-                if (recipientSnap.exists()) {
-                    const recipientData = recipientSnap.val();
-                    const recipientNewBalance = (recipientData.userBalance || 0) + amount;
-                    await update(recipientRef, { userBalance: recipientNewBalance });
+                const recipientSnapshot = await get(recipientRef);
+                if (!recipientSnapshot.exists()) {
+                    alert("Recipient not found!");
+                    return;
                 }
 
-                // Save transaction to history
-                const transactionId = `txn_${Date.now()}`;
-                const transactionRef = ref(db, `transactions/${transactionId}`);
-                await set(transactionRef, {
-                    sender: user.uid,
-                    recipient: walletAddress,
-                    amount,
-                    timestamp: new Date().toISOString(),
-                    recipientName
-                });
+                const recipientData = recipientSnapshot.val();
+                const recipientName = `${recipientData.firstName} ${recipientData.lastName}`;
+                const confirmSend = confirm(`Are you sure you want to send ${amountInTNC.toFixed(5)} TNC to ${recipientName} (${walletAddress})?`);
+                if (!confirmSend) return;
 
-                alert(`TanaCoin sending successful to ${recipientName}! New Balance: ${newBalance} TNC`);
+                // Update balances
+                const newSenderBalance = senderData.userBalance - amountInTNC;
+                const newRecipientBalance = (recipientData.userBalance || 0) + amountInTNC;
+
+                await update(senderRef, { userBalance: newSenderBalance });
+                await update(recipientRef, { userBalance: newRecipientBalance });
+
+                // Update localStorage balance
+                localStorage.setItem('userBalance', newSenderBalance);
+
+                alert('Transaction successful!');
+                loadUserInfo();
                 getUserData(user.uid);
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                console.error("Transaction error:", error);
+                alert("Transaction failed!");
             }
         }
     });
-
+    
+ 
     // Copy wallet address
     document.getElementById('copyBtn').addEventListener('click', () => {
         const walletAddress = document.getElementById('walletAddressDisplay').textContent;
@@ -555,14 +585,75 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
         });
     });
 
-    // Initialize user data when user is logged in
-    onAuthStateChanged(auth, (user) => {
+
+
+    //history send and receive 
+    
+    async function addToSendHistory(senderId, recipientAddress, amount, recipientName) {
+        const sendHistoryRef = ref(db, `sendHistory/${senderId}`);
+        await push(sendHistoryRef, {
+            recipient: recipientAddress,
+            amount,
+            recipientName,
+            timestamp: new Date().toISOString()
+        });
+    }
+
+    async function addToReceivedHistory(recipientAddress, senderId, amount, senderName) {
+        const receivedHistoryRef = ref(db, `receivedHistory/${recipientAddress}`);
+        await push(receivedHistoryRef, {
+            sender: senderId,
+            amount,
+            senderName,
+            timestamp: new Date().toISOString()
+        });
+    }
+
+    async function getSendHistory(uid) {
+        const sendHistoryRef = ref(db, `sendHistory/${uid}`);
+        const snapshot = await get(sendHistoryRef);
+        if (snapshot.exists()) {
+            const history = snapshot.val();
+            const sendHistoryList = document.getElementById('sentHistoryList');
+            sendHistoryList.innerHTML = "";
+            for (const key in history) {
+                const { recipient, amount, recipientName, timestamp } = history[key];
+                const historyItem = document.createElement('div');
+                historyItem.textContent = `Sent ${amount} TNC to ${recipientName} (${recipient}) on ${timestamp}`;
+                sendHistoryList.appendChild(historyItem);
+            }
+        } else {
+            console.log("No Send History Found.");
+        }
+    }
+
+    async function getReceivedHistory(walletAddress) {
+        const receivedHistoryRef = ref(db, `receivedHistory/${walletAddress}`);
+        const snapshot = await get(receivedHistoryRef);
+        if (snapshot.exists()) {
+            const history = snapshot.val();
+            const receivedHistoryList = document.getElementById('receivedHistoryList');
+            receivedHistoryList.innerHTML = "";
+            for (const key in history) {
+                const { sender, amount, senderName, timestamp } = history[key];
+                const historyItem = document.createElement('div');
+                historyItem.textContent = `Received ${amount} TNC from ${senderName} (${sender}) on ${timestamp}`;
+                receivedHistoryList.appendChild(historyItem);
+            }
+        } else {
+            console.log("No Received History Found.");
+        }
+    }
+       onAuthStateChanged(auth, (user) => {
         if (user) {
-            getUserData(user.uid);
+            loadUserInfo();
+            getSendHistory(user.uid);
+            getReceivedHistory(localStorage.getItem('walletAddress'));
         } else {
             alert("No user logged in. Please log in first.");
         }
     });
+      
 </script>
 </body>
 </html>
