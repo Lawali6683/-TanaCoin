@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invite Friends - TanaCoin</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Invite Friends - TanaCoin</title>    
     <style>
         /* Basic Styles */
 body {
@@ -33,7 +32,7 @@ header {
     padding: 0px 0px;
     background-color: rgba(255, 255, 255, 0.85); 
     position: relative;
-    z-index: 1000; 
+    z-index: 100;
     width: 314px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     border-bottom: 3px solid #ddd;
@@ -231,7 +230,7 @@ th, td {
         <p class="fas8"><i style="color:red;">Tana</i><i style="color:green;">Coin</i><i style="color:blue">
             ...</i></p>
     </div>
-    <i id="main-content" style="display:none;">
+    
 <header>
     
 <video autoplay muted loop id="bgVideo">
@@ -241,7 +240,7 @@ th, td {
    <center> <span class="use" id="userBalance">0.00000</span></center>
     <div class="profile-container">
         <input type="file" id="upload" style="display:none;" accept="image/*" />
-        <img id="avatar" src="avatar.png" alt="User Avatar" class="avatar" />
+       <img id="avatar" src="avatar.png" alt="User Avatar" class="avatar" />
         <h3 id="username">Username</h3>
     </div>
 </header>
@@ -286,12 +285,11 @@ th, td {
         </tbody>
     </table>
 </div>
- <script>
+<script>
         // Loading Screen Logic
       // Nemi dukkan bidiyon
 const videoElements = Array.from(document.querySelectorAll('video'));
 
-// Nemi loading-screen idan ya wanzu
 const loadingScreen = document.getElementById('loading-screen');
 
 
@@ -319,10 +317,40 @@ if (loadingScreen) {
 }
 
     </script>
+    <script>        
+const avatar = document.getElementById("avatar");
+const uploadInput = document.getElementById("upload");
+
+const savedAvatar = localStorage.getItem("avatar");
+if (savedAvatar) {
+  avatar.src = savedAvatar; 
+} else {
+  avatar.src = "avatar.png"; 
+}
+
+avatar.addEventListener("click", () => {
+  uploadInput.click(); 
+});
+
+uploadInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const newAvatar = e.target.result;
+      avatar.src = newAvatar; 
+      localStorage.setItem("avatar", newAvatar); 
+    };
+
+    reader.readAsDataURL(file); 
+  }
+});
+    </script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+  import { getDatabase, ref, set, get, update, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
   // Firebase configuration
   const firebaseConfig = {
@@ -333,7 +361,7 @@ if (loadingScreen) {
     storageBucket: "tanacoin-mine.appspot.com",
     messagingSenderId: "550307127686",
     appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
-    measurementId: "G-596X16VEGX"
+    measurementId: "G-596X16VEGX",
   };
 
   // Initialize Firebase
@@ -341,88 +369,136 @@ if (loadingScreen) {
   const auth = getAuth(app);
   const db = getDatabase(app);
 
-  // Get the elements
-  const avatar = document.getElementById('avatar');
-  const uploadInput = document.getElementById('upload');
-  const usernameDisplay = document.getElementById('username');
-  const userBalance = document.getElementById('userBalance');
-  const referralLink = document.getElementById('referralLink');
+  // DOM Elements
+  const usernameDisplay = document.getElementById("username");
+  const userBalance = document.getElementById("userBalance");
+  const referralLink = document.getElementById("referralLink");
+  const copyButton = document.getElementById("copyButton");
+  const referralTable = document.getElementById("referralTable");
 
-  // Load avatar from local storage if available
-  if (localStorage.getItem('avatar')) {
-    avatar.src = localStorage.getItem('avatar');
-  }
+  let currentUserUid = null;
 
   // Handle user authentication state
   onAuthStateChanged(auth, async (user) => {
     if (user) {
-      const uid = user.uid;
+      currentUserUid = user.uid;
+      const userRef = ref(db, `users/${currentUserUid}`);
 
-      // Get user data from Realtime Database
-      const userRef = ref(db, `users/${uid}`);
+      // Fetch or initialize user data
       const userSnapshot = await get(userRef);
-      if (userSnapshot.exists()) {
-        const data = userSnapshot.val();
-        
-        // Display username and set localStorage
-        usernameDisplay.textContent = data.username || "User";
-        localStorage.setItem('username', data.username || "User");
-
-        // Display referral link
-        referralLink.value = `https://tana-coin.vercel.app/referral?user=${usernameDisplay.textContent}${uid}`;
-
-        // Update balance and bonuses
-        updateBalance(uid);
-      } else {
-        console.error("User data does not exist in database.");
+      if (!userSnapshot.exists()) {
+        const initialData = {
+          username: user.email.split("@")[0],
+          balance: 0.0,
+          referralEarnings: 0.0,
+          friendEarnings: 0.0,
+          referralCount: 0,
+        };
+        await set(userRef, initialData);
+        console.log("User data initialized in database.");
       }
+
+      // Display user data
+      const userData = (await get(userRef)).val();
+      usernameDisplay.textContent = userData.username || "User";
+      userBalance.textContent = (userData.balance || 0).toFixed(5);
+
+      // Generate referral link
+      referralLink.value = `https://tana-coin.vercel.app/referral?user=${userData.username}&ref=${currentUserUid.slice(0, 6)}`;
+
+      // Load referral data
+      await loadReferralData();
     } else {
       console.error("User is not authenticated.");
     }
   });
 
-  // Set up referral link
-  document.getElementById('copyButton').addEventListener('click', () => {
+  // Copy referral link to clipboard
+  copyButton.addEventListener("click", () => {
     referralLink.select();
-    document.execCommand('copy');
-    document.getElementById('copySuccess').classList.remove('hidden');
+    document.execCommand("copy");
+    alert("Referral link copied!");
   });
 
-  // Update profile picture
-  avatar.addEventListener('click', () => {
-    uploadInput.click();
-  });
-
-  uploadInput.addEventListener('change', function () {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function () {
-        avatar.src = reader.result;
-        localStorage.setItem('avatar', reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // Function to calculate bonuses and update user balance
-  async function updateBalance(uid) {
+  // Add TanaCoin to user balance
+  async function addTanaCoin(uid, amount) {
     const userRef = ref(db, `users/${uid}`);
     const userSnapshot = await get(userRef);
     if (userSnapshot.exists()) {
-      const data = userSnapshot.val();
-      let balance = data.balance || 0;
-      const referralBonus = 3; // Fixed referral bonus
-      const referralPercentage = 0.1 * (data.referralEarnings || 0);
-      const friendPercentage = 0.05 * (data.friendEarnings || 0);
+      const userData = userSnapshot.val();
+      const newBalance = (userData.balance || 0) + amount;
 
-      balance += referralBonus + referralPercentage + friendPercentage;
-      
-      // Update balance in Realtime Database
-      await update(userRef, { balance });
-      
-      // Display balance
-      userBalance.textContent = balance.toFixed(5);
+      await update(userRef, { balance: newBalance });
+      userBalance.textContent = newBalance.toFixed(5);
+      console.log(`Added ${amount} TanaCoin to user ${uid}`);
+    } else {
+      console.error("User not found in database.");
+    }
+  }
+
+  // Handle referral signup and bonuses
+  async function handleReferralSignup() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrerUid = urlParams.get("ref");
+
+    if (referrerUid && currentUserUid) {
+      const userRef = ref(db, `users/${currentUserUid}`);
+      const snapshot = await get(userRef);
+
+      if (!snapshot.exists()) {
+        // Initialize user and assign referral
+        await set(userRef, {
+          balance: 2.0,
+          referredBy: referrerUid,
+        });
+
+        // Update referrer data
+        const referrerRef = ref(db, `users/${referrerUid}`);
+        const referrerData = (await get(referrerRef)).val() || {};
+
+        await update(referrerRef, {
+          referralEarnings: (referrerData.referralEarnings || 0) + 2.0,
+        });
+
+        await addReferralBonus(referrerUid, 2.0, "Direct Referral Bonus");
+      }
+    }
+  }
+
+  // Add referral bonus
+  async function addReferralBonus(referrerUid, amount, type) {
+    const referrerRef = ref(db, `users/${referrerUid}`);
+    const referrerSnapshot = await get(referrerRef);
+
+    if (referrerSnapshot.exists()) {
+      const referrerData = referrerSnapshot.val();
+      const newBalance = (referrerData.balance || 0) + amount;
+
+      await update(referrerRef, { balance: newBalance });
+      console.log(`${type} of ${amount} TanaCoin added to ${referrerUid}`);
+    }
+  }
+
+  // Load referral data into the table
+  async function loadReferralData() {
+    const referralsRef = ref(db, `users/${currentUserUid}/referrals`);
+    const snapshot = await get(referralsRef);
+
+    if (snapshot.exists()) {
+      referralTable.innerHTML = "";
+      const referrals = Object.values(snapshot.val());
+
+      referrals.forEach((referral) => {
+        const { username, bonus10, friendUsername, bonus5 } = referral;
+        referralTable.innerHTML += `
+          <tr>
+            <td>${username}</td>
+            <td>${bonus10?.toFixed(5) || 0}</td>
+            <td>${friendUsername || "N/A"}</td>
+            <td>${bonus5?.toFixed(5) || 0}</td>
+          </tr>
+        `;
+      });
     }
   }
 </script>
