@@ -19,12 +19,12 @@
             color: #0003ff;
         }
         table {
-            width: 85%;
+            width: 90%;
             margin: 0 auto;
             border-collapse: collapse;
             margin-top: 20px;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 2px;
             text-align: center;
         }
         table, th, td {
@@ -46,11 +46,11 @@
             background-color: #4cae4c;
         }
         textarea {
-            width: 80%;
+            width: 90%;
             padding: 10px;
             border: 2px solid #5bff15;
             border-radius: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
         }
         input {
             padding: 18px;
@@ -73,7 +73,7 @@
         <h1>Admin Dashboard</h1>
 
         <div class="setting">
-            <h3>Total TanaCoin mined: <span id="total-mined">0</span></h3>
+            <h3>Total TanaCoin mined: <span id="total-mined">0.00000</span></h3>
         </div>
 
         <div class="setting">
@@ -88,10 +88,10 @@
                     </tr>
                 </thead>
                 <tbody id="user-table">
-                    <!-- User Data will be dynamically loaded here -->
+                    
                 </tbody>
             </table>
-            <p style="color:#0d00c4;">Total users registered: <span id="total-users">0</span></p>
+            <p style="color:#0d00c4;">Total users registered: <span id="total-users" class="setting">0</span></p>
         </div>
 
         <div class="setting">
@@ -110,7 +110,7 @@
                     </tr>
                 </thead>
                 <tbody id="notification-table">
-                    <!-- Notifications will be loaded here -->
+                    
                 </tbody>
             </table>
         </div>
@@ -172,7 +172,7 @@
         const usersRef = ref(database, 'users');
         onValue(usersRef, (snapshot) => {
             const users = snapshot.val();
-            let totalMined = 0;
+            let totalMined = 0.00000;
             let totalUsers = 0;
             userTable.innerHTML = '';
 
