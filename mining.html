@@ -559,7 +559,7 @@ section {
     position: fixed;
     top: 0;
     right: 0;
-    width: 250px;
+    width: 300px;
     height: 100vh;
     background: linear-gradient(45deg, #6afff5c0, #f5ff6ac0, #ff6ab0c0, #6a84ffc0);
     color: white;
@@ -567,6 +567,7 @@ section {
     box-shadow: -5px 0 10px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease;
     z-index: 9999;
+    overflow-y: auto;        
 }
 
 .menu-container ul {
@@ -582,12 +583,13 @@ section {
     color: white;
     Font-weight: bold;
     text-decoration: none;
-    font-size: 8px;
+    font-size: 12px;
     margin: 20px;
     padding: 8px 10px;
     background-color: blue;
     border-radius: 20px;
     display: flex;
+    overflow-y: auto;        
 }
 
 .menu-container ul li a i {
@@ -616,7 +618,7 @@ section {
     
     <div class="menu-container" id="menuContainer">
         <ul>
-            <li><a href="tasks.html"><i class="fas fa-tasks"></i>Earn TNC</a></li>
+            <li><a href="task.html"><i class="fas fa-tasks"></i>Earn TNC</a></li>
             <li><a href="wellet.html"><i class="fas fa-wallet"></i>TNC Wallet</a></li>
             <li><a href="policy.html"><i class="fas fa-file-alt"></i> New Update</a></li>
             <li><a href="white.html"><i class="fas fa-book"></i> Whitepaper</a></li>
@@ -792,8 +794,7 @@ uploadInput.addEventListener('change', function () {
       console.error("Required DOM elements are missing.");
       return;
     }
-
-    // Firebase Authentication and User Balance
+    
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const uid = user.uid;
@@ -818,14 +819,12 @@ uploadInput.addEventListener('change', function () {
         // Update UI with fetched data
 usernameDisplay.textContent = username;
 
-// Tabbatar da cewa userBalance yana da darajar lamba
 userBalance = parseFloat(userBalance) || 0.00000;
 userBalanceElement.innerText = userBalance.toFixed(5);
 
-// Function to update user balance in Firebase
 async function updateUserBalance(newBalance) {
     try {
-        // Tabbatar da cewa newBalance yana lamba ne kafin adanawa
+        
         const sanitizedBalance = parseFloat(newBalance) || 0.00000;
         await update(ref(db, `users/${uid}`), { userBalance: sanitizedBalance });
         console.log("User balance updated in Firebase.");
@@ -835,9 +834,9 @@ async function updateUserBalance(newBalance) {
 }
 
 
-        // Handle mining event and update balance
+   // Handle mining event and update balance
         window.mineTanaCoin = async function () {
-          userBalance += 0.003587;
+          userBalance += 0.0001587;
           userBalanceElement.innerText = userBalance.toFixed(5);
           await updateUserBalance(userBalance);
         }
@@ -846,7 +845,7 @@ async function updateUserBalance(newBalance) {
         console.error("User is not authenticated.");
       }
     });
-  });
+  });    
 </script>
 
 <script>
@@ -860,7 +859,7 @@ async function updateUserBalance(newBalance) {
   async function mineTanaCoin() {
     let userBalance = parseFloat(document.getElementById('userBalance').innerText) || 0;
     clickCount++;
-    userBalance += 0.001587;
+    userBalance += 0.0001587;
     document.getElementById('userBalance').innerText = userBalance.toFixed(5);
 
     // Update Firebase with new user balance
@@ -918,7 +917,7 @@ async function updateUserBalance(newBalance) {
   function displayFlyingCoin(flightDirection) {
     const coin = document.createElement('div');
     coin.classList.add('fly-coin');
-    coin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.001587';
+    coin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.0001587';
 
     // Add flying direction class
     if (flightDirection === 0) {
@@ -933,7 +932,7 @@ async function updateUserBalance(newBalance) {
       for (let i = 0; i < 5; i++) {
         const randomCoin = document.createElement('div');
         randomCoin.classList.add('fly-coin');
-        randomCoin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.001587';
+        randomCoin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> 0.0001587';
         randomCoin.style.left = `${Math.random() * 35}%`;
         randomCoin.style.top = `${Math.random() * 45}%`;
         document.body.appendChild(randomCoin);
@@ -969,7 +968,7 @@ async function updateUserBalance(newBalance) {
 
     function rewardUser() {
         if (adsWatched) {
-            userBalance += 0.005396;
+            userBalance += 0.0005396;
             if (userBalanceElement) {
                 userBalanceElement.innerText = userBalance.toFixed(5);
             }
@@ -1014,7 +1013,7 @@ async function updateUserBalance(newBalance) {
             const adImage = document.createElement('img');
             adImage.src = 'bonus.png';
             adImage.style.width = '90%';
-            adImage.style.height = '40%';
+            adImage.style.height = '30%';
             adImage.style.marginBottom = '20px';
             adContainer.appendChild(adImage);
 
@@ -1077,7 +1076,7 @@ async function updateUserBalance(newBalance) {
         for (let i = 0; i < 2; i++) {
             const coin = document.createElement('div');
             coin.classList.add('fly-coin');
-            coin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> <span class="white">0.005396</span>';
+            coin.innerHTML = '🕊️<span class="red">Tana</span><span class="green">Coin</span> <span class="white">0.0005396</span>';
             coin.style.position = 'fixed';
             coin.style.bottom = '20px';
             coin.style.right = '20px';
