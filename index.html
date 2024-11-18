@@ -264,7 +264,55 @@
             text-align: none;
             width: 100%;
         }
-      
+        
+        /* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Full page loading screen */
+#loadingScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    display: none; /* Initially hidden */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Loader animation */
+.loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    text-align: center;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+/* Animation for the loader */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Message below the loader */
+#loadingScreen p {
+    margin-top: 0px;
+    font-size: 18px;
+    text-align: center;
+}
+     
     </style>
 <body>
     <div id="loading-screen">
@@ -275,6 +323,7 @@
             ...</i></p>
     </div>
  <i id="main-content" style="display:none;">
+     <div  id="loadingScreen"> <div class="loader"></div> <p>Please wait...</p> </div>
     <video autoplay muted loop plays Inline  id="background-video">
             <source src="video.mp4" type="video/mp4">
             Your browser does not support the video tag.
@@ -356,8 +405,7 @@
         var video = document.getElementById('background-video');
         var loadingScreen = document.getElementById('loading-screen');
         var mainContent = document.getElementById('main-content');
-        
-        // Don saurin bude shafin bayan seconds 3
+               
         setTimeout(function() {
             loadingScreen.style.display = 'none';
             mainContent.style.display = 'block';
@@ -371,107 +419,139 @@
 </script>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
-            authDomain: "tanacoin-mine.firebaseapp.com",
-            projectId: "tanacoin-mine",
-            storageBucket: "tanacoin-mine.appspot.com",
-            messagingSenderId: "550307127686",
-            appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
-            measurementId: "G-596X16VEGX",
-            databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
+        authDomain: "tanacoin-mine.firebaseapp.com",
+        projectId: "tanacoin-mine",
+        storageBucket: "tanacoin-mine.appspot.com",
+        messagingSenderId: "550307127686",
+        appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+        measurementId: "G-596X16VEGX",
+        databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth();
-        const db = getDatabase();
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getDatabase();
 
-        function generateWalletAddress() {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            let walletAddress = "TNC";
-            for (let i = 0; i < 32; i++) {
-                walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
+    function generateWalletAddress() {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let walletAddress = "TNC";
+        for (let i = 0; i < 32; i++) {
+            walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return walletAddress;
+    }
+
+    async function checkWalletAddressExists(walletAddress) {
+        const snapshot = await get(ref(db, 'users/'));
+        const users = snapshot.val();
+        
+        
+        for (let userId in users) {
+            if (users[userId].walletAddress === walletAddress) {
+                return true;  
             }
-            return walletAddress;
+        }
+        return false;  
+    }
+
+    document.getElementById('step1Form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorMessage = document.getElementById('error-message');
+
+        // Clear previous error messages
+        errorMessage.textContent = '';
+
+        if (password !== confirmPassword) {
+            errorMessage.textContent = "Passwords do not match!";
+            return;
         }
 
-        document.getElementById('step1Form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Show loading screen
+        document.getElementById('loadingScreen').style.display = 'block';
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const errorMessage = document.getElementById('error-message');
-
-            // Clear previous error messages
-            errorMessage.textContent = '';
-
-            if (password !== confirmPassword) {
-                errorMessage.textContent = "Passwords do not match!";
+        try {
+            const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+            if (signInMethods.length > 0) {
+                errorMessage.textContent = "This email address has already been used. Please log in to your account.";
                 return;
             }
 
-            try {
-                const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-                if (signInMethods.length > 0) {
-                    errorMessage.textContent = "This email address has already been used. Please log in to your account.";
-                    return;
-                }
-
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                const user = userCredential.user;
-
-                localStorage.setItem('userEmail', email);
-                localStorage.setItem('userId', user.uid);
-
-                document.getElementById('step1Form').classList.remove('active');
-                document.getElementById('step2Form').classList.add('active');
-            } catch (error) {
-                console.error("Error in Firebase Authentication: ", error);
-                if (error.code === 'auth/email-already-in-use') {
-                    errorMessage.textContent = "This email address is already in use. Please log in.";
-                } else {
-                    errorMessage.textContent = "Failed to create account. Please try again.";
-                }
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;            
+            document.getElementById('loadingScreen').style.display = 'none';            
+            document.getElementById('step1Form').classList.remove('active');
+            document.getElementById('step2Form').classList.add('active');
+        } catch (error) {
+            console.error("Error in Firebase Authentication: ", error);
+            document.getElementById('loadingScreen').style.display = 'none';  
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage.textContent = "This email address is already in use. Please log in.";
+            } else {
+                errorMessage.textContent = "Failed to create account. Please try again.";
             }
-        });
+        }
+    });
 
-        document.getElementById('step2Form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+    document.getElementById('step2Form').addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            const userId = localStorage.getItem('userId');
-            const email = localStorage.getItem('userEmail');
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const username = document.getElementById('username').value;
-            const country = document.getElementById('country').value;
+        const userId = auth.currentUser.uid;  
+        const email = auth.currentUser.email;  
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const username = document.getElementById('username').value;
+        const country = document.getElementById('country').value;
+        const referralEarnings = 0.00000;  
+        const friendEarnings = 0.00000;  
 
-            const userData = {
-                firstName,
-                lastName,
-                username,
-                email,
-                country,
-                walletAddress: generateWalletAddress(),
-                userBalance: 0.00000,
-                userId: userId
-            };
+        let walletAddress = generateWalletAddress();
 
-            try {
-                await set(ref(db, 'users/' + userId), userData);
-                localStorage.setItem('userData', JSON.stringify(userData));
+        // Check if the wallet address is already taken
+        while (await checkWalletAddressExists(walletAddress)) {
+            walletAddress = generateWalletAddress();  
+        }
 
-                alert("Registration successful!");
-                window.location.href = "login.html";
-            } catch (error) {
-                console.error("Error in Firebase Database: ", error);
-                alert("Failed to save user data. Please try again.");
-            }
-        });
-    </script>
+        const userData = {
+            firstName,
+            lastName,
+            username,
+            email,
+            country,
+            referralEarnings,
+            friendEarnings,
+            walletAddress,
+            userBalance: 0.00000,
+            usdBalance: 0.00,
+            userId: userId
+        };
+
+        // Show loading screen
+        document.getElementById('loadingScreen').style.display = 'block';
+
+        try {
+            await set(ref(db, 'users/' + userId), userData);
+
+            // Hide loading screen after successfully saving data
+            document.getElementById('loadingScreen').style.display = 'none';
+
+            alert("Registration successful!");
+            window.location.href = "login.html";  
+        } catch (error) {
+            console.error("Error in Firebase Database: ", error);
+            document.getElementById('loadingScreen').style.display = 'none';  
+            alert("Failed to save user data. Please try again.");
+        }
+    });
+</script>
 </body>
 </html>
