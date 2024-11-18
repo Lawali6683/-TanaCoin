@@ -481,26 +481,535 @@ uploadInput.addEventListener("change", (event) => {
 
   // Load referral data into the table
   async function loadReferralData() {
-    const referralsRef = ref(db, `users/${currentUserUid}/referrals`);
-    const snapshot = await get(referralsRef);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Friends - TanaCoin</title>    
+    <style>
+        /* Basic Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #95fff597;
+}
 
-    if (snapshot.exists()) {
-      referralTable.innerHTML = "";
-      const referrals = Object.values(snapshot.val());
+/* Video Background */
+#bgVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    z-index: -1; 
+}
 
-      referrals.forEach((referral) => {
-        const { username, bonus10, friendUsername, bonus5 } = referral;
-        referralTable.innerHTML += `
-          <tr>
-            <td>${username}</td>
-            <td>${bonus10?.toFixed(5) || 0}</td>
-            <td>${friendUsername || "N/A"}</td>
-            <td>${bonus5?.toFixed(5) || 0}</td>
-          </tr>
-        `;
-      });
+/* Header styling */
+header {
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 0px;
+    background-color: rgba(255, 255, 255, 0.85); 
+    position: relative;
+    z-index: 100;
+    width: 314px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid #ddd;
+    Text-align; center;
+}
+
+header .tana {
+    width: 100px;
+    margin-right: 15px;
+}
+
+header .use {
+    font-size: 1.8em;
+    gap: 1px;
+    color: #2ecc71;
+    font-weight: bold;
+    flex-grow: 10px;
+    text-align: center;
+    
+}
+
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    Color:#fffc15;
+}
+
+.avatar {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    
+    align-items: center;
+    gap: 10px;
+    border: 2px solid #2ecc71;
+}
+
+/* Media Queries don na'urorin hannu */
+@media (max-width: 768px) {
+    header {
+        padding: 1px 3px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    header .use {
+        text-align: left;
+        font-size: 1.6em;
+        margin-top: 10px;
+    }
+    
+.container {
+width: 97%;
+    padding: 3px;
+    background-color: rgba(255, 255, 255, 0.85); 
+    background-color: #eaffff;
+    margin: 1px 3px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.1);
+    text-align: center
+}
+
+h1 {
+    color: #444;
+}
+
+p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.referral-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#referralLink {
+    width: 40%;
+    padding: 10px;
+    font-size: 1.1em;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
+
+#copyButton {
+    padding: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+#copySuccess {
+    margin-left: 10px;
+    color: green;
+    font-size: 1em;
+}
+
+table {
+
+    width: 100%;
+    border-collapse: collapse;
+    position: center;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    Font-weight: bold;
+    Font-size: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+.good{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 0px;
+    background-color: rgba(255, 255, 255, 0.85); 
+    position: relative;
+    z-index: 1000;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-bottom: 3px solid #ddd;
+    Text-align; center;
+}
+</style>
+<style>
+                            
+/* Loading screen styles */
+#loading-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #90ff2b; 
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+}
+
+.icon-container img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    animation: pulse 2s infinite; 
+}
+
+.fas8{
+    margin-top: 15px;
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+@keyframes pulse {
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+
+ /* Styles for main content */
+        #main-content {
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+<div id="loading-screen">
+        <div class="icon-container">
+            <img src="dove.png" alt="Loading Icon">
+        </div>
+        <p class="fas8"><i style="color:red;">Tana</i><i style="color:green;">Coin</i><i style="color:blue">
+            ...</i></p>
+    </div>
+    
+<header>
+    
+<video autoplay muted loop id="bgVideo">
+    <source src="video4.mp4" type="video/mp4">
+</video>
+    <h2><img src="dove1.png" class="tana"><i class="unt" style="color:red;">Tana</i><i class="unt" style="color:green;">Coin</i></h2>
+   <center> <span class="use" id="userBalance">0.00000</span></center>
+    <div class="profile-container">
+        <input type="file" id="upload" style="display:none;" accept="image/*" />
+       <img id="avatar" src="avatar.png" alt="User Avatar" class="avatar" />
+        <h3 id="username">Username</h3>
+    </div>
+</header>
+
+<div class="container">
+    <h1>Invite Your Friends to Earn More <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h1>
+    <p>Earn a 2 <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> bonus for each friend you refer! Additionally, you'll earn 10% of the <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> your referral accumulates every day and 5% from their referred friends' earnings.</p>
+    <section class="good">
+       
+<video autoplay muted loop id="bgVideo">
+    <source src="video5.mp4" type="video/mp4">
+</video>
+    <h3><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i><i style="color:white;"> Target Price: $5</h3></i>
+    </section>
+    
+    <p>Copy your referral link and share it with your friends to start earning <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> today!</p>
+
+    <!-- Referral Link Section -->
+    <div class="referral-section">
+        <input type="text" value="https://tanacoin.netlify.app/referral-link" id="referralLink" readonly>
+        <button id="copyButton">Copy  Link</button>
+        <span id="copySuccess" class="hidden">Copied successfully!</span>
+    </div>    
+       <section class="good"> 
+   
+<video autoplay muted loop id="bgVideo">
+    <source src="video6.mp4" type="video/mp4">
+</video>   
+    <h2 style="color:white;">Your Active Referrals and Friends' Referrals</h2> </section>   
+    <div>
+    <table>
+        <thead>
+            <tr>
+                <th>Referral Username</th>
+                <th>Your Bonus (10%)</th>
+                <th>Friend's Referral Username</th>
+                <th>Your Bonus (5%)</th>
+            </tr>
+        </thead>
+        <tbody id="referralTable">
+            
+        </tbody>
+    </table>
+</div>
+<script>
+        // Loading Screen Logic
+      // Nemi dukkan bidiyon
+const videoElements = Array.from(document.querySelectorAll('video'));
+
+const loadingScreen = document.getElementById('loading-screen');
+
+
+let videosLoaded = 0;
+
+
+if (loadingScreen) {
+    
+    videoElements.forEach((video) => {
+        
+        if (video) {
+            
+            video.preload = 'auto';
+
+            video.addEventListener('canplay', () => {
+                videosLoaded++;
+                
+                if (videosLoaded === videoElements.length) {
+                    loadingScreen.style.display = 'none';
+                }
+            });            
+            video.load();
+        }
+    });
+}
+
+    </script>
+    <script>        
+const avatar = document.getElementById("avatar");
+const uploadInput = document.getElementById("upload");
+
+const savedAvatar = localStorage.getItem("avatar");
+if (savedAvatar) {
+  avatar.src = savedAvatar; 
+} else {
+  avatar.src = "avatar.png"; 
+}
+
+avatar.addEventListener("click", () => {
+  uploadInput.click(); 
+});
+
+uploadInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const newAvatar = e.target.result;
+      avatar.src = newAvatar; 
+      localStorage.setItem("avatar", newAvatar); 
+    };
+
+    reader.readAsDataURL(file); 
+  }
+});
+    </script>
+    
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
+    authDomain: "tanacoin-mine.firebaseapp.com",
+    databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/",
+    projectId: "tanacoin-mine",
+    storageBucket: "tanacoin-mine.appspot.com",
+    messagingSenderId: "550307127686",
+    appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+    measurementId: "G-596X16VEGX",
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  // DOM Elements
+  const usernameDisplay = document.getElementById("username");
+  const userBalance = document.getElementById("userBalance");
+  const referralLink = document.getElementById("referralLink");
+  const copyButton = document.getElementById("copyButton");
+
+  let currentUserUid = null;
+
+  // Handle user authentication state
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      currentUserUid = user.uid;
+      const userRef = ref(db, `users/${currentUserUid}`);
+
+      // Fetch or initialize user data
+      const userSnapshot = await get(userRef);
+      if (!userSnapshot.exists()) {
+        const initialData = {
+          username: user.email.split("@")[0],
+          userBalance: 0.0,
+          referralEarnings: 0.0,
+          referralCount: 0,
+        };
+        await set(userRef, initialData);
+        console.log("User data initialized in database.");
+      }
+
+      // Display user data
+      const userData = (await get(userRef)).val();
+      usernameDisplay.textContent = userData.username || "User";
+      userBalance.textContent = (userData.userBalance || 0).toFixed(5);
+
+      // Generate referral link
+      referralLink.value = `https://tana-coin.vercel.app/referral?user=${userData.username}&ref=${currentUserUid.slice(0, 6)}`;
+
+      // Handle referral signup
+      await handleReferralSignup();
+    } else {
+      console.error("User is not authenticated.");
+    }
+  });
+
+  // Copy referral link to clipboard
+  copyButton.addEventListener("click", () => {
+    referralLink.select();
+    document.execCommand("copy");
+    alert("Referral link copied!");
+  });
+
+  // Add TanaCoin to user balance
+  async function addTanaCoin(uid, amount) {
+    const userRef = ref(db, `users/${uid}`);
+    const userSnapshot = await get(userRef);
+    if (userSnapshot.exists()) {
+      const userData = userSnapshot.val();
+      const newBalance = (userData.userBalance || 0) + amount;
+
+      await update(userRef, { userBalance: newBalance });
+      userBalance.textContent = newBalance.toFixed(5);
+      console.log(`Added ${amount} TanaCoin to user ${uid}`);
+    } else {
+      console.error("User not found in database.");
     }
   }
+
+  // Handle referral signup and bonuses
+  async function handleReferralSignup() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrerUid = urlParams.get("ref");
+
+    if (referrerUid && currentUserUid) {
+      const userRef = ref(db, `users/${currentUserUid}`);
+      const snapshot = await get(userRef);
+
+      if (!snapshot.exists()) {
+        // Initialize user and assign referral
+        await set(userRef, {
+          userBalance: 2.0,
+          referredBy: referrerUid,
+        });
+
+        // Update referrer data
+        const referrerRef = ref(db, `users/${referrerUid}`);
+        const referrerData = (await get(referrerRef)).val() || {};
+
+        await update(referrerRef, {
+          referralEarnings: (referrerData.referralEarnings || 0) + 2.0,
+        });
+
+        await addTanaCoin(referrerUid, 2.0);
+      }
+    }
+  }
+  
+  // Add referral bonus (10% for referrer and 5% for referred user)
+async function addReferralBonus(referrerUid, referredUid, amount) {
+  // Calculate the bonuses
+  const referrerBonus = amount * 0.10;  // 10% for referrer
+  const referredBonus = amount * 0.05;  // 5% for referred user
+
+  // Update referrer's balance (10%)
+  const referrerRef = ref(db, `users/${referrerUid}`);
+  const referrerSnapshot = await get(referrerRef);
+
+  if (referrerSnapshot.exists()) {
+    const referrerData = referrerSnapshot.val();
+    const newReferrerBalance = (referrerData.userBalance || 0) + referrerBonus;
+
+    // Update referrer's userBalance with the bonus
+    await update(referrerRef, { userBalance: newReferrerBalance });
+    console.log(`Added ${referrerBonus} TanaCoin to referrer (${referrerUid})`);
+  } else {
+    console.error(`Referrer UID ${referrerUid} not found in database.`);
+  }
+
+  // Update referred user's balance (5%)
+  const referredRef = ref(db, `users/${referredUid}`);
+  const referredSnapshot = await get(referredRef);
+
+  if (referredSnapshot.exists()) {
+    const referredData = referredSnapshot.val();
+    const newReferredBalance = (referredData.userBalance || 0) + referredBonus;
+
+    // Update referred user's userBalance with the bonus
+    await update(referredRef, { userBalance: newReferredBalance });
+    console.log(`Added ${referredBonus} TanaCoin to referred user (${referredUid})`);
+  } else {
+    console.error(`Referred UID ${referredUid} not found in database.`);
+  }
+}
+
+async function loadReferralData() {
+  const referralsRef = ref(db, `users/${currentUserUid}/referrals`);
+  const snapshot = await get(referralsRef);
+
+  if (snapshot.exists()) {
+    referralTable.innerHTML = ""; // Clear the existing table content
+    const referrals = Object.values(snapshot.val());
+    
+    referrals.forEach((referral) => {
+      const { username, bonus10, friendUsername, bonus5 } = referral;
+
+      // Add referral data as a table row
+      referralTable.innerHTML += `
+        <tr>
+          <td>${username || "N/A"}</td>
+          <td>${bonus10?.toFixed(5) || "0.00000"}</td>
+          <td>${friendUsername || "N/A"}</td>
+          <td>${bonus5?.toFixed(5) || "0.00000"}</td>
+        </tr>
+      `;
+    });
+  } else {
+    console.log("No referral data found for the current user.");
+  }
+}
+
 </script>
 </body>
 </html>
