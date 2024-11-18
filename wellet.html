@@ -226,6 +226,11 @@ P{
     Font-weight:  bold;
     Font-size: 11px;
 }
+.TNC{
+    Font-weight: bold;
+    Font-size: 20px;
+    Color: red;
+}
     </style>
 </head>
 <body>
@@ -246,7 +251,7 @@ P{
             <div class="balance-display">
                 <img src="dove.png" alt="TanaCoin">
                 <div>
-                    <span class="tnc-amount" id="userBalance">TNC 0.00000</span>
+                    <span class="TNC">TN<i style="color:green;">C</i></span> <span class="tnc-amount" id="userBalance"> 0.00000</span>
                     <span class="dollar-amount" id="dollar_totalone">$0.00</span>
                 </div>
             </div>            
@@ -402,9 +407,9 @@ historySendBtn.addEventListener('click', () => {
     }
 });
 </script>
-    <script type="module">
+        <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, get, set, update, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     // Firebase Config
@@ -422,69 +427,40 @@ historySendBtn.addEventListener('click', () => {
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth();
-        
-// DOM Elements for displaying names
-const firstNameDisplay = document.getElementById('firstNameDispay');
-const lastNameDisplay = document.getElementById('lastNameDispay');
 
-// Load user information
-    function loadUserInfo() {
-        const firstName = localStorage.getItem('firstName');
-        const lastName = localStorage.getItem('lastName');
+    // DOM Elements for displaying names
+    const firstNameDisplay = document.getElementById('firstNameDisplay');
+    const lastNameDisplay = document.getElementById('lastNameDisplay');
 
-        if (firstName && lastName) {
-            document.getElementById('firstNameDisplay').textContent = user.firstName;
-            
-document.getElementById('lastNameDisplay').textContent = user.lastName;
-
-        } else {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    const userRef = ref(db, `users/${user.uid}`);
-                    get(userRef).then(snapshot => {
-                        const data = snapshot.val();
-                        if (data) {
-                            localStorage.setItem('firstName', data.firstName);
-                            localStorage.setItem('lastName', data.lastName);
-                            document.getElementById('firstNameDisplay').innerText = data.firstName;
-                            document.getElementById('lastNameDisplay').innerText = data.lastName;
-                        }
-                    }).catch(console.error);
-                }
-            });
-        }
+    // Load user information
+    function loadUserInfo(uid) {
+        const userRef = ref(db, `users/${uid}`);
+        get(userRef).then(snapshot => {
+            const data = snapshot.val();
+            if (data) {
+                firstNameDisplay.textContent = data.firstName;
+                lastNameDisplay.textContent = data.lastName;
+            }
+        }).catch(console.error);
     }
-    
-document.addEventListener('DOMContentLoaded', loadUserInfo);
-
 
     // Fetch user data and update balance
     async function getUserData(uid) {
-        let walletAddress = localStorage.getItem('walletAddress');
-        let userBalance = parseFloat(localStorage.getItem('userBalance')) || 0;
+        const userRef = ref(db, `users/${uid}`);
+        const userSnap = await get(userRef);
+        if (userSnap.exists()) {
+            const userData = userSnap.val();
+            const walletAddress = userData.walletAddress || "Not available";
+            const userBalance = parseFloat(userData.userBalance) || 0;
 
-        const pricePerTNC = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
-        const dollarTotal = (userBalance * pricePerTNC).toFixed(2);
+            const pricePerTNC = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
+            const dollarTotal = (userBalance * pricePerTNC).toFixed(2);
 
-        document.getElementById('userBalance').textContent = `${userBalance.toFixed(5)} TNC`;
-        document.getElementById('dollar_total').textContent = `$${dollarTotal}`;
-        document.getElementById('dollar_totalone').textContent = `$${dollarTotal}`;
-
-        if (!walletAddress) {
-            const userRef = ref(db, `users/${uid}`);
-            const userSnap = await get(userRef);
-            if (userSnap.exists()) {
-                const userData = userSnap.val();
-                walletAddress = userData.walletAddress;
-                userBalance = userData.userBalance;
-
-                localStorage.setItem('walletAddress', walletAddress);
-                localStorage.setItem('userBalance', userBalance);
-            }
+            document.getElementById('userBalance').textContent = `${userBalance.toFixed(5)} `;
+            document.getElementById('dollar_total').textContent = `$${dollarTotal}`;
+            document.getElementById('dollar_totalone').textContent = `$${dollarTotal}`;
+            document.getElementById('walletAddressDisplay').textContent = walletAddress;
         }
-
-        document.getElementById('walletAddressDisplay').textContent = walletAddress;
-        document.getElementById('userBalance').textContent = `${userBalance} TNC`;
     }
 
     // Fetch recipient's name using wallet address
@@ -498,10 +474,10 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
             throw new Error("Recipient not found!");
         }
     }
-    
+
     const TanaCoinPrice = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
 
-// Calculate TanaCoin equivalent
+    // Calculate TanaCoin equivalent
     document.getElementById('amount').addEventListener('input', function () {
         const amountInDollars = parseFloat(document.getElementById('amount').value);
         if (isNaN(amountInDollars) || amountInDollars <= 0) {
@@ -512,7 +488,7 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
         const equivalentTNC = (amountInDollars / TanaCoinPrice).toFixed(5);  
         document.getElementById('coinEquivalent').textContent = `TNC: ${equivalentTNC}`;
     });
-        
+
     // Send TanaCoin
     document.getElementById('sendForm').addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -556,27 +532,23 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
                 const confirmSend = confirm(`Are you sure you want to send ${amountInTNC.toFixed(5)} TNC to ${recipientName} (${walletAddress})?`);
                 if (!confirmSend) return;
 
-                // Update balances
+       // Update balances
                 const newSenderBalance = senderData.userBalance - amountInTNC;
                 const newRecipientBalance = (recipientData.userBalance || 0) + amountInTNC;
 
                 await update(senderRef, { userBalance: newSenderBalance });
                 await update(recipientRef, { userBalance: newRecipientBalance });
-
-                // Update localStorage balance
-                localStorage.setItem('userBalance', newSenderBalance);
-
                 alert('Transaction successful!');
-                loadUserInfo();
+                loadUserInfo(user.uid);
                 getUserData(user.uid);
-            } catch (error) {
+          }  catch (error) {
                 console.error("Transaction error:", error);
                 alert("Transaction failed!");
             }
         }
     });
-    
- 
+                             
+
     // Copy wallet address
     document.getElementById('copyBtn').addEventListener('click', () => {
         const walletAddress = document.getElementById('walletAddressDisplay').textContent;
@@ -585,10 +557,7 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
         });
     });
 
-
-
-    //history send and receive 
-    
+    // Transaction history
     async function addToSendHistory(senderId, recipientAddress, amount, recipientName) {
         const sendHistoryRef = ref(db, `sendHistory/${senderId}`);
         await push(sendHistoryRef, {
@@ -622,8 +591,6 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
                 historyItem.textContent = `Sent ${amount} TNC to ${recipientName} (${recipient}) on ${timestamp}`;
                 sendHistoryList.appendChild(historyItem);
             }
-        } else {
-            console.log("No Send History Found.");
         }
     }
 
@@ -640,20 +607,18 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
                 historyItem.textContent = `Received ${amount} TNC from ${senderName} (${sender}) on ${timestamp}`;
                 receivedHistoryList.appendChild(historyItem);
             }
-        } else {
-            console.log("No Received History Found.");
         }
     }
-       onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, (user) => {
         if (user) {
-            loadUserInfo();
+            loadUserInfo(user.uid);
             getSendHistory(user.uid);
-            getReceivedHistory(localStorage.getItem('walletAddress'));
+            getUserData(user.uid);
         } else {
             alert("No user logged in. Please log in first.");
         }
     });
-      
+    
 </script>
 </body>
 </html>
