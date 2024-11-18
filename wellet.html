@@ -194,11 +194,15 @@ h1 {
     font-weight: bold;
 }
 .pay{
-    Color:#0018ff;
-    Font-weight: bold;
-    Font-size: 20px;
-    
-}
+    font-size: 20px;
+            color: #27ae60;
+            text-transform: capitalize;
+            border: 2px dashed #2ecc71;
+            padding: 5px;
+            Font-weight: bold;
+            Text-align: center;
+            border-radius: 10px;
+        }
 P{
     Font-weight: bold;
     
@@ -231,13 +235,27 @@ P{
     Font-size: 20px;
     Color: red;
 }
+.pay{ 
+
+    background: repeating-linear-gradient(
+                -45deg,
+                #3498db,
+                #3498db 10px,
+                #2980b9 10px,
+                #2980b9 20px
+            );
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+     
+}
     </style>
 </head>
 <body>
     <i id="TanaCoinPrice" style="display: none;">$5.00</i>
 
     <div class="wallet-container">
-                       <h2><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet</h2>        <span class="pay" id="firstNameDisplay"></span> <span id="lastNameDisplay"></span>
+                       <h2 class="pay"><i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Wallet        <span id="firstNameDisplay"></span> <span id="lastNameDisplay"></span></h2>
 
                             
         <!-- Display user balance -->
