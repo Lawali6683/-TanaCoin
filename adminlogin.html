@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TanaCoin Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 1.5rem;
+    color: #333;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+input {
+    width: 90%;
+    padding: 0.9rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    background: #28a745;
+    color: #fff;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    background: #a4ff2b;
+}
+
+#error-message {
+    margin-top: 1rem;
+    color: red;
+    font-size: 0.9rem;
+    text-align: left;
+}
+
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>TanaCoin Login</h1>
+        <form id="login-form">
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+            <div id="error-message"></div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
+    authDomain: "tanacoin-mine.firebaseapp.com",
+    databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/",
+    projectId: "tanacoin-mine",
+    storageBucket: "tanacoin-mine.appspot.com",
+    messagingSenderId: "550307127686",
+    appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+    measurementId: "G-596X16VEGX"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const errorMessage = document.getElementById("error-message");
+
+    errorMessage.textContent = ""; // Clear previous error message
+
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // Redirect to mining.html after successful login
+        window.location.href = "mining.html";
+    } catch (error) {
+        if (error.code === "auth/user-not-found") {
+            errorMessage.textContent = "User not found. Please check your email address.";
+        } else if (error.code === "auth/wrong-password") {
+            errorMessage.textContent = "Incorrect password. Please try again.";
+        } else {
+            errorMessage.textContent = "An error occurred. Please try again.";
+        }
+    }
+});
+
+    </script>
+</body>
+</html>
