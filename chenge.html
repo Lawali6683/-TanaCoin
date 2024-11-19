@@ -336,55 +336,57 @@ input{
 
         let currentUser;
 
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user.uid;
-                const userRef = ref(db, `users/${currentUser}`);
-                const snapshot = await get(userRef);
+    onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        currentUser = user.uid;
+        const userRef = ref(db, `users/${currentUser}`);
+        const snapshot = await get(userRef);
 
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    usernameEl.textContent = data.username || "User";
-                    userBalanceDisplay.textContent = data.userBalance || "0.0000";
-                    usdBalanceEl.textContent = data.usdBalance || "0.00";
-                }
-            } else {
-                alert("User not logged in!");
-            }
-        });
-
-        const handleSell = async (market, amount, password) => {
-            const userRef = ref(db, `users/${currentUser}`);
-            const snapshot = await get(userRef);
-
-            if (!snapshot.exists()) {
-                alert("User data not found!");
-                return;
-            }
-
+        if (snapshot.exists()) {
             const data = snapshot.val();
-            if (data.password !== password) {
-                alert("Invalid password!");
-                return;
-            }
+            usernameEl.textContent = data.username || "User";
+            
+            // Format balance to 5 decimal places
+            userBalanceDisplay.textContent = parseFloat(data.userBalance || 0).toFixed(5);
+            usdBalanceEl.textContent = parseFloat(data.usdBalance || 0).toFixed(2);
+        }
+    } else {
+        alert("User not logged in!");
+    }
+});
 
-            if (amount > data.userBalance) {
-                alert("Insufficient TNC balance!");
-                return;
-            }
 
-            const fee = market === "binance" ? 0.05905 : 0.062979;
-            const usdAmount = amount * 5 * (1 - fee);
+const handleSell = async (market, amount, password) => {
+    const userRef = ref(db, `users/${currentUser}`);
+    const snapshot = await get(userRef);
 
-            await update(userRef, {
-                userBalance: data.userBalance - amount,
-                usdBalance: data.usdBalance + usdAmount,
-            });
+    if (!snapshot.exists()) {
+        alert("User data not found!");
+        return;
+    }
 
-            alert(`Successfully sold ${amount} TNC for $${usdAmount.toFixed(2)}`);
-        };
+    const data = snapshot.val();
+    if (data.password !== password) {
+        alert("Invalid password!");
+        return;
+    }
 
-        document.getElementById("binanceBtn").addEventListener("click", () => {
+    if (amount > data.userBalance) {
+        alert("Insufficient TNC balance!");
+        return;
+    }
+
+    const fee = market === "binance" ? 0.05905 : 0.062979;
+    const usdAmount = amount * 5 * (1 - fee);
+    
+    await update(userRef, {
+        userBalance: (data.userBalance - amount).toFixed(5),
+        usdBalance: (data.usdBalance + usdAmount).toFixed(2),
+    });
+
+    alert(`Successfully sold ${amount.toFixed(5)} TNC for $${usdAmount.toFixed(2)}`);
+};
+           document.getElementById("binanceBtn").addEventListener("click", () => {
             document.getElementById("binanceForm").style.display = "flex";
         });
 
