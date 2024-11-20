@@ -435,7 +435,7 @@ historySendBtn.addEventListener('click', () => {
         <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getDatabase, ref, get, set, update, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     // Firebase Config
     const firebaseConfig = {
@@ -501,20 +501,17 @@ historySendBtn.addEventListener('click', () => {
     }
 
     const TanaCoinPrice = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
+    
+    
 
-    // Calculate TanaCoin equivalent
+    // Calculate TanaCoin equivalent    
     document.getElementById('amount').addEventListener('input', function () {
         const amountInDollars = parseFloat(document.getElementById('amount').value);
-        if (isNaN(amountInDollars) || amountInDollars <= 0) {
-            document.getElementById('coinEquivalent').textContent = 'TNC: 0.00000';
-            return;
-        }
-
-        const equivalentTNC = (amountInDollars / TanaCoinPrice).toFixed(5);  
+        const equivalentTNC = isNaN(amountInDollars) || amountInDollars <= 0 ? 0 : (amountInDollars / TanaCoinPrice).toFixed(5);
         document.getElementById('coinEquivalent').textContent = `TNC: ${equivalentTNC}`;
     });
 
-    // Send TanaCoin
+    // Handle TanaCoin Transfer
     document.getElementById('sendForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
@@ -528,51 +525,49 @@ historySendBtn.addEventListener('click', () => {
             return;
         }
 
-        const senderRef = ref(db, `users/${user.uid}`);
-        const snapshot = await get(senderRef);
+        try {
+            // Verify password using Firebase Authentication
+            await signInWithEmailAndPassword(auth, user.email, password);
 
-        if (snapshot.exists()) {
-            const senderData = snapshot.val();
-            if (password !== senderData.password) {
-                alert('Password is incorrect!');
-                return;
-            }
-
+            // Fetch user data
+            const senderRef = ref(db, `users/${user.uid}`);
+            const senderSnap = await get(senderRef);
+            if (!senderSnap.exists()) throw new Error("Sender data not found!");
+            
+            const senderData = senderSnap.val();
             const amountInTNC = amount / TanaCoinPrice;
+
             if (senderData.userBalance < amountInTNC) {
-                alert('Insufficient Balance!');
+                alert("Insufficient balance!");
                 return;
             }
 
-            try {
-                const recipientRef = ref(db, `users/${walletAddress}`);
-                const recipientSnapshot = await get(recipientRef);
-                if (!recipientSnapshot.exists()) {
-                    alert("Recipient not found!");
-                    return;
-                }
-
-                const recipientData = recipientSnapshot.val();
-                const recipientName = `${recipientData.firstName} ${recipientData.lastName}`;
-                const confirmSend = confirm(`Are you sure you want to send ${amountInTNC.toFixed(5)} TNC to ${recipientName} (${walletAddress})?`);
-                if (!confirmSend) return;
-
-       // Update balances
-                const newSenderBalance = senderData.userBalance - amountInTNC;
-                const newRecipientBalance = (recipientData.userBalance || 0) + amountInTNC;
-
-                await update(senderRef, { userBalance: newSenderBalance });
-                await update(recipientRef, { userBalance: newRecipientBalance });
-                alert('Transaction successful!');
-                loadUserInfo(user.uid);
-                getUserData(user.uid);
-          }  catch (error) {
-                console.error("Transaction error:", error);
-                alert("Transaction failed!");
+            // Fetch recipient data
+            const recipientRef = ref(db, `users/${walletAddress}`);
+            const recipientSnap = await get(recipientRef);
+            if (!recipientSnap.exists()) {
+                alert("Recipient not found!");
+                return;
             }
+
+            const recipientData = recipientSnap.val();
+            const recipientName = `${recipientData.firstName} ${recipientData.lastName}`;
+            const confirmSend = confirm(`Are you sure you want to send ${amountInTNC.toFixed(5)} TNC to ${recipientName} (${walletAddress})?`);
+            if (!confirmSend) return;
+
+            // Update balances
+            const newSenderBalance = senderData.userBalance - amountInTNC;
+            const newRecipientBalance = (recipientData.userBalance || 0) + amountInTNC;
+
+            await update(senderRef, { userBalance: newSenderBalance });
+            await update(recipientRef, { userBalance: newRecipientBalance });
+
+            alert("Transaction successful!");
+        } catch (error) {
+            console.error("Transaction error:", error);
+            alert("Password verification failed or transaction error!");
         }
     });
-                             
 
     // Copy wallet address
     document.getElementById('copyBtn').addEventListener('click', () => {
