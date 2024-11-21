@@ -434,8 +434,8 @@ historySendBtn.addEventListener('click', () => {
 </script>
         <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, get, set, update, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
-   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     // Firebase Config
     const firebaseConfig = {
@@ -501,23 +501,54 @@ historySendBtn.addEventListener('click', () => {
     }
 
     const TanaCoinPrice = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
-    
-    
-
+        
     // Calculate TanaCoin equivalent    
     document.getElementById('amount').addEventListener('input', function () {
         const amountInDollars = parseFloat(document.getElementById('amount').value);
         const equivalentTNC = isNaN(amountInDollars) || amountInDollars <= 0 ? 0 : (amountInDollars / TanaCoinPrice).toFixed(5);
         document.getElementById('coinEquivalent').textContent = `TNC: ${equivalentTNC}`;
     });
+        
+    // Handle Wallet Address Verification
+    document.getElementById('walletAddress').addEventListener('blur', async function () {
+        const walletAddress = document.getElementById('walletAddress').value.trim();
+        if (!walletAddress) return;
 
+        try {
+            const usersRef = ref(db, `users`);
+            const snapshot = await get(usersRef);
+            if (snapshot.exists()) {
+                const users = snapshot.val();
+                let recipientFound = null;
+
+                for (const userId in users) {
+                    if (users[userId].walletAddress === walletAddress) {
+                        recipientFound = users[userId];
+                        break;
+                    }
+                }
+
+                if (recipientFound) {
+                    alert(`Recipient Found: ${recipientFound.firstName} ${recipientFound.lastName}`);
+                } else {
+                    alert("Wallet address not found in database!");
+                }
+            } else {
+                alert("No users in database!");
+            }
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            alert("An error occurred while verifying wallet address.");
+        }
+    });
+               
     // Handle TanaCoin Transfer
     document.getElementById('sendForm').addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        const walletAddress = document.getElementById('walletAddress').value;
+        const walletAddress = document.getElementById('walletAddress').value.trim();
         const amount = parseFloat(document.getElementById('amount').value);
-        const password = document.getElementById('password').value;
+        const password = document.getElementById('password').value.trim();
 
         const user = auth.currentUser;
         if (!user) {
@@ -526,14 +557,13 @@ historySendBtn.addEventListener('click', () => {
         }
 
         try {
-            // Verify password using Firebase Authentication
+            // Verify password
             await signInWithEmailAndPassword(auth, user.email, password);
 
-            // Fetch user data
             const senderRef = ref(db, `users/${user.uid}`);
             const senderSnap = await get(senderRef);
             if (!senderSnap.exists()) throw new Error("Sender data not found!");
-            
+
             const senderData = senderSnap.val();
             const amountInTNC = amount / TanaCoinPrice;
 
@@ -543,14 +573,28 @@ historySendBtn.addEventListener('click', () => {
             }
 
             // Fetch recipient data
-            const recipientRef = ref(db, `users/${walletAddress}`);
-            const recipientSnap = await get(recipientRef);
-            if (!recipientSnap.exists()) {
+            const usersRef = ref(db, `users`);
+            const snapshot = await get(usersRef);
+            if (!snapshot.exists()) throw new Error("No users found in database!");
+
+            let recipientData = null;
+            let recipientKey = null;
+
+            for (const userId in snapshot.val()) {
+                const userData = snapshot.val()[userId];
+                if (userData.walletAddress === walletAddress) {
+                    recipientData = userData;
+                    recipientKey = userId;
+                    break;
+                }
+            }
+
+            if (!recipientData) {
                 alert("Recipient not found!");
                 return;
             }
 
-            const recipientData = recipientSnap.val();
+            // Confirm transaction
             const recipientName = `${recipientData.firstName} ${recipientData.lastName}`;
             const confirmSend = confirm(`Are you sure you want to send ${amountInTNC.toFixed(5)} TNC to ${recipientName} (${walletAddress})?`);
             if (!confirmSend) return;
@@ -560,7 +604,7 @@ historySendBtn.addEventListener('click', () => {
             const newRecipientBalance = (recipientData.userBalance || 0) + amountInTNC;
 
             await update(senderRef, { userBalance: newSenderBalance });
-            await update(recipientRef, { userBalance: newRecipientBalance });
+            await update(ref(db, `users/${recipientKey}`), { userBalance: newRecipientBalance });
 
             alert("Transaction successful!");
         } catch (error) {
@@ -568,7 +612,7 @@ historySendBtn.addEventListener('click', () => {
             alert("Password verification failed or transaction error!");
         }
     });
-
+        
     // Copy wallet address
     document.getElementById('copyBtn').addEventListener('click', () => {
         const walletAddress = document.getElementById('walletAddressDisplay').textContent;
