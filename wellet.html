@@ -254,6 +254,14 @@ P{
     Font-weight: bold;
     Font-size: 9px;
 }
+#historySendContainer{
+    Font-weight: bold;
+    Font-size: 10px;
+}
+#sentHistoryList{
+    Font-weight: bold;
+    Font-size: 10px;
+}
     </style>
 </head>
 <body>
@@ -423,12 +431,10 @@ historySendBtn.addEventListener('click', () => {
         historySendContainer.classList.add('hidden');
     }
 });
-</script>
-
-
-   <script type="module">
+</script>                     
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, get, update, push, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, get, update, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     // Firebase Config
@@ -447,11 +453,20 @@ historySendBtn.addEventListener('click', () => {
     const db = getDatabase(app);
     const auth = getAuth();
 
-    // DOM Elements for displaying names
+    // DOM Elements for displaying user info
     const firstNameDisplay = document.getElementById('firstNameDisplay');
     const lastNameDisplay = document.getElementById('lastNameDisplay');
+    const userBalanceElement = document.getElementById('userBalance');
+    const dollarTotalElement = document.getElementById('dollar_total');
+    const dollarTotalOneElement = document.getElementById('dollar_totalone');
+    const walletAddressDisplay = document.getElementById('walletAddressDisplay');
+    const amountInput = document.getElementById('amount');
+    const coinEquivalent = document.getElementById('coinEquivalent');
+    const sendForm = document.getElementById('sendForm');
+    const copyMessage = document.getElementById('copyMessage');
+    const TanaCoinPrice = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
 
-    // Load user information
+    // Load user information from Firebase
     function loadUserInfo(uid) {
         const userRef = ref(db, `users/${uid}`);
         get(userRef).then(snapshot => {
@@ -459,6 +474,7 @@ historySendBtn.addEventListener('click', () => {
             if (data) {
                 firstNameDisplay.textContent = data.firstName;
                 lastNameDisplay.textContent = data.lastName;
+                walletAddressDisplay.textContent = data.walletAddress || "Not Available";
             }
         }).catch(console.error);
     }
@@ -469,40 +485,22 @@ historySendBtn.addEventListener('click', () => {
         const userSnap = await get(userRef);
         if (userSnap.exists()) {
             const userData = userSnap.val();
-            const walletAddress = userData.walletAddress || "Not available";
             const userBalance = parseFloat(userData.userBalance) || 0;
+            const dollarTotal = (userBalance * TanaCoinPrice).toFixed(2);
 
-            const pricePerTNC = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
-            const dollarTotal = (userBalance * pricePerTNC).toFixed(2);
-
-            document.getElementById('userBalance').textContent = `${userBalance.toFixed(5)} `;
-            document.getElementById('dollar_total').textContent = `$${dollarTotal}`;
-            document.getElementById('dollar_totalone').textContent = `$${dollarTotal}`;
-            document.getElementById('walletAddressDisplay').textContent = walletAddress;
+            userBalanceElement.textContent = `${userBalance.toFixed(5)} `;
+            dollarTotalElement.textContent = `$${dollarTotal}`;
+            dollarTotalOneElement.textContent = `$${dollarTotal}`;
         }
     }
 
-    // Fetch recipient's name using wallet address
-    async function getRecipientName(walletAddress) {
-        const recipientRef = ref(db, `users/${walletAddress}`);
-        const recipientSnap = await get(recipientRef);
-        if (recipientSnap.exists()) {
-            const recipientData = recipientSnap.val();
-            return `${recipientData.firstName} ${recipientData.lastName}`;
-        } else {
-            throw new Error("Recipient not found!");
-        }
-    }
-
-    const TanaCoinPrice = parseFloat(document.getElementById('TanaCoinPrice').textContent) || 5.00;
-        
-    // Calculate TanaCoin equivalent    
-    document.getElementById('amount').addEventListener('input', function () {
-        const amountInDollars = parseFloat(document.getElementById('amount').value);
+    // Calculate TanaCoin equivalent from dollar input
+    amountInput.addEventListener('input', function () {
+        const amountInDollars = parseFloat(amountInput.value);
         const equivalentTNC = isNaN(amountInDollars) || amountInDollars <= 0 ? 0 : (amountInDollars / TanaCoinPrice).toFixed(5);
-        document.getElementById('coinEquivalent').textContent = `TNC: ${equivalentTNC}`;
+        coinEquivalent.textContent = `TNC: ${equivalentTNC}`;
     });
-        
+
     // Handle Wallet Address Verification
     document.getElementById('walletAddress').addEventListener('blur', async function () {
         const walletAddress = document.getElementById('walletAddress').value.trim();
@@ -525,10 +523,10 @@ historySendBtn.addEventListener('click', () => {
                 if (recipientFound) {
                     alert(`Recipient Found: ${recipientFound.firstName} ${recipientFound.lastName}`);
                 } else {
-                    alert("Wallet address is not correct!");
+                    alert("This Wallet address not found in TanaCoin Mine!");
                 }
             } else {
-                alert("No users in TanaCoin!");
+                alert("No users in TanaCoin Miner!");
             }
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -537,11 +535,11 @@ historySendBtn.addEventListener('click', () => {
     });
 
     // Handle TanaCoin Transfer
-    document.getElementById('sendForm').addEventListener('submit', async function (e) {
+    sendForm.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         const walletAddress = document.getElementById('walletAddress').value.trim();
-        const amount = parseFloat(document.getElementById('amount').value);
+        const amount = parseFloat(amountInput.value);
         const password = document.getElementById('password').value.trim();
 
         const user = auth.currentUser;
@@ -569,7 +567,7 @@ historySendBtn.addEventListener('click', () => {
             // Fetch recipient data
             const recipientRef = ref(db, `users`);
             const snapshot = await get(recipientRef);
-            if (!snapshot.exists()) throw new Error("No users found in database!");
+            if (!snapshot.exists()) throw new Error("No users found in Miners!");
 
             let recipientData = null;
             let recipientKey = null;
@@ -592,97 +590,99 @@ historySendBtn.addEventListener('click', () => {
             const confirmSend = confirm(`Are you sure you want to send ${amountInTNC.toFixed(5)} TNC $${amount} to ${recipientName} (${walletAddress})?`);
             if (!confirmSend) return;
 
-            // Update balances
+            // Update balances only after confirmation
             const newSenderBalance = senderData.userBalance - amountInTNC;
             const newRecipientBalance = (recipientData.userBalance || 0) + amountInTNC;
 
+            // Perform transfer (transaction)
             await update(ref(db, `users/${recipientKey}`), { userBalance: newRecipientBalance });
             await update(senderRef, { userBalance: newSenderBalance });
 
-            alert("Transaction successful!");
-                                    
             // Add to transaction history
             await addToSendHistory(user.uid, walletAddress, amountInTNC, recipientName);
             await addToReceivedHistory(walletAddress, user.uid, amountInTNC, senderData.firstName + ' ' + senderData.lastName);
 
+            alert("Transaction successful!");
+
         } catch (error) {
             console.error("Transaction error:", error);
-            alert("Transaction failed! Balance unchanged.");
+            alert("Transaction failed! Error password Or Network issue Your TNC unchanged.");
         }
     });
 
     // Copy wallet address
-document.getElementById('copyBtn').addEventListener('click', () => {
-    const walletAddress = document.getElementById('walletAddressDisplay').textContent;
-    navigator.clipboard.writeText(walletAddress).then(() => {
-        document.getElementById('copyMessage').textContent = "Copy Your Wallet Address successfully!";
+    document.getElementById('copyBtn').addEventListener('click', () => {
+        const walletAddress = walletAddressDisplay.textContent;
+        navigator.clipboard.writeText(walletAddress).then(() => {
+            copyMessage.textContent = "Copied your Wallet Address successfully!";
+        });
     });
-});
 
+    // Transaction history
+    async function addToSendHistory(senderId, recipientAddress, amount, recipientName) {
+        const sendHistoryRef = ref(db, `sendHistory/${senderId}`);
+        await push(sendHistoryRef, {
+            recipient: recipientAddress,
+            amount,
+            recipientName,
+            timestamp: new Date().toISOString()
+        });
+    }
 
-// Transaction history
-async function addToSendHistory(senderId, recipientAddress, amount, recipientName) {
-    const sendHistoryRef = ref(db, `sendHistory/${senderId}`);
-    await push(sendHistoryRef, {
-        recipient: recipientAddress,
-        amount,
-        recipientName,
-        timestamp: new Date().toISOString()
-    });
-}
+    async function addToReceivedHistory(recipientAddress, senderId, amount, senderName) {
+        const receivedHistoryRef = ref(db, `receivedHistory/${recipientAddress}`);
+        await push(receivedHistoryRef, {
+            sender: senderId,
+            amount,
+            senderName,
+            timestamp: new Date().toISOString()
+        });
+    }
 
-async function addToReceivedHistory(recipientAddress, senderId, amount, senderName) {
-    const receivedHistoryRef = ref(db, `receivedHistory/${recipientAddress}`);
-    await push(receivedHistoryRef, {
-        sender: senderId,
-        amount,
-        senderName,
-        timestamp: new Date().toISOString()
-    });
-}
-
-async function getSendHistory(uid) {
-    const sendHistoryRef = ref(db, `sendHistory/${uid}`);
-    const snapshot = await get(sendHistoryRef);
-    if (snapshot.exists()) {
-        const history = snapshot.val();
-        const sendHistoryList = document.getElementById('sentHistoryList');
-        sendHistoryList.innerHTML = "";
-        for (const key in history) {
-            const { recipient, amount, recipientName, timestamp } = history[key];
-            const historyItem = document.createElement('div');
-            historyItem.textContent = `Sent ${amount} TNC to ${recipientName} (${recipient}) on ${timestamp}`;
-            sendHistoryList.appendChild(historyItem);
+    async function getSendHistory(uid) {
+        const sendHistoryRef = ref(db, `sendHistory/${uid}`);
+        const snapshot = await get(sendHistoryRef);
+        if (snapshot.exists()) {
+            const history = snapshot.val();
+            const sendHistoryList = document.getElementById('sentHistoryList');
+            sendHistoryList.innerHTML = "";
+            for (const key in history) {
+                const { recipient, amount, recipientName, timestamp } = history[key];
+                const historyItem = document.createElement('div');
+                historyItem.textContent = `You Send ${amount} TNC to ${recipientName} (${recipient}) on ${timestamp}`;
+                sendHistoryList.appendChild(historyItem);
+            }
         }
     }
-}
 
-async function getReceivedHistory(walletAddress) {
-    const receivedHistoryRef = ref(db, `receivedHistory/${walletAddress}`);
-    const snapshot = await get(receivedHistoryRef);
-    if (snapshot.exists()) {
-        const history = snapshot.val();
-        const receivedHistoryList = document.getElementById('receivedHistoryList');
-        receivedHistoryList.innerHTML = "";
-        for (const key in history) {
-            const { sender, amount, senderName, timestamp } = history[key];
-            const historyItem = document.createElement('div');
-            historyItem.textContent = `Received ${amount} TNC from ${senderName} (${sender}) on ${timestamp}`;
-            receivedHistoryList.appendChild(historyItem);
+        async function getReceivedHistory(walletAddress) {
+        const receivedHistoryRef = ref(db, `receivedHistory/${walletAddress}`);
+        const snapshot = await get(receivedHistoryRef);
+        if (snapshot.exists()) {
+            const history = snapshot.val();
+            const receivedHistoryList = document.getElementById('receivedHistoryList');
+            receivedHistoryList.innerHTML = ""; // Clear existing history
+            for (const key in history) {
+                const { sender, amount, senderName, timestamp } = history[key];
+                const historyItem = document.createElement('div');
+                historyItem.textContent = `You Received ${amount} TNC from ${senderName} (${sender}) on ${timestamp}`;
+                receivedHistoryList.appendChild(historyItem);
+            }
         }
     }
-}
 
-
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        loadUserInfo(user.uid);
-        getSendHistory(user.uid);
-        getUserData(user.uid);
-    } else {
-        alert("No user logged in. Please log in first.");
-    }
-});
-</script>                                                            
+    // Monitor auth state changes and load user data
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            loadUserInfo(user.uid);
+            getSendHistory(user.uid);
+            getReceivedHistory(user.uid);  // Ensure received history is also loaded
+            getUserData(user.uid);  // Ensure balance and wallet info is up-to-date
+        } else {
+            alert("No user logged in. Please log in first.");
+        }
+    });
+        
+</script>                                                             
 </body>
 </html>
