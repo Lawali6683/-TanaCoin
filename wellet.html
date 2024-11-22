@@ -306,7 +306,7 @@ P{
 
         <label for="amount">TNC Amount (in dollars):</label>
         <div class="amount-container">
-            <input type="number" id="amount" placeholder="$0.00" required>
+            <input type="" id="amount" placeholder="$0.00" required>
             <span id="coinEquivalent">TNC: 0.00000</span>
         </div>
 
@@ -385,14 +385,6 @@ function hideAllContainers() {
     historySendContainer.classList.add('hidden');
 }
 
-function checkTransactionHistory() {
-    if (!receivedHistoryList.innerHTML.trim()) {
-        receivedHistoryList.innerHTML = '<p style="color:red;">Not Transactions History</p>';
-    }
-    if (!sentHistoryList.innerHTML.trim()) {
-        sentHistoryList.innerHTML = '<p style="color:red;">Not Transactions History</p>';
-    }
-}
 
 sendBtn.addEventListener('click', () => {
     if (sendContainer.classList.contains('hidden')) {
@@ -432,9 +424,11 @@ historySendBtn.addEventListener('click', () => {
     }
 });
 </script>
-        <script type="module">
+
+
+   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getDatabase, ref, get, update, push, onValue } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
 
     // Firebase Config
@@ -531,17 +525,17 @@ historySendBtn.addEventListener('click', () => {
                 if (recipientFound) {
                     alert(`Recipient Found: ${recipientFound.firstName} ${recipientFound.lastName}`);
                 } else {
-                    alert("Wallet address not found in database!");
+                    alert("Wallet address is not correct!");
                 }
             } else {
-                alert("No users in database!");
+                alert("No users in TanaCoin!");
             }
         } catch (error) {
             console.error("Error fetching users:", error);
             alert("An error occurred while verifying wallet address.");
         }
     });
-               
+
     // Handle TanaCoin Transfer
     document.getElementById('sendForm').addEventListener('submit', async function (e) {
         e.preventDefault();
@@ -557,7 +551,7 @@ historySendBtn.addEventListener('click', () => {
         }
 
         try {
-            // Verify password
+            // Authenticate user
             await signInWithEmailAndPassword(auth, user.email, password);
 
             const senderRef = ref(db, `users/${user.uid}`);
@@ -573,8 +567,8 @@ historySendBtn.addEventListener('click', () => {
             }
 
             // Fetch recipient data
-            const usersRef = ref(db, `users`);
-            const snapshot = await get(usersRef);
+            const recipientRef = ref(db, `users`);
+            const snapshot = await get(recipientRef);
             if (!snapshot.exists()) throw new Error("No users found in database!");
 
             let recipientData = null;
@@ -594,95 +588,101 @@ historySendBtn.addEventListener('click', () => {
                 return;
             }
 
-            // Confirm transaction
             const recipientName = `${recipientData.firstName} ${recipientData.lastName}`;
-            const confirmSend = confirm(`Are you sure you want to send ${amountInTNC.toFixed(5)} TNC to ${recipientName} (${walletAddress})?`);
+            const confirmSend = confirm(`Are you sure you want to send ${amountInTNC.toFixed(5)} TNC $${amount} to ${recipientName} (${walletAddress})?`);
             if (!confirmSend) return;
 
             // Update balances
             const newSenderBalance = senderData.userBalance - amountInTNC;
             const newRecipientBalance = (recipientData.userBalance || 0) + amountInTNC;
 
-            await update(senderRef, { userBalance: newSenderBalance });
             await update(ref(db, `users/${recipientKey}`), { userBalance: newRecipientBalance });
+            await update(senderRef, { userBalance: newSenderBalance });
 
             alert("Transaction successful!");
+                                    
+            // Add to transaction history
+            await addToSendHistory(user.uid, walletAddress, amountInTNC, recipientName);
+            await addToReceivedHistory(walletAddress, user.uid, amountInTNC, senderData.firstName + ' ' + senderData.lastName);
+
         } catch (error) {
             console.error("Transaction error:", error);
-            alert("Password verification failed or transaction error!");
+            alert("Transaction failed! Balance unchanged.");
         }
     });
-        
+
     // Copy wallet address
-    document.getElementById('copyBtn').addEventListener('click', () => {
-        const walletAddress = document.getElementById('walletAddressDisplay').textContent;
-        navigator.clipboard.writeText(walletAddress).then(() => {
-            document.getElementById('copyMessage').textContent = "Copy Your Wallet Address successfully!";
-        });
+document.getElementById('copyBtn').addEventListener('click', () => {
+    const walletAddress = document.getElementById('walletAddressDisplay').textContent;
+    navigator.clipboard.writeText(walletAddress).then(() => {
+        document.getElementById('copyMessage').textContent = "Copy Your Wallet Address successfully!";
     });
+});
 
-    // Transaction history
-    async function addToSendHistory(senderId, recipientAddress, amount, recipientName) {
-        const sendHistoryRef = ref(db, `sendHistory/${senderId}`);
-        await push(sendHistoryRef, {
-            recipient: recipientAddress,
-            amount,
-            recipientName,
-            timestamp: new Date().toISOString()
-        });
-    }
 
-    async function addToReceivedHistory(recipientAddress, senderId, amount, senderName) {
-        const receivedHistoryRef = ref(db, `receivedHistory/${recipientAddress}`);
-        await push(receivedHistoryRef, {
-            sender: senderId,
-            amount,
-            senderName,
-            timestamp: new Date().toISOString()
-        });
-    }
+// Transaction history
+async function addToSendHistory(senderId, recipientAddress, amount, recipientName) {
+    const sendHistoryRef = ref(db, `sendHistory/${senderId}`);
+    await push(sendHistoryRef, {
+        recipient: recipientAddress,
+        amount,
+        recipientName,
+        timestamp: new Date().toISOString()
+    });
+}
 
-    async function getSendHistory(uid) {
-        const sendHistoryRef = ref(db, `sendHistory/${uid}`);
-        const snapshot = await get(sendHistoryRef);
-        if (snapshot.exists()) {
-            const history = snapshot.val();
-            const sendHistoryList = document.getElementById('sentHistoryList');
-            sendHistoryList.innerHTML = "";
-            for (const key in history) {
-                const { recipient, amount, recipientName, timestamp } = history[key];
-                const historyItem = document.createElement('div');
-                historyItem.textContent = `Sent ${amount} TNC to ${recipientName} (${recipient}) on ${timestamp}`;
-                sendHistoryList.appendChild(historyItem);
-            }
+async function addToReceivedHistory(recipientAddress, senderId, amount, senderName) {
+    const receivedHistoryRef = ref(db, `receivedHistory/${recipientAddress}`);
+    await push(receivedHistoryRef, {
+        sender: senderId,
+        amount,
+        senderName,
+        timestamp: new Date().toISOString()
+    });
+}
+
+async function getSendHistory(uid) {
+    const sendHistoryRef = ref(db, `sendHistory/${uid}`);
+    const snapshot = await get(sendHistoryRef);
+    if (snapshot.exists()) {
+        const history = snapshot.val();
+        const sendHistoryList = document.getElementById('sentHistoryList');
+        sendHistoryList.innerHTML = "";
+        for (const key in history) {
+            const { recipient, amount, recipientName, timestamp } = history[key];
+            const historyItem = document.createElement('div');
+            historyItem.textContent = `Sent ${amount} TNC to ${recipientName} (${recipient}) on ${timestamp}`;
+            sendHistoryList.appendChild(historyItem);
         }
     }
+}
 
-    async function getReceivedHistory(walletAddress) {
-        const receivedHistoryRef = ref(db, `receivedHistory/${walletAddress}`);
-        const snapshot = await get(receivedHistoryRef);
-        if (snapshot.exists()) {
-            const history = snapshot.val();
-            const receivedHistoryList = document.getElementById('receivedHistoryList');
-            receivedHistoryList.innerHTML = "";
-            for (const key in history) {
-                const { sender, amount, senderName, timestamp } = history[key];
-                const historyItem = document.createElement('div');
-                historyItem.textContent = `Received ${amount} TNC from ${senderName} (${sender}) on ${timestamp}`;
-                receivedHistoryList.appendChild(historyItem);
-            }
+async function getReceivedHistory(walletAddress) {
+    const receivedHistoryRef = ref(db, `receivedHistory/${walletAddress}`);
+    const snapshot = await get(receivedHistoryRef);
+    if (snapshot.exists()) {
+        const history = snapshot.val();
+        const receivedHistoryList = document.getElementById('receivedHistoryList');
+        receivedHistoryList.innerHTML = "";
+        for (const key in history) {
+            const { sender, amount, senderName, timestamp } = history[key];
+            const historyItem = document.createElement('div');
+            historyItem.textContent = `Received ${amount} TNC from ${senderName} (${sender}) on ${timestamp}`;
+            receivedHistoryList.appendChild(historyItem);
         }
     }
+}
+
+
 onAuthStateChanged(auth, (user) => {
-        if (user) {
-            loadUserInfo(user.uid);
-            getSendHistory(user.uid);
-            getUserData(user.uid);
-        } else {
-            alert("No user logged in. Please log in first.");
-        }
-    });
-    
-</script>
+    if (user) {
+        loadUserInfo(user.uid);
+        getSendHistory(user.uid);
+        getUserData(user.uid);
+    } else {
+        alert("No user logged in. Please log in first.");
+    }
+});
+</script>                                                            
 </body>
 </html>
