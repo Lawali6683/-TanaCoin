@@ -543,15 +543,569 @@
 
             // Hide loading screen after successfully saving data
             document.getElementById('loadingScreen').style.display = 'none';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TanaCoin Mining Register</title>
+        <meta property="og:title" content="🌟TanaCoin Mine! Earn over $1000🎁"/>            
+    <meta property="og:image" content="https://tana-coin.vercel.app/gh1.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://tana-coin.vercel.app/" />  
+    <link rel="icon" href="dove.png" type="image/png">
+    <link rel="manifest" href="/manifest.json">
+</head>
+    <style>
+        /* Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+       body, html {
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+       text-shadow: 3px 4px 4px rgba(0, 0, 0, 0.3);          
+        }
+
+
+        .register-container {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.9);
+         
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            text-align: center
+        z-index: 10;   
+        overflow-y: auto;   
+        }
+
+        h1 {
+            color: #0003ff;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 23px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"] {
+            padding: 13px;
+            Font-size:20px;
+            margin-bottom: 20px;
+            
+       border-bottom: 4px solid #90ff55;
+      
+            border-radius: 10px;
+            font-size: 16px;
+      overflow: auto;
+        }
+
+        button {
+            padding: 7px;
+            background-color: #00FF00;
+            color: white;
+            
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+          border-bottom: 4px solid red; 
+        }
+
+        button:hover {
+            background-color: blue;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+        
+   .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        p {
+            text-align: center;
+            font-size: 23px;
+        }
+
+        a {
+            color: #FF0000;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Image container styling */
+        .image-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2px; 
+        }
+
+        .image {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+          animation: pulse 2s infinite;     
+            box-shadow: 0 0 20px rgba(118, 75, 162, 0.5);
+            z-index: 10;
+        }
+
+        @keyframes rotate-horizontal {
+            from {
+                transform: rotateY(0deg);
+            }
+            to {
+                transform: rotateY(360deg);
+            }
+        }
+
+        /* Responsive styling */
+        @media (max-width: 600px) {
+            .register-container {
+                width: 90%;
+                padding: 20px;
+       overflow-y: auto;        
+                
+            }
+
+            .image {
+                width: 90px;
+                height: 90px;
+            }
+        
+        
+        /* Loading screen styles */
+#loading-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #90ff2b; 
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+}
+
+.icon-container img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    animation: pulse 2s infinite; 
+}
+
+.fas8{
+    margin-top: 15px;
+    font-size: 18px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+
+@keyframes pulse {
+    0% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.3;
+    }
+}
+.gut{
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    Border-radius:10px;
+    
+}
+.button one{
+    Text-align:center;
+    Font-weight:bold;
+    Font-size:20px;
+    Color#d915ff;
+   
+} 
+
+   #background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+       overflow-y: auto;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+      text-shadow: 3px 4px 4px rgba(0, 0, 0, 0.3);           
+        }
+        
+         h1 {
+            text-align: center;
+            color: #0003ff;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 23px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 20px;
+            text-align: left;
+            Font-weight:bold;
+        }
+        input{
+            text-align: none;
+            width: 100%;
+        }
+        
+        /* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Full page loading screen */
+#loadingScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    display: none; /* Initially hidden */
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Loader animation */
+.loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    text-align: center;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+}
+
+/* Animation for the loader */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Message below the loader */
+#loadingScreen p {
+    margin-top: 0px;
+    font-size: 18px;
+    text-align: center;
+}
+     
+    </style>
+<body>
+    <div id="loading-screen">
+        <div class="icon-container">
+            <img src="dove.png" alt="Loading Icon">
+        </div>
+        <p class="fas8"><i style="color:red;">Tana</i><i style="color:green;">Coin</i><i style="color:blue">
+            ...</i></p>
+    </div>
+ <i id="main-content" style="display:none;">
+     <div  id="loadingScreen"> <div class="loader"></div> <p>Please wait...</p> </div>
+    <video autoplay muted loop plays Inline  id="background-video">
+            <source src="video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </i>
+
+    <!-- Image container -->
+    <div  class="image-container">
+    <img id="doveImage" src="dove.png" class="image" alt="Rotating Image" onclick="checkClicks()">
+</div>
+
+<script>
+    let clickCount = 0;
+
+    function checkClicks() {
+        clickCount++;
+        if (clickCount === 5) {
+            window.location.href = 'admin.html'; 
+        }
+    }
+</script>
+   
+    <div class="register-container">
+        <h1><i style="color:red;">Tana</i><i style="color:green;">Coin</i> Mining Register</h1>
+        <form id="step1Form" class="form-section active">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="example75@gmail.com" required>
+            
+            <label for="password">Password</label>
+            <div class="password-wrapper">
+            <input type="password" id="password" name="password" placeholder="create like xtwu@648" required>
+            <span class="toggle-password">👁️‍🗨️</span>
+                </div>  
+   <label for="confirmPassword">Confirm Password</label>
+   <div class="password-wrapper">
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirming" required>
+             <span class="toggle-password">👁️‍🗨️</span>
+             </div>    
+            <button type="submit">Submit</button>
+            <div id="error-message" class="error"></div>
+        </form>
+
+        <form id="step2Form" class="form-section">
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" placeholder="John" required>
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Joseph" required>
+
+            <label for="username">User Name</label>
+            <input type="text" id="username" name="username" placeholder="John466@" required>
+
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" placeholder="Your Nation" required>
+
+            <button type="submit">Complete Register</button>
+        </form>
+        <p>Already have an account? <a href="login.html">Login</a></p>
+        <img src="gh1.png" class="gut">
+    </div>
+<script>
+    const togglePasswordIcons = document.querySelectorAll('.toggle-password');
+
+    togglePasswordIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            const input = this.previousElementSibling;
+            const inputType = input.getAttribute('type');
+            
+            if (inputType === 'password') {
+                input.setAttribute('type', 'text');
+            } else {
+                input.setAttribute('type', 'password');
+            }
+        });
+    });
+</script>
+<script>
+    window.onload = function() {
+        var video = document.getElementById('background-video');
+        var loadingScreen = document.getElementById('loading-screen');
+        var mainContent = document.getElementById('main-content');
+               
+        setTimeout(function() {
+            loadingScreen.style.display = 'none';
+            mainContent.style.display = 'block';
+        }, 3000);
+
+        video.addEventListener('canplaythrough', function() {
+            loadingScreen.style.display = 'none'; // Cire loading screen
+            mainContent.style.display = 'block';  // Nuna main content
+        });
+    };
+</script>
+
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
+        authDomain: "tanacoin-mine.firebaseapp.com",
+        projectId: "tanacoin-mine",
+        storageBucket: "tanacoin-mine.appspot.com",
+        messagingSenderId: "550307127686",
+        appId: "1:550307127686:web:a7fb30e74aefebf3280c07",
+        measurementId: "G-596X16VEGX",
+        databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth();
+    const db = getDatabase();
+
+    function generateWalletAddress() {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        let walletAddress = "TNC";
+        for (let i = 0; i < 32; i++) {
+            walletAddress += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return walletAddress;
+    }
+
+    async function checkWalletAddressExists(walletAddress) {
+        const snapshot = await get(ref(db, 'users/'));
+        const users = snapshot.val();
+        for (let userId in users) {
+            if (users[userId].walletAddress === walletAddress) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    async function handleReferralBonus(referrerUid, bonusAmount, levelBonus = 0) {
+        const referrerRef = ref(db, `users/${referrerUid}`);
+        const snapshot = await get(referrerRef);
+        if (snapshot.exists()) {
+            const referrerData = snapshot.val();
+            const updatedBalance = parseFloat(referrerData.userBalance || 0) + bonusAmount;
+
+            // Update userBalance
+            await update(referrerRef, { userBalance: updatedBalance });
+
+            // Handle referral chain bonuses
+            if (levelBonus > 0 && referrerData.referredBy) {
+                await handleReferralBonus(referrerData.referredBy, levelBonus, levelBonus / 2);
+            }
+        }
+    }
+
+    document.getElementById('step1Form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const errorMessage = document.getElementById('error-message');
+
+        errorMessage.textContent = '';
+
+        if (password !== confirmPassword) {
+            errorMessage.textContent = "Passwords do not match!";
+            return;
+        }
+
+        document.getElementById('loadingScreen').style.display = 'block';
+
+        try {
+            const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+            if (signInMethods.length > 0) {
+                errorMessage.textContent = "This email address has already been used. Please log in to your account.";
+                return;
+            }
+
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('step1Form').classList.remove('active');
+            document.getElementById('step2Form').classList.add('active');
+        } catch (error) {
+            console.error("Error in Firebase Authentication: ", error);
+            document.getElementById('loadingScreen').style.display = 'none';
+            errorMessage.textContent = "Failed to create account. Please try again.";
+        }
+    });
+
+    document.getElementById('step2Form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const userId = auth.currentUser.uid;
+        const email = auth.currentUser.email;
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const username = document.getElementById('username').value;
+        const country = document.getElementById('country').value;
+        const referredBy = new URLSearchParams(window.location.search).get('ref') || null;
+
+        let walletAddress = generateWalletAddress();
+        while (await checkWalletAddressExists(walletAddress)) {
+            walletAddress = generateWalletAddress();
+        }
+
+        const userData = {
+            firstName,
+            lastName,
+            username,
+            email,
+            country,
+            userBalance: 0.00000,
+            referralLink: `https://tana-coin.vercel.app/referral?user=${username}&ref=${userId.slice(0, 6)}`,
+            walletAddress,
+            referredBy
+        };
+
+        document.getElementById('loadingScreen').style.display = 'block';
+
+        try {
+            await set(ref(db, 'users/' + userId), userData);
+
+            // Handle referral bonus
+            if (referredBy) {
+                await handleReferralBonus(referredBy, 2.00000, 0.20000); // Add initial bonus and chain bonuses
+            }
+
+            document.getElementById('loadingScreen').style.display = 'none';
             alert("Registration successful!");
-            window.location.href = "login.html";  
+            window.location.href = "login.html";
         } catch (error) {
             console.error("Error in Firebase Database: ", error);
-            document.getElementById('loadingScreen').style.display = 'none';  
+            document.getElementById('loadingScreen').style.display = 'none';
             alert("Failed to save user data. Please try again.");
         }
     });
 </script>
+
 </body>
 </html>
+
