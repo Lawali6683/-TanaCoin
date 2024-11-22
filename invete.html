@@ -10,6 +10,7 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     background-color: #95fff597;
+    width: 100%;
 }
 
 /* Video Background */
@@ -75,6 +76,7 @@ header .use {
 @media (max-width: 768px) {
     header {
         padding: 1px 3px;
+        width: 100%;
         flex-direction: column;
         align-items: flex-start;
     }
@@ -86,7 +88,8 @@ header .use {
     }
     
 .container {
-width: 97%;
+width: 100%;
+
     padding: 3px;
     background-color: rgba(255, 255, 255, 0.85); 
     background-color: #eaffff;
@@ -220,6 +223,88 @@ th, td {
         #main-content {
             display: none; 
         }
+        
+       .mun{
+      margin-top: 50px;
+      padding: 10px;
+      background: #111;
+      color: #fff;
+      Text-align: center;
+    }
+    </style>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.footer {
+    background-color: black;
+    width: 100%;
+    border-bottom: 3px solid green;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto;
+    position: relative;
+    font-family: Arial, sans-serif;
+}
+
+.footer p {
+    margin: 0 0 10px;
+    Color: blue;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.social-icon {
+    color: #fff;
+    font-size: 30px;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.social-icon:hover {
+    transform: translateY(-5px);
+}
+
+.social-icon:active {
+    transform: scale(0.9);
+}
+
+#facebook {
+    color: #3b5998; 
+}
+
+#twitter {
+    color: #1da1f2; 
+}
+
+#telegram {
+    color: #0088cc; 
+}
+
+#whatsapp {
+    color: #25d366; 
+}
+
+#instagram {
+    color: #e1306c; 
+}
+
+#email {
+    color: #d44638; 
+}
+
+.social-icon:hover {
+    filter: brightness(1.2);
+}
+
     </style>
 </head>
 <body>
@@ -241,7 +326,7 @@ th, td {
     <div class="profile-container">
         <input type="file" id="upload" style="display:none;" accept="image/*" />
        <img id="avatar" src="avatar.png" alt="User Avatar" class="avatar" />
-        <h3 id="username">Username</h3>
+        <h3 id="username"></h3>
     </div>
 </header>
 
@@ -268,23 +353,52 @@ th, td {
    
 <video autoplay muted loop id="bgVideo">
     <source src="video6.mp4" type="video/mp4">
-</video>   
-    <h2 style="color:white;">Your Active Referrals and Friends' Referrals</h2> </section>   
-    <div>
-    <table>
-        <thead>
-            <tr>
-                <th>Referral Username</th>
-                <th>Your Bonus (10%)</th>
-                <th>Friend's Referral Username</th>
-                <th>Your Bonus (5%)</th>
-            </tr>
-        </thead>
-        <tbody id="referralTable">
-            
-        </tbody>
-    </table>
+</video> 
+  
+    <h2 style="color:white;">Your Active Referrals</h2> </section>                   
+<table id="referralTable">
+  <thead>
+    <tr>
+      <th>Your Referrals</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+    
 </div>
+
+<section>
+    <footer class="footer">
+        <p>&copy; <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Social media Views Us</p>
+        <div class="social-icons">
+          <a href="" data-url="" class="social-icon" id="facebook"> <i class="fab fa-facebook-f"></i></a>
+            <a href="" data-url="" class="social-icon" id="twitter"><i class="fab fa-twitter"></i></a>
+            <a href="" data-url="" class="social-icon" id="telegram"><i class="fab fa-telegram-plane"></i></a>
+            <a href="" data-url="" class="social-icon" id="whatsapp"><i class="fab fa-whatsapp"></i></a>
+            <a href="" data-url="" class="social-icon" id="instagram"><i class="fab fa-instagram"></i></a>
+            <a href="" data-url="mailto:minetanacoin@gmail.com" class="social-icon" id="email"><i class="fas fa-envelope"></i></a>
+        </div>
+      
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        document.querySelectorAll('.social-icon').forEach(icon => {
+    icon.addEventListener('click', function (event) {
+        event.preventDefault(); // Stop the link from opening immediately
+        const url = icon.getAttribute('data-url');
+        if (url) {
+            // Open link if available
+            window.open(url, '_blank');
+        } else {
+            // Show alert if no link is available
+            alert("Coming soon. Loch January 2025");
+        }
+    });
+});
+
+    </script>
+    <p>&copy; 2025 <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Mine. All Rights Reserved.</p>
+  </footer>
+</section>
 <script>
         // Loading Screen Logic
       // Nemi dukkan bidiyon
@@ -353,6 +467,7 @@ uploadInput.addEventListener("change", (event) => {
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
   import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
+  // Firebase Config
   const firebaseConfig = {
     apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
     authDomain: "tanacoin-mine.firebaseapp.com",
@@ -373,7 +488,7 @@ uploadInput.addEventListener("change", (event) => {
   const userBalance = document.getElementById("userBalance");
   const referralLink = document.getElementById("referralLink");
   const copyButton = document.getElementById("copyButton");
-  const referralTable = document.getElementById("referralTable"); // Add this element in your HTML
+  const referralTable = document.getElementById("referralTable");
 
   let currentUserUid = null;
 
@@ -385,31 +500,29 @@ uploadInput.addEventListener("change", (event) => {
         const userRef = ref(db, `users/${currentUserUid}`);
         const userSnapshot = await get(userRef);
 
-        if (!userSnapshot.exists()) {
-          const urlParams = new URLSearchParams(window.location.search);
-          const referrerUid = urlParams.get("ref");
+        let userData = userSnapshot.exists() ? userSnapshot.val() : null;
 
-          // Initialize new user
+        // Check if user has referral link
+        if (!userData || !userData.referralLink) {
+          const username = userData?.username || user.email.split("@")[0];
+          const referralLinkValue = `https://tana-coin.vercel.app/referral?user=${username}&ref=${currentUserUid.slice(0, 6)}`;
+
           const initialData = {
-            username: user.email.split("@")[0],
-            userBalance: 2.0, // Initial balance with some amount
-            referredBy: referrerUid || null,
+            username,
+            userBalance: userData?.userBalance || 0.0,
+            referralLink: referralLinkValue,
           };
-          await set(userRef, initialData);
 
-          // Add referral bonuses
-          if (referrerUid) {
-            await addReferralBonus(referrerUid, currentUserUid);
-          }
+          await update(userRef, initialData);
+          userData = initialData; // Update local variable with new data
         }
 
         // Display user data
-        const userData = (await get(userRef)).val();
         usernameDisplay.textContent = userData.username || "User";
         userBalance.textContent = (userData.userBalance || 0).toFixed(5);
+        referralLink.value = userData.referralLink;
 
-        // Generate referral link
-        referralLink.value = `https://tana-coin.vercel.app/referral?user=${userData.username}&ref=${currentUserUid.slice(0, 6)}`;
+        // Load referral data
         await loadReferralData();
       } else {
         console.error("User is not authenticated.");
@@ -426,42 +539,6 @@ uploadInput.addEventListener("change", (event) => {
     alert("Referral link copied!");
   });
 
-  // Add TanaCoin bonuses
-  async function addReferralBonus(referrerUid, referredUid) {
-    try {
-      const referrerRef = ref(db, `users/${referrerUid}`);
-      const referredRef = ref(db, `users/${referredUid}`);
-
-      const referrerSnapshot = await get(referrerRef);
-      const referredSnapshot = await get(referredRef);
-
-      if (referrerSnapshot.exists() && referredSnapshot.exists()) {
-        const referrerData = referrerSnapshot.val();
-        const referredData = referredSnapshot.val();
-
-        // Add 2.0 TanaCoin to referrer for referral
-        const newReferrerBalance = (referrerData.userBalance || 0) + 2.0;
-        await update(referrerRef, { userBalance: newReferrerBalance });
-
-        // Track the referral and bonuses
-        const referralData = {
-          username: referredData.username,
-          bonus10: 0, // Initial bonus values
-          bonus5: 0,
-        };
-        const referralRef = ref(db, `users/${referrerUid}/referrals/${referredUid}`);
-        await set(referralRef, referralData);
-
-        // Add bonuses to userBalance of the referred user as well
-        const referredBonus = 2.0; // Add a bonus for the referred user
-        const newReferredBalance = (referredData.userBalance || 0) + referredBonus;
-        await update(referredRef, { userBalance: newReferredBalance });
-      }
-    } catch (error) {
-      console.error("Error adding referral bonus:", error);
-    }
-  }
-
   // Load referral data
   async function loadReferralData() {
     try {
@@ -473,15 +550,12 @@ uploadInput.addEventListener("change", (event) => {
         const referrals = Object.values(snapshot.val());
 
         referrals.forEach((referral) => {
-          const { username, bonus10, friendUsername, bonus5 } = referral;
+          const { username } = referral;
 
           // Add referral data as a table row
           referralTable.innerHTML += `
             <tr>
               <td>${username || "N/A"}</td>
-              <td>${bonus10?.toFixed(5) || "0.00000"}</td>
-              <td>${friendUsername || "N/A"}</td>
-              <td>${bonus5?.toFixed(5) || "0.00000"}</td>
             </tr>
           `;
         });
@@ -493,5 +567,6 @@ uploadInput.addEventListener("change", (event) => {
     }
   }
 </script>
+
 </body>
 </html>
