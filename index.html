@@ -458,9 +458,10 @@
         return false;
     }
 
-    async function handleReferralBonus(referrerUid, bonusAmount, levelBonus = 0) {
-        const referrerRef = ref(db, `users/${referrerUid}`);
+    async function handleReferralBonus(referrerId, bonusAmount, levelBonus = 0) {
+        const referrerRef = ref(db, `users/${referrerId}`);
         const snapshot = await get(referrerRef);
+
         if (snapshot.exists()) {
             const referrerData = snapshot.val();
             const updatedBalance = parseFloat(referrerData.userBalance || 0) + bonusAmount;
@@ -468,7 +469,7 @@
             // Update userBalance
             await update(referrerRef, { userBalance: updatedBalance });
 
-            // Handle referral chain bonuses
+            // Handle chain bonuses
             if (levelBonus > 0 && referrerData.referredBy) {
                 await handleReferralBonus(referrerData.referredBy, levelBonus, levelBonus / 2);
             }
@@ -560,6 +561,5 @@
         }
     });
 </script>
-
 </body>
 </html>
