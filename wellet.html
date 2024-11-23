@@ -8,6 +8,7 @@
     <style>
         Body{
             background: #eaffff97;
+            Text-align: center;
         }
         #{
     font-family: Arial, sans-serif;
@@ -26,7 +27,7 @@
     background-color: #eaffff97;
     justify-content: center;
     
-    padding: 0px;
+    padding: 1px;
     border-radius: 10px;
     text-align: center;
      border-top: 5px solid green;
@@ -90,6 +91,10 @@ button{
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.70);
 }
+button hover{
+    Background: blue;
+}
+
 
  .balance-container {
             margin-top: 20px;
@@ -146,6 +151,7 @@ button{
         }
 
         .menu-item button {
+     
             background-color: #3498db;
             color: white;
             border: none;
@@ -254,7 +260,7 @@ P{
     Font-weight: bold;
     Font-size: 9px;
 }
-#historySendContainer{
+#receivedHistoryList{
     Font-weight: bold;
     Font-size: 10px;
 }
@@ -352,12 +358,12 @@ P{
 
         <!-- History Containers -->
         <div id="historyReceiveContainer" class="hidden">
-            <h3>Received TanaCoin History</h3>
+            <h3>Received <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> History</h3>
             <div id="receivedHistoryList"></div>
         </div>
 
         <div id="historySendContainer" class="hidden">
-            <h3>Sent TanaCoin History</h3>
+            <h3>Send <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> History</h3>
             <div id="sentHistoryList"></div> 
         </div>
          <div class="container">
@@ -371,7 +377,7 @@ Take advantage of this opportunity—mine TNC coins today and watch your earning
             <img src="pm.png" style="width: 100%; height: 50%;">
     </div>
     </div>
-<script>
+    <script>
     // Samun maballin da akwatinan da suka dace
 const sendBtn = document.getElementById('sendBtn');
 const receiveBtn = document.getElementById('receiveBtn');
@@ -393,7 +399,7 @@ function hideAllContainers() {
     historySendContainer.classList.add('hidden');
 }
 
-
+// Duba shafin "Send"
 sendBtn.addEventListener('click', () => {
     if (sendContainer.classList.contains('hidden')) {
         hideAllContainers();
@@ -403,6 +409,7 @@ sendBtn.addEventListener('click', () => {
     }
 });
 
+// Duba shafin "Receive"
 receiveBtn.addEventListener('click', () => {
     if (receiveContainer.classList.contains('hidden')) {
         hideAllContainers();
@@ -412,27 +419,28 @@ receiveBtn.addEventListener('click', () => {
     }
 });
 
+// Duba tarihin "Receive" (amma ba tare da kiran checkTransactionHistory ba, saboda an riga an loda tarihin)
 historyReceiveBtn.addEventListener('click', () => {
     if (historyReceiveContainer.classList.contains('hidden')) {
         hideAllContainers();
         historyReceiveContainer.classList.remove('hidden');
-        checkTransactionHistory();
-    } else {
+    } else {  
         historyReceiveContainer.classList.add('hidden');
     }
 });
 
+// Duba tarihin "Send" (amma ba tare da kiran checkTransactionHistory ba, saboda an riga an loda tarihin)
 historySendBtn.addEventListener('click', () => {
     if (historySendContainer.classList.contains('hidden')) {
         hideAllContainers();
         historySendContainer.classList.remove('hidden');
-        checkTransactionHistory();
     } else {
         historySendContainer.classList.add('hidden');
     }
 });
-</script>                     
-<script type="module">
+</script>
+                
+       <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getDatabase, ref, get, update, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
@@ -602,6 +610,11 @@ historySendBtn.addEventListener('click', () => {
             await addToSendHistory(user.uid, walletAddress, amountInTNC, recipientName);
             await addToReceivedHistory(walletAddress, user.uid, amountInTNC, senderData.firstName + ' ' + senderData.lastName);
 
+            // Clear form after successful transaction
+            sendForm.reset();
+            // Update user balance on the dashboard
+            getUserData(user.uid);
+
             alert("Transaction successful!");
 
         } catch (error) {
@@ -619,57 +632,81 @@ historySendBtn.addEventListener('click', () => {
     });
 
     // Transaction history
-    async function addToSendHistory(senderId, recipientAddress, amount, recipientName) {
-        const sendHistoryRef = ref(db, `sendHistory/${senderId}`);
-        await push(sendHistoryRef, {
-            recipient: recipientAddress,
-            amount,
-            recipientName,
-            timestamp: new Date().toISOString()
-        });
-    }
+async function addToSendHistory(senderId, recipientAddress, amount, recipientName) {
+    const sendHistoryRef = ref(db, `sendHistory/${senderId}`);
+    await push(sendHistoryRef, {
+        recipient: recipientAddress,
+        amount,
+        recipientName,
+        timestamp: new Date().toISOString()
+    });
+}
 
-    async function addToReceivedHistory(recipientAddress, senderId, amount, senderName) {
-        const receivedHistoryRef = ref(db, `receivedHistory/${recipientAddress}`);
-        await push(receivedHistoryRef, {
-            sender: senderId,
-            amount,
-            senderName,
-            timestamp: new Date().toISOString()
-        });
-    }
+async function addToReceivedHistory(recipientAddress, senderId, amount, senderName) {
+    const receivedHistoryRef = ref(db, `receivedHistory/${recipientAddress}`);
+    await push(receivedHistoryRef, {
+        sender: senderId,
+        amount,
+        senderName,
+        timestamp: new Date().toISOString()
+    });
+}
 
-    async function getSendHistory(uid) {
-        const sendHistoryRef = ref(db, `sendHistory/${uid}`);
-        const snapshot = await get(sendHistoryRef);
-        if (snapshot.exists()) {
-            const history = snapshot.val();
-            const sendHistoryList = document.getElementById('sentHistoryList');
-            sendHistoryList.innerHTML = "";
-            for (const key in history) {
-                const { recipient, amount, recipientName, timestamp } = history[key];
-                const historyItem = document.createElement('div');
-                historyItem.textContent = `You Send ${amount} TNC to ${recipientName} (${recipient}) on ${timestamp}`;
-                sendHistoryList.appendChild(historyItem);
-            }
+// Fetch and display send transaction history
+async function getSendHistory(uid) {
+    const sendHistoryRef = ref(db, `sendHistory/${uid}`);
+    const snapshot = await get(sendHistoryRef);
+    if (snapshot.exists()) {
+        const history = snapshot.val();
+        const sendHistoryList = document.getElementById('sentHistoryList');
+        sendHistoryList.innerHTML = ""; // Clear existing history
+        for (const key in history) {
+            const { recipient, amount, recipientName, timestamp } = history[key];
+            
+            // Convert TNC amount to USD
+            const amountInUSD = (amount * TanaCoinPrice).toFixed(2);
+            const formattedTimestamp = new Date(timestamp).toLocaleString();
+
+            // Display history item
+            const historyItem = document.createElement('div');
+            historyItem.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <span style="font-weight: bold; color: green;">✔️</span>
+                    <span style="margin-left: 8px;">You sending TNC ${amount} ($${amountInUSD}) to ${recipientName} on ${formattedTimestamp}</span>
+                </div>
+            `;
+            sendHistoryList.appendChild(historyItem);
         }
     }
+}
 
-        async function getReceivedHistory(walletAddress) {
-        const receivedHistoryRef = ref(db, `receivedHistory/${walletAddress}`);
-        const snapshot = await get(receivedHistoryRef);
-        if (snapshot.exists()) {
-            const history = snapshot.val();
-            const receivedHistoryList = document.getElementById('receivedHistoryList');
-            receivedHistoryList.innerHTML = ""; // Clear existing history
-            for (const key in history) {
-                const { sender, amount, senderName, timestamp } = history[key];
-                const historyItem = document.createElement('div');
-                historyItem.textContent = `You Received ${amount} TNC from ${senderName} (${sender}) on ${timestamp}`;
-                receivedHistoryList.appendChild(historyItem);
-            }
+// Fetch and display receive transaction history
+async function getReceivedHistory(walletAddress) {
+    const receivedHistoryRef = ref(db, `receivedHistory/${walletAddress}`);
+    const snapshot = await get(receivedHistoryRef);
+    if (snapshot.exists()) {
+        const history = snapshot.val();
+        const receivedHistoryList = document.getElementById('receivedHistoryList');
+        receivedHistoryList.innerHTML = ""; // Clear existing history
+        for (const key in history) {
+            const { sender, amount, senderName, timestamp } = history[key];
+            
+            // Convert TNC amount to USD
+            const amountInUSD = (amount * TanaCoinPrice).toFixed(2);
+            const formattedTimestamp = new Date(timestamp).toLocaleString();
+
+            // Display history item
+            const historyItem = document.createElement('div');
+            historyItem.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                    <span style="font-weight: bold; color: blue;">✔️</span>
+                    <span style="margin-left: 8px;">You received TNC ${amount} ($${amountInUSD}) from ${senderName} on ${formattedTimestamp}</span>
+                </div>
+            `;
+            receivedHistoryList.appendChild(historyItem);
         }
     }
+}
 
     // Monitor auth state changes and load user data
     onAuthStateChanged(auth, (user) => {
@@ -682,7 +719,7 @@ historySendBtn.addEventListener('click', () => {
             alert("No user logged in. Please log in first.");
         }
     });
-        
-</script>                                                             
+</script>
+                                                        
 </body>
 </html>
