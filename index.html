@@ -437,6 +437,16 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
     const db = getDatabase();
+    
+    const referredBy = new URLSearchParams(window.location.search).get('ref');
+
+if (!referredBy) {
+    
+    alert("You are not eligible to register. You must use a referral link.");
+    window.location.href = "https://tana-coin.vercel.app/referral?user=Haruna@66&ref=6eFgxE"; 
+    throw new Error("User attempted to register without a referral link.");
+}
+
 
     function generateWalletAddress() {
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
