@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/referral", "destination": "/referral" }
+    { "source": "/referral", "destination": "/" }
   ]
 }
