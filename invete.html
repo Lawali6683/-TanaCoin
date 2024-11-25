@@ -11,6 +11,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #95fff597;
     width: 100%;
+    overflow-y: auto;
 }
 
 /* Video Background */
@@ -88,7 +89,7 @@ header .use {
     }
     
 .container {
-width: 100%;
+width: 99%;
 
     padding: 3px;
     background-color: rgba(255, 255, 255, 0.85); 
@@ -332,7 +333,7 @@ th, td {
 
 <div class="container">
     <h1>Invite Your Friends to Earn More <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i></h1>
-    <p>Earn a 2 <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> bonus for each friend you refer! Additionally, you'll earn 10% of the <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> your referral accumulates every day and 5% from their referred friends' earnings.</p>
+    <p>Earn a 2 <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> bonus for each friend you refer! Additionally, you'll earn 10% of the <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> your referral accumulates every day  earnings.</p>
     <section class="good">
        
 <video autoplay muted loop id="bgVideo">
@@ -355,19 +356,9 @@ th, td {
     <source src="video6.mp4" type="video/mp4">
 </video> 
   
-    <h2 style="color:white;">Your Active Referrals</h2> </section>                   
-<table id="referralTable">
-  <thead>
-    <tr>
-      <th>Your Referrals</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
-    
-</div>
+    <h2 style="color:white;">Keep inviting your friends! Share your referral link on social media and earn rewards.</h2></div >
 
-<section>
+<p>
     <footer class="footer">
         <p>&copy; <i style="color:red;">🕊️Tana</i><i style="color:green;">Coin</i> Social media Views Us</p>
         <div class="social-icons">
@@ -462,10 +453,11 @@ uploadInput.addEventListener("change", (event) => {
 });
     </script>
     
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
   import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+  import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
   // Firebase Config
   const firebaseConfig = {
@@ -488,42 +480,28 @@ uploadInput.addEventListener("change", (event) => {
   const userBalance = document.getElementById("userBalance");
   const referralLink = document.getElementById("referralLink");
   const copyButton = document.getElementById("copyButton");
-  const referralTable = document.getElementById("referralTable");
 
   let currentUserUid = null;
 
-  // Handle user authentication
+  // Handle user authentication and data fetching
   onAuthStateChanged(auth, async (user) => {
     try {
       if (user) {
         currentUserUid = user.uid;
+
         const userRef = ref(db, `users/${currentUserUid}`);
         const userSnapshot = await get(userRef);
 
-        let userData = userSnapshot.exists() ? userSnapshot.val() : null;
+        if (userSnapshot.exists()) {
+          const userData = userSnapshot.val();
 
-        // Check if user has referral link
-        if (!userData || !userData.referralLink) {
-          const username = userData?.username || user.email.split("@")[0];
-          const referralLinkValue = `https://tana-coin.vercel.app/referral?user=${username}&ref=${currentUserUid.slice(0, 6)}`;
-
-          const initialData = {
-            username,
-            userBalance: userData?.userBalance || 0.0,
-            referralLink: referralLinkValue,
-          };
-
-          await update(userRef, initialData);
-          userData = initialData; // Update local variable with new data
+          // Display user data
+          usernameDisplay.textContent = userData.username || "User";
+          userBalance.textContent = (userData.userBalance || 0).toFixed(5);
+          referralLink.value = userData.referralLink || "Referral link not available";
+        } else {
+          console.error("User data not found in the database.");
         }
-
-        // Display user data
-        usernameDisplay.textContent = userData.username || "User";
-        userBalance.textContent = (userData.userBalance || 0).toFixed(5);
-        referralLink.value = userData.referralLink;
-
-        // Load referral data
-        await loadReferralData();
       } else {
         console.error("User is not authenticated.");
       }
@@ -538,35 +516,6 @@ uploadInput.addEventListener("change", (event) => {
     document.execCommand("copy");
     alert("Referral link copied!");
   });
-
-  // Load referral data
-  async function loadReferralData() {
-    try {
-      const referralsRef = ref(db, `users/${currentUserUid}/referrals`);
-      const snapshot = await get(referralsRef);
-
-      if (snapshot.exists()) {
-        referralTable.innerHTML = ""; // Clear the existing table content
-        const referrals = Object.values(snapshot.val());
-
-        referrals.forEach((referral) => {
-          const { username } = referral;
-
-          // Add referral data as a table row
-          referralTable.innerHTML += `
-            <tr>
-              <td>${username || "N/A"}</td>
-            </tr>
-          `;
-        });
-      } else {
-        console.log("No referral data found for the current user.");
-      }
-    } catch (error) {
-      console.error("Error loading referral data:", error);
-    }
-  }
 </script>
-
 </body>
 </html>
