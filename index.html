@@ -50,7 +50,7 @@
         form {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            
         }
 
         label {
@@ -69,11 +69,11 @@
       
             border-radius: 10px;
             font-size: 16px;
-      overflow: auto;
+      
         }
 
         button {
-            padding: 7px;
+            padding: 10px;
             background-color: #00FF00;
             color: white;
             
@@ -263,6 +263,7 @@
         input{
             text-align: none;
             width: 100%;
+            
         }
         
         /* Basic Reset */
@@ -291,6 +292,7 @@
 
 /* Loader animation */
 .loader {
+
     border: 16px solid #f3f3f3;
     border-top: 16px solid #3498db;
     border-radius: 50%;
@@ -323,7 +325,8 @@
             ...</i></p>
     </div>
  <i id="main-content" style="display:none;">
-     <div  id="loadingScreen"> <div class="loader"></div> <p>Please wait...</p> </div>
+  <section><center>  <div  id="loadingScreen"> <div class="loader"></div> <p>Please wait...</p> </div></center></section>
+     
     <video autoplay muted loop plays Inline  id="background-video">
             <source src="video.mp4" type="video/mp4">
             Your browser does not support the video tag.
@@ -348,58 +351,68 @@
    
     <div class="register-container">
         <h1><i style="color:red;">Tana</i><i style="color:green;">Coin</i> Mining Register</h1>
-        <form id="step1Form" class="form-section active">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="example75@gmail.com" required>
-            
-            <label for="password">Password</label>
+        
+         <div id="registrationForm">     
+        <form id="registerForm">
+            <div>
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" placeholder="John" required><br></div>
+            <div>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" placeholder="Joseph" required><br></div>
+            <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" placeholder="John466@" required><br></div>
+            <div>
+            <label for="referralCode">Referral Code:</label></div>
+            <div>
+            <input type="text" id="referralCode" disabled><br></div>
+            <div>
+            <label for="county">County:</label>
+            <input type="text" id="county" placeholder="Your Nation" required><br></div>
+            <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="example75@gmail.com" required><br></div>
+            <div>
+            <label for="password">Password:</label>
             <div class="password-wrapper">
-            <input type="password" id="password" name="password" placeholder="create like xtwu@648" required>
+            <input type="password" id="password" placeholder="create like xtwu648"  required><br> 
             <span class="toggle-password">👁️‍🗨️</span>
-                </div>  
-   <label for="confirmPassword">Confirm Password</label>
-   <div class="password-wrapper">
-            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirming" required>
-             <span class="toggle-password">👁️‍🗨️</span>
-             </div>    
+            </div>
+            <div>
+            <label for="confirmPassword">Confirm Password:</label>
+         <div class="password-wrapper">  
+            <input type="password" id="confirmPassword" placeholder="xtwu648" required><br> 
+            <span  class="toggle-password">👁️‍🗨️</span>
+            </div>
             <button type="submit">Submit</button>
-            <div id="error-message" class="error"></div>
         </form>
-
-        <form id="step2Form" class="form-section">
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" name="firstName" placeholder="John" required>
-
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" name="lastName" placeholder="Joseph" required>
-
-            <label for="username">User Name</label>
-            <input type="text" id="username" name="username" placeholder="John466@" required>
-
-            <label for="country">Country</label>
-            <input type="text" id="country" name="country" placeholder="Your Nation" required>
-
-            <button type="submit">Complete Register</button>
-        </form>
+    </div>
+    
+    <div>
         <p>Already have an account? <a href="login.html">Login</a></p>
         <img src="gh1.png" class="gut">
     </div>
-<script>
-    const togglePasswordIcons = document.querySelectorAll('.toggle-password');
+    <script>
+        const togglePasswordIcons = document.querySelectorAll('.toggle-password');
 
-    togglePasswordIcons.forEach(icon => {
-        icon.addEventListener('click', function() {
-            const input = this.previousElementSibling;
-            const inputType = input.getAttribute('type');
-            
-            if (inputType === 'password') {
-                input.setAttribute('type', 'text');
-            } else {
-                input.setAttribute('type', 'password');
-            }
-        });
+togglePasswordIcons.forEach(icon => {
+    icon.addEventListener('click', function() {
+        // Find the corresponding input within the same parent wrapper
+        const input = this.closest('.password-wrapper').querySelector('input');
+        const inputType = input.getAttribute('type');
+        
+        // Toggle between 'text' and 'password'
+        if (inputType === 'password') {
+            input.setAttribute('type', 'text');
+        } else {
+            input.setAttribute('type', 'password');
+        }
     });
-</script>
+});
+
+    </script>
+
 <script>
     window.onload = function() {
         var video = document.getElementById('background-video');
@@ -417,12 +430,12 @@
         });
     };
 </script>
-
-    <script type="module">
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { getDatabase, ref, set, get, update } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
+    // Firebase configuration
     const firebaseConfig = {
         apiKey: "AIzaSyBZl5lT_PEvGZh034gstErFfjEaMFsFzKY",
         authDomain: "tanacoin-mine.firebaseapp.com",
@@ -434,20 +447,15 @@
         databaseURL: "https://tanacoin-mine-default-rtdb.firebaseio.com/"
     };
 
+    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth();
     const db = getDatabase();
-    
-    const referredBy = new URLSearchParams(window.location.search).get('ref');
 
-if (!referredBy) {
-    
-    alert("You are not eligible to register. You must use a referral link.");
-    window.location.href = "https://tana-coin.vercel.app/referral?user=Haruna@66&ref=6eFgxE"; 
-    throw new Error("User attempted to register without a referral link.");
-}
+    // Default referral code
+    const defaultReferralCode = "292zJR";
 
-
+    // Generate a random wallet address
     function generateWalletAddress() {
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         let walletAddress = "TNC";
@@ -457,6 +465,7 @@ if (!referredBy) {
         return walletAddress;
     }
 
+ // Check if the wallet address already exists
     async function checkWalletAddressExists(walletAddress) {
         const snapshot = await get(ref(db, 'users/'));
         const users = snapshot.val();
@@ -467,109 +476,155 @@ if (!referredBy) {
         }
         return false;
     }
+    
+    // Handle referral link and show referral code
+    function handleReferralLink() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const referralCode = urlParams.get('ref');
+        if (referralCode) {
+            document.getElementById("referralCode").value = referralCode;
+        } else {         
+            alert("You are not using a referral code, default will be used.");
+                       document.getElementById("referralCode").value = defaultReferralCode;
+        }
+    }
 
-    async function handleReferralBonus(referrerId, bonusAmount, levelBonus = 0) {
-        const referrerRef = ref(db, `users/${referrerId}`);
-        const snapshot = await get(referrerRef);
+    // Register user
+    document.getElementById("registerForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
 
-        if (snapshot.exists()) {
-            const referrerData = snapshot.val();
-            const updatedBalance = parseFloat(referrerData.userBalance || 0) + bonusAmount;
+        // Show loading screen
+        document.getElementById("loadingScreen").style.display = "block";
 
-            // Update userBalance
-            await update(referrerRef, { userBalance: updatedBalance });
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        const referralCode = document.getElementById("referralCode").value;
+        const county = document.getElementById("county").value;
 
-            // Handle chain bonuses
-            if (levelBonus > 0 && referrerData.referredBy) {
-                await handleReferralBonus(referrerData.referredBy, levelBonus, levelBonus / 2);
+        // Validate passwords
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            document.getElementById("loadingScreen").style.display = "none";
+            return;
+        }
+
+        // Validate referral code
+        const referralCodeValid = await checkReferralCodeExists(referralCode);
+        if (!referralCodeValid) {
+            alert("This referral code is not valid. Registration cannot proceed.");
+            document.getElementById("loadingScreen").style.display = "none";
+            return;
+        }
+
+        try {
+            // Create user with email and password
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Generate wallet address
+            let walletAddress = generateWalletAddress();
+            while (await checkWalletAddressExists(walletAddress)) {
+                walletAddress = generateWalletAddress();
+            }
+
+            // Generate referral code
+            const generatedReferralCode = Math.random().toString(36).substring(2, 8);
+
+            // Create referral link
+            const referralLink = `https://tana-coin.vercel.app/referral?user=${username}&ref=${generatedReferralCode}`;
+
+            // Create user data in Firebase Realtime Database
+            const userData = {
+                firstName,
+                lastName,
+                username,
+                email,
+                userBalance: 0.00000,
+                usdBalance: 0.00,
+                referralLink,
+                county,
+           sendHistory: [],
+                       receiveHistory: [], 
+                referralCode: generatedReferralCode,
+                walletAddress,
+            };
+
+            await set(ref(db, 'users/' + user.uid), userData);
+
+            // Check if there is a valid referral code
+            if (referralCode) {
+                await applyReferralBonus(referralCode);
+            }
+
+            alert("Registration successful!");
+            window.location.href = "login.html";
+        } catch (error) {
+            console.error("Error during registration:", error);
+            alert("An error occurred during registration. Please try again later.");
+        } finally {
+            // Hide loading screen
+            document.getElementById("loadingScreen").style.display = "none";
+        }
+    });
+
+    // Check if referral code exists
+    async function checkReferralCodeExists(referralCode) {
+        const snapshot = await get(ref(db, 'users/'));
+        const users = snapshot.val();
+        for (let userId in users) {
+            if (users[userId].referralCode === referralCode) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Apply referral bonus
+    async function applyReferralBonus(referralCode) {
+        const snapshot = await get(ref(db, 'users/'));
+        const users = snapshot.val();
+        for (let userId in users) {
+            if (users[userId].referralCode === referralCode) {
+                // Add bonus to the referrer
+                const referrerBonus = 2.00000; // Bonus for the referrer
+                const updatedReferrerBalance = parseFloat(users[userId].userBalance || 0) + referrerBonus;
+
+                // Update referrer's balance in the database
+                await update(ref(db, 'users/' + userId), { userBalance: updatedReferrerBalance });
+
+                alert(`Referral bonus of ${referrerBonus} TanaCoin credited to the referrer.`);
+                break;
             }
         }
     }
 
-    document.getElementById('step1Form').addEventListener('submit', async (e) => {
-        e.preventDefault();
+function trackReferralEarnings(newUserId, referrerId) {
+        const newUserRef = ref(db, `users/${newUserId}/userBalance`);
+        onValue(newUserRef, async (snapshot) => {
+            const newBalance = snapshot.val();
+            if (newBalance > 0) {
+                const referrerRef = ref(db, `users/${referrerId}`);
+                const referrerSnapshot = await get(referrerRef);
+                const referrerData = referrerSnapshot.val();
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
-        const errorMessage = document.getElementById('error-message');
+                const bonus = newBalance * 0.10; // 10% of new user's balance
+                const updatedReferrerBalance = parseFloat(referrerData.userBalance || 0) + bonus;
 
-        errorMessage.textContent = '';
-
-        if (password !== confirmPassword) {
-            errorMessage.textContent = "Passwords do not match!";
-            return;
-        }
-
-        document.getElementById('loadingScreen').style.display = 'block';
-
-        try {
-            const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-            if (signInMethods.length > 0) {
-                errorMessage.textContent = "This email address has already been used. Please log in to your account.";
-                return;
+                await update(referrerRef, { userBalance: updatedReferrerBalance });
+                alert(`10% bonus of ${bonus} TNC credited to the referrer.`);
             }
+        });
+    }
 
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('step1Form').classList.remove('active');
-            document.getElementById('step2Form').classList.add('active');
-        } catch (error) {
-            console.error("Error in Firebase Authentication: ", error);
-            document.getElementById('loadingScreen').style.display = 'none';
-            errorMessage.textContent = "Failed to create account. Please try again.";
-        }
-    });
-
-    document.getElementById('step2Form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const userId = auth.currentUser.uid;
-        const email = auth.currentUser.email;
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const username = document.getElementById('username').value;
-        const country = document.getElementById('country').value;
-        const referredBy = new URLSearchParams(window.location.search).get('ref') || null;
-
-        let walletAddress = generateWalletAddress();
-        while (await checkWalletAddressExists(walletAddress)) {
-            walletAddress = generateWalletAddress();
-        }
-
-        const userData = {
-            firstName,
-            lastName,
-            username,
-            email,
-            country,
-            userBalance: 0.00000,
-            referralLink: `https://tana-coin.vercel.app/referral?user=${username}&ref=${userId.slice(0, 6)}`,
-            walletAddress,
-            referredBy
-        };
-
-        document.getElementById('loadingScreen').style.display = 'block';
-
-        try {
-            await set(ref(db, 'users/' + userId), userData);
-
-            // Handle referral bonus
-            if (referredBy) {
-                await handleReferralBonus(referredBy, 2.00000, 0.20000); // Add initial bonus and chain bonuses
-            }
-
-            document.getElementById('loadingScreen').style.display = 'none';
-            alert("Registration successful!");
-            window.location.href = "login.html";
-        } catch (error) {
-            console.error("Error in Firebase Database: ", error);
-            document.getElementById('loadingScreen').style.display = 'none';
-            alert("Failed to save user data. Please try again.");
-        }
-    });
+    // Handle referral link on page load
+    handleReferralLink();
 </script>
-</body>
+    
+     
+        
+        </body>
 </html>
