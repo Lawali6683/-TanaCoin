@@ -1,7 +1,7 @@
 {
-  "name": "TanaCoin Mining",
-  "short_name": "TanaCoin",
-  "start_url": "/repo-name/index.html",
+  "name": "TanaCoin",
+  "short_name": "TNC",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
